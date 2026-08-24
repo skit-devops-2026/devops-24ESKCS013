@@ -1,6 +1,6 @@
 # API Documentation
 
-The backend exposes a REST API for the Next.js frontend.
+The backend exposes a REST API for the React frontend.
 
 ## Base URL
 `/api/v1`

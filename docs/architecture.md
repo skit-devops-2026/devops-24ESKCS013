@@ -3,7 +3,7 @@
 The Student Portal follows a simple, modular client-server architecture:
 
 ## Client
-- **Framework**: Next.js (App Router)
+- **Framework**: React.js + Vite
 - **Styling**: Tailwind CSS + shadcn/ui
 - **State Management**: React state + Zustand (where required)
 

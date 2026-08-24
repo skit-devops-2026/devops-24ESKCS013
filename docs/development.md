@@ -3,7 +3,7 @@
 ## General Principles
 1. **Simplicity First**: Implement the simplest clean solution. Avoid over-engineering.
 2. **Small Functions**: Single responsibility.
-3. **TypeScript Strictness**: Avoid `any`. Use Zod for runtime validation.
+3. **Strictness**: Avoid `any` in backend TS. Use Zod for runtime validation.
 
 ## Module Development Flow
 When adding a new feature, work in the following order:

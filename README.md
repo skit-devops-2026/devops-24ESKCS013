@@ -3,7 +3,7 @@
 A clean, modern, personal productivity and academic progress tracking web application for students.
 
 ## Tech Stack
-- **Frontend**: Next.js 16 (App Router), TypeScript, Tailwind CSS, shadcn/ui
+- **Frontend**: React.js, Vite, JavaScript, Tailwind CSS, shadcn/ui
 - **Backend**: Node.js, Express, TypeScript, Zod
 - **Database/Auth/Storage**: Supabase (PostgreSQL)
 - **AI Integration**: Gemini API
@@ -11,7 +11,7 @@ A clean, modern, personal productivity and academic progress tracking web applic
 ## Project Structure
 ```
 student-portal/
-├── client/          # Next.js frontend
+├── client/          # React + Vite frontend
 ├── server/          # Express TypeScript backend
 ├── docs/            # Project documentation
 ├── README.md        # This file
