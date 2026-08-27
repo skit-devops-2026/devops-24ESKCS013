@@ -1,13 +1,96 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>client</title>
+    <meta name="description" content="Nexus Portal - A next-generation learning management system for students and administrators." />
+    <title>Nexus Student Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
+    <div class="app-container">
+      <!-- Navigation Bar -->
+      <nav class="navbar">
+        <div class="logo">
+          <div class="logo-icon"></div>
+          <span class="logo-text">Nexus</span>
+        </div>
+        <div class="nav-links">
+          <a href="#" class="nav-link">Features</a>
+          <a href="#" class="nav-link">About</a>
+          <a href="#" class="nav-link">Contact</a>
+        </div>
+      </nav>
+
+      <!-- Main Hero Section -->
+      <main class="hero">
+        <div class="hero-content">
+          <div class="badge">Next-Generation Learning</div>
+          <h1 class="hero-title">Empower Your <br/><span class="highlight">Academic Journey</span></h1>
+          <p class="hero-subtitle">
+            A unified platform connecting students and administrators with powerful tools, seamless tracking, and intelligent insights.
+          </p>
+          
+          <div class="action-buttons">
+            <button id="student-login-btn" class="btn btn-primary">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+              Student Login
+            </button>
+            <button id="admin-login-btn" class="btn btn-secondary">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              Admin Login
+            </button>
+          </div>
+        </div>
+        
+        <!-- Abstract Visual Graphic -->
+        <div class="hero-visual">
+          <div class="glass-card">
+            <div class="glass-header">
+              <div class="dot red"></div>
+              <div class="dot yellow"></div>
+              <div class="dot green"></div>
+            </div>
+            <div class="glass-body">
+              <div class="mock-line length-l"></div>
+              <div class="mock-line length-m"></div>
+              <div class="mock-line length-s"></div>
+              <div class="mock-progress-container">
+                <div class="mock-progress-bar"></div>
+              </div>
+            </div>
+          </div>
+          <div class="decorative-blur blur-1"></div>
+          <div class="decorative-blur blur-2"></div>
+        </div>
+      </main>
+      
+      <!-- Login Modal (Hidden by default) -->
+      <div id="login-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+          <button class="modal-close" id="close-modal" aria-label="Close modal">&times;</button>
+          <div class="modal-header">
+            <h2 id="modal-title">Welcome Back</h2>
+            <p id="modal-subtitle">Sign in to your account</p>
+          </div>
+          <form id="login-form" class="login-form">
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input type="email" id="email" placeholder="name@example.com" required>
+            </div>
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input type="password" id="password" placeholder="••••••••" required>
+            </div>
+            <button type="submit" class="btn btn-primary full-width">Sign In</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    
+    <script src="main.js"></script>
   </body>
 </html>
