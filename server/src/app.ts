@@ -16,4 +16,13 @@ app.get('/health', (req, res) => {
   res.status(200).json({ success: true, message: 'Server is healthy' });
 });
 
+// API routes
+const apiRouter = express.Router();
+
+apiRouter.get('/health', (req, res) => {
+  res.status(200).json({ success: true, message: 'Nexus API is running' });
+});
+
+app.use('/api', apiRouter);
+
 export default app;

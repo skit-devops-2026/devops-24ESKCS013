@@ -1,95 +1,82 @@
-/**
- * Main JavaScript entry point for the Vanilla JS Nexus Portal
- */
-
 document.addEventListener('DOMContentLoaded', () => {
-  // Select DOM Elements
+  // Cursor tracking for background glow
+  const cursorGlow = document.getElementById('cursor-glow');
+  
+  document.addEventListener('mousemove', (e) => {
+    if (cursorGlow) {
+      cursorGlow.style.left = `${e.clientX}px`;
+      cursorGlow.style.top = `${e.clientY}px`;
+    }
+  });
+
+  // Modal Logic
   const studentLoginBtn = document.getElementById('student-login-btn');
   const adminLoginBtn = document.getElementById('admin-login-btn');
   const loginModal = document.getElementById('login-modal');
   const closeModalBtn = document.getElementById('close-modal');
+  const modalBackdrop = document.querySelector('.modal-backdrop');
   const loginForm = document.getElementById('login-form');
   const modalTitle = document.getElementById('modal-title');
-  const modalSubtitle = document.getElementById('modal-subtitle');
+  
+  // Custom button text colors for different modes
+  const themeColors = {
+    'STUDENT': '#00f0ff',
+    'ADMIN': '#ff0055'
+  };
 
-  // State to track which portal is open (student or admin)
-  let currentLoginType = '';
+  let currentMode = '';
 
-  /**
-   * Opens the login modal and configures text based on login type
-   * @param {string} type - 'Student' or 'Admin'
-   */
-  const openModal = (type) => {
-    currentLoginType = type;
-    modalTitle.textContent = `${type} Portal`;
-    modalSubtitle.textContent = `Sign in to your ${type.toLowerCase()} account`;
+  const openModal = (mode) => {
+    currentMode = mode;
+    modalTitle.innerHTML = `${mode} <span style="color: ${themeColors[mode]}">ACCESS</span>`;
     
-    // Clear previous inputs
+    // Change button color based on mode
+    const submitBtn = document.querySelector('.btn-submit');
+    submitBtn.style.setProperty('--accent-tertiary', themeColors[mode]);
+    
     loginForm.reset();
-    
-    // Show modal
     loginModal.classList.remove('hidden');
-    
-    // Focus the first input
     setTimeout(() => {
       document.getElementById('email').focus();
-    }, 100);
+    }, 400); // Wait for animation
   };
 
-  /**
-   * Closes the login modal
-   */
   const closeModal = () => {
     loginModal.classList.add('hidden');
-    currentLoginType = '';
   };
 
-  // Event Listeners for Buttons
-  studentLoginBtn.addEventListener('click', () => openModal('Student'));
-  adminLoginBtn.addEventListener('click', () => openModal('Admin'));
-
-  // Event Listeners for Closing Modal
+  studentLoginBtn.addEventListener('click', () => openModal('STUDENT'));
+  adminLoginBtn.addEventListener('click', () => openModal('ADMIN'));
   closeModalBtn.addEventListener('click', closeModal);
-  
-  // Close modal when clicking on the dark overlay outside the modal content
-  loginModal.addEventListener('click', (e) => {
-    if (e.target === loginModal) {
-      closeModal();
-    }
-  });
+  modalBackdrop.addEventListener('click', closeModal);
 
-  // Handle Form Submission
+  // Form submission with hyper-modern aesthetic feedback
   loginForm.addEventListener('submit', (e) => {
-    // Prevent actual form submission since we have no backend integration yet
     e.preventDefault();
     
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    
-    // In a real app, you would send a fetch() request here
-    console.log(`[${currentLoginType} Login Attempt] Email: ${email}`);
-    
-    // Simulate successful login
     const submitBtn = loginForm.querySelector('button[type="submit"]');
-    const originalText = submitBtn.textContent;
+    const btnContent = submitBtn.querySelector('.btn-content');
+    const originalText = btnContent.textContent;
     
-    submitBtn.textContent = 'Authenticating...';
-    submitBtn.disabled = true;
-    
-    setTimeout(() => {
-      submitBtn.textContent = 'Success!';
-      submitBtn.style.backgroundColor = '#22c55e'; // green
-      submitBtn.style.color = '#fff';
-      
-      setTimeout(() => {
-        closeModal();
-        // Reset button
-        submitBtn.textContent = originalText;
-        submitBtn.style.backgroundColor = '';
-        submitBtn.style.color = '';
-        submitBtn.disabled = false;
-        alert(`Successfully logged in as ${currentLoginType}!`);
-      }, 1000);
-    }, 1500);
+    // Glitchy auth effect
+    let glitchCount = 0;
+    const glitchInterval = setInterval(() => {
+      btnContent.textContent = Math.random().toString(36).substring(2, 10).toUpperCase();
+      glitchCount++;
+      if (glitchCount > 10) {
+        clearInterval(glitchInterval);
+        btnContent.textContent = 'ACCESS GRANTED';
+        submitBtn.style.setProperty('--accent-tertiary', '#00ffaa'); // Green success
+        
+        setTimeout(() => {
+          closeModal();
+          // Reset after close
+          setTimeout(() => {
+            btnContent.textContent = originalText;
+            submitBtn.style.setProperty('--accent-tertiary', themeColors[currentMode]);
+          }, 500);
+        }, 1000);
+      }
+    }, 50);
   });
 });
