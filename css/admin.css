@@ -1,0 +1,71 @@
+/* Admin UI Theme Overrides */
+
+.admin-sidebar {
+  background-color: var(--ink);
+  color: var(--paper);
+  border-right: none;
+}
+
+.admin-sidebar .sidebar-header {
+  border-bottom-color: #2D3748;
+  color: var(--paper-raised);
+}
+
+.admin-sidebar .sidebar-link {
+  color: var(--ink-faint);
+}
+
+.admin-sidebar .sidebar-link:hover, 
+.admin-sidebar .sidebar-link.active {
+  background-color: #2D3748;
+  color: var(--paper-raised);
+}
+
+.admin-sidebar .sidebar-footer {
+  border-top-color: #2D3748;
+}
+
+/* Admin Dashboard Specifics */
+.admin-stat-card {
+  border-top: 4px solid var(--ink-soft);
+}
+
+.admin-attention-panel {
+  background-color: var(--red-soft);
+  border-color: #E5C3BC;
+}
+
+.admin-attention-panel .panel-title {
+  color: var(--red);
+  border-bottom-color: #E5C3BC;
+}
+
+/* Admin Tables */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-table th, .admin-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--rule);
+  font-size: 0.875rem;
+}
+
+.admin-table th {
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.status-indicator {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+}
+
+.status-active { background-color: var(--green); }
+.status-inactive { background-color: var(--red); }
+.status-warning { background-color: var(--gold); }

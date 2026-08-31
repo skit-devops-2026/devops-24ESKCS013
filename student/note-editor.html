@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Note Editor — Student360</title>
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/student.css">
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="sidebar-header"><span class="text-gold">Student</span>360</div>
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="sidebar-link">Dashboard</a>
+        <a href="study.html" class="sidebar-link">Study Tracker</a>
+        <a href="subjects.html" class="sidebar-link">Subjects</a>
+        <a href="notes.html" class="sidebar-link active">Notes</a>
+        <a href="tasks.html" class="sidebar-link">Tasks</a>
+        <a href="goals.html" class="sidebar-link">Goals</a>
+        <a href="calendar.html" class="sidebar-link">Calendar</a>
+        <a href="progress.html" class="sidebar-link">Progress</a>
+        <a href="analytics.html" class="sidebar-link">Analytics</a>
+        <a href="reflection.html" class="sidebar-link">Self Review</a>
+        <a href="ai.html" class="sidebar-link">AI Assistant</a>
+        <a href="resources.html" class="sidebar-link">Resources</a>
+        <a href="announcements.html" class="sidebar-link">Announcements</a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="profile.html" class="sidebar-link">Settings / Profile</a>
+        <a href="../index.html" class="sidebar-link text-faint">Logout</a>
+      </div>
+    </aside>
+
+    <main class="main-content" style="max-width: 1000px;">
+      <div style="margin-bottom: 1rem;">
+        <a href="notes.html" class="text-faint" style="font-size: 0.875rem;">&larr; Back to Notes</a>
+      </div>
+
+      <form id="note-editor-form">
+        <header class="dashboard-header" style="align-items: center; margin-bottom: 1.5rem;">
+          <input type="text" id="editor-title" class="form-control"
+            style="font-family: var(--font-serif); font-size: 2rem; border: none; background: transparent; padding: 0; outline: none; flex: 1;"
+            placeholder="Note title…">
+          <div style="display: flex; gap: 0.5rem; align-items: center;">
+            <span id="word-count" class="text-faint" style="font-size: 0.8rem;"></span>
+            <button type="button" id="delete-note-btn" class="btn btn-outline" style="color:var(--red);border-color:var(--red-soft);display:none;">Delete</button>
+            <button type="button" id="save-note-btn" class="btn btn-primary">Save Note</button>
+          </div>
+        </header>
+
+        <!-- Metadata row -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
+          <div class="form-group" style="margin: 0;">
+            <label class="form-label">Subject</label>
+            <select id="editor-subject" class="form-control">
+              <option>Calculus II</option>
+              <option>Physics 101</option>
+              <option>Computer Science</option>
+              <option>Literature</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin: 0; grid-column: span 2;">
+            <label class="form-label">Tags <span class="text-faint" style="font-weight:400;">(comma-separated)</span></label>
+            <input type="text" id="editor-tags" class="form-control" placeholder="formulas, exam-prep, chapter-3">
+          </div>
+        </div>
+
+        <!-- Editor area -->
+        <div class="dashboard-panel" style="padding: 0; display: flex; flex-direction: column; min-height: 500px;">
+          <!-- Formatting toolbar (visual only in Phase 2) -->
+          <div style="padding: 0.75rem 1rem; border-bottom: 1px solid var(--rule); display: flex; gap: 1rem; background-color: var(--paper); flex-wrap: wrap;">
+            <button type="button" onclick="document.execCommand('bold')"   style="font-weight: bold; cursor: pointer; background: none; border: none; font-family: var(--font-sans);">B</button>
+            <button type="button" onclick="document.execCommand('italic')" style="font-style: italic; cursor: pointer; background: none; border: none; font-family: var(--font-sans);">I</button>
+            <button type="button" onclick="document.execCommand('underline')" style="text-decoration: underline; cursor: pointer; background: none; border: none; font-family: var(--font-sans);">U</button>
+            <span style="color: var(--rule-strong);">|</span>
+            <button type="button" onclick="document.execCommand('formatBlock','false','h2')" style="cursor: pointer; background: none; border: none; font-family: var(--font-sans);">H2</button>
+            <button type="button" onclick="document.execCommand('formatBlock','false','h3')" style="cursor: pointer; background: none; border: none; font-family: var(--font-sans);">H3</button>
+            <span style="color: var(--rule-strong);">|</span>
+            <button type="button" onclick="document.execCommand('insertUnorderedList')" style="cursor: pointer; background: none; border: none; font-family: var(--font-sans);">• List</button>
+            <button type="button" onclick="document.execCommand('insertOrderedList')"   style="cursor: pointer; background: none; border: none; font-family: var(--font-sans);">1. List</button>
+          </div>
+          <!-- Plain textarea (stores to localStorage, Phase 5 will use rich editor) -->
+          <textarea id="editor-content" class="form-control"
+            style="border: none; flex: 1; padding: 2rem; resize: none; font-size: 1rem; line-height: 1.8; font-family: var(--font-sans);"
+            placeholder="Start typing your notes here…"></textarea>
+        </div>
+      </form>
+    </main>
+  </div>
+  <script src="../js/main.js"></script>
+  <script src="../js/notes.js"></script>
+</body>
+</html>

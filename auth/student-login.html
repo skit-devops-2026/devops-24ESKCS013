@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Login — Student360</title>
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/auth.css">
+</head>
+<body class="auth-layout">
+  <div class="auth-panel">
+    <div class="auth-header">
+      <h1 class="auth-title">Student Login</h1>
+      <p class="auth-desc">Welcome back to your academic ledger.</p>
+    </div>
+    
+    <form class="auth-form" id="student-login-form">
+      <div class="form-group">
+        <label for="login-email" class="form-label">Email Address</label>
+        <input type="email" id="login-email" class="form-control" placeholder="student@example.com" required>
+      </div>
+      <div class="form-group">
+        <label for="login-password" class="form-label">Password</label>
+        <input type="password" id="login-password" class="form-control" placeholder="••••••••" required>
+      </div>
+      
+      <div class="auth-options">
+        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+          <input type="checkbox" id="remember">
+          Remember me
+        </label>
+        <a href="#">Forgot password?</a>
+      </div>
+      
+      <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem;">Sign In</button>
+    </form>
+
+    <div class="auth-footer">
+      <p>Don't have an account? <a href="student-register.html">Register here</a></p>
+      <p class="mt-2"><a href="login.html" class="text-faint">&larr; Back to role selection</a></p>
+    </div>
+  </div>
+  <script src="../js/main.js"></script>
+  <script src="../js/auth.js"></script>
+</body>
+</html>

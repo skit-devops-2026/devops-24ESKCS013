@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile — Student360</title>
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/student.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <span class="text-gold">Student</span>360
+      </div>
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="sidebar-link">Dashboard</a>
+        <a href="study.html" class="sidebar-link">Study Tracker</a>
+        <a href="subjects.html" class="sidebar-link">Subjects</a>
+        <a href="notes.html" class="sidebar-link">Notes</a>
+        <a href="tasks.html" class="sidebar-link">Tasks</a>
+        <a href="goals.html" class="sidebar-link">Goals</a>
+        <a href="calendar.html" class="sidebar-link">Calendar</a>
+        <a href="progress.html" class="sidebar-link">Progress</a>
+        <a href="analytics.html" class="sidebar-link">Analytics</a>
+        <a href="reflection.html" class="sidebar-link">Self Review</a>
+        <a href="ai.html" class="sidebar-link">AI Assistant</a>
+        <a href="resources.html" class="sidebar-link">Resources</a>
+        <a href="announcements.html" class="sidebar-link">Announcements</a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="profile.html" class="sidebar-link active">Settings / Profile</a>
+        <a href="../index.html" class="sidebar-link text-faint">Logout</a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="dashboard-header">
+        <div>
+          <h1 class="dashboard-title">Profile & Settings</h1>
+          <p class="dashboard-subtitle">Manage your account and preferences.</p>
+        </div>
+      </header>
+
+      <div class="dashboard-grid">
+        <div class="dashboard-main">
+          
+          <div class="dashboard-panel">
+            <h2 class="panel-title">Personal Information</h2>
+            <form>
+              <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input type="text" class="form-control" value="Jane Doe">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input type="email" class="form-control" value="student@example.com" disabled>
+                <p class="text-faint" style="font-size: 0.75rem; margin-top: 0.25rem;">Email cannot be changed.</p>
+              </div>
+              
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                  <label class="form-label">Course</label>
+                  <input type="text" class="form-control" value="B.Sc. Computer Science">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Semester</label>
+                  <select class="form-control">
+                    <option>Fall 2026</option>
+                    <option>Spring 2026</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Primary Learning Goals</label>
+                <textarea class="form-control" rows="3">Maintain a 3.8 GPA and secure an internship for next summer.</textarea>
+              </div>
+
+              <button type="button" class="btn btn-primary mt-4">Save Changes</button>
+            </form>
+          </div>
+
+          <div class="dashboard-panel">
+            <h2 class="panel-title">Preferences</h2>
+            <form>
+              <div class="form-group" style="display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                  <label class="form-label" style="margin-bottom: 0;">Email Notifications</label>
+                  <p class="text-faint" style="font-size: 0.75rem;">Receive daily summaries and deadline reminders.</p>
+                </div>
+                <input type="checkbox" checked>
+              </div>
+              
+              <div class="form-group mt-4" style="display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                  <label class="form-label" style="margin-bottom: 0;">AI Coaching</label>
+                  <p class="text-faint" style="font-size: 0.75rem;">Allow AI to analyze your progress and offer suggestions.</p>
+                </div>
+                <input type="checkbox" checked>
+              </div>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="../js/main.js"></script>
+</body>
+</html>

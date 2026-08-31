@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Announcements — Admin Portal</title>
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Admin Sidebar -->
+    <aside class="sidebar admin-sidebar">
+      <div class="sidebar-header">
+        Admin Portal
+      </div>
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="sidebar-link">Dashboard</a>
+        <a href="students.html" class="sidebar-link">Students</a>
+        <a href="analytics.html" class="sidebar-link">Analytics</a>
+        <a href="resources.html" class="sidebar-link">Resources</a>
+        <a href="announcements.html" class="sidebar-link active">Announcements</a>
+        <a href="ai-management.html" class="sidebar-link">AI Management</a>
+        <a href="subjects.html" class="sidebar-link">Subjects</a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="settings.html" class="sidebar-link">Settings</a>
+        <a href="../index.html" class="sidebar-link">Logout</a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="dashboard-header">
+        <div>
+          <h1 class="dashboard-title">Announcements</h1>
+          <p class="dashboard-subtitle">Broadcast messages to student cohorts.</p>
+        </div>
+      </header>
+
+      <div class="dashboard-grid">
+        <div class="dashboard-main">
+          
+          <div class="dashboard-panel" style="padding: 0; overflow-x: auto;">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Audience</th>
+                  <th>Date</th>
+                  <th>Priority</th>
+                  <th style="text-align: right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="announcements-table-body">
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+
+        <div class="dashboard-side">
+          <div class="dashboard-panel">
+            <h2 class="panel-title">New Announcement</h2>
+            <form id="new-announcement-form">
+              <div class="form-group">
+                <label class="form-label">Title</label>
+                <input type="text" name="title" class="form-control" placeholder="Announcement title..." required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Message</label>
+                <textarea name="message" class="form-control" rows="4" placeholder="Type message body here..."></textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Audience</label>
+                <select name="audience" class="form-control">
+                  <option value="All Students">All Students</option>
+                  <option value="Calculus II cohort">Calculus II cohort</option>
+                  <option value="Physics 101 cohort">Physics 101 cohort</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Priority</label>
+                <select name="priority" class="form-control">
+                  <option value="Normal">Normal</option>
+                  <option value="High">High (Pins to top)</option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-primary" style="width: 100%;">Publish Announcement</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="../js/main.js"></script>
+  <script src="../js/admin.js"></script>
+</body>
+</html>

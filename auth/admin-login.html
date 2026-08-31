@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login — Student360</title>
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/auth.css">
+</head>
+<body class="auth-layout" style="background-color: var(--ink);">
+  <div class="auth-panel">
+    <div class="auth-header">
+      <h1 class="auth-title">Admin Login</h1>
+      <p class="auth-desc">Access the management console.</p>
+    </div>
+    
+    <form class="auth-form" id="admin-login-form">
+      <div class="form-group">
+        <label for="admin-email" class="form-label">Admin Email</label>
+        <input type="email" id="admin-email" class="form-control" placeholder="admin@student360.edu" required>
+      </div>
+      <div class="form-group">
+        <label for="admin-password" class="form-label">Password</label>
+        <input type="password" id="admin-password" class="form-control" placeholder="••••••••" required>
+      </div>
+      
+      <div class="auth-options">
+        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+          <input type="checkbox" id="remember">
+          Remember me
+        </label>
+      </div>
+      
+      <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem;">Access Portal</button>
+    </form>
+
+    <div class="auth-footer">
+      <p class="mt-2"><a href="login.html" class="text-faint">&larr; Back to role selection</a></p>
+    </div>
+  </div>
+  <script src="../js/main.js"></script>
+  <script src="../js/auth.js"></script>
+</body>
+</html>

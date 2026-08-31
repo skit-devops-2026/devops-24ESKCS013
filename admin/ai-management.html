@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Management — Admin Portal</title>
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Admin Sidebar -->
+    <aside class="sidebar admin-sidebar">
+      <div class="sidebar-header">
+        Admin Portal
+      </div>
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="sidebar-link">Dashboard</a>
+        <a href="students.html" class="sidebar-link">Students</a>
+        <a href="analytics.html" class="sidebar-link">Analytics</a>
+        <a href="resources.html" class="sidebar-link">Resources</a>
+        <a href="announcements.html" class="sidebar-link">Announcements</a>
+        <a href="ai-management.html" class="sidebar-link active">AI Management</a>
+        <a href="subjects.html" class="sidebar-link">Subjects</a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="settings.html" class="sidebar-link">Settings</a>
+        <a href="../index.html" class="sidebar-link">Logout</a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="dashboard-header">
+        <div>
+          <h1 class="dashboard-title">AI Management</h1>
+          <p class="dashboard-subtitle">Configure the behaviour, limits, and capabilities of the student AI Coach.</p>
+        </div>
+        <div>
+          <!-- Mock Toggle -->
+          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
+            <input type="checkbox" checked style="width: 1.25rem; height: 1.25rem;">
+            Global AI Access Enabled
+          </label>
+        </div>
+      </header>
+
+      <div class="dashboard-grid">
+        <div class="dashboard-main">
+          
+          <div class="dashboard-panel">
+            <h2 class="panel-title">System Instructions</h2>
+            <p class="text-faint" style="font-size: 0.875rem; margin-bottom: 1rem;">This prompt defines the AI's core persona and restrictions when interacting with students.</p>
+            <form>
+              <div class="form-group">
+                <textarea class="form-control" rows="10" style="font-family: monospace; font-size: 0.875rem; line-height: 1.6;">You are the Student360 AI Coach. Your primary role is to guide students towards their academic goals.
+- Be encouraging but firm about deadlines.
+- When generating questions, ensure they align strictly with the student's current subject progress.
+- Never give direct answers to assignments; instead, explain the underlying concepts.
+- Base all recommendations on the student's Growth Score and recent study logs.</textarea>
+              </div>
+              <button type="button" id="save-system-prompt-btn" class="btn btn-outline">Update Instructions</button>
+            </form>
+          </div>
+
+          <div class="dashboard-panel">
+            <h2 class="panel-title">Feature Toggles</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+              <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer;">
+                <input type="checkbox" checked>
+                <div>
+                  <div style="font-weight: 500;">Study Plan Generation</div>
+                  <div class="text-faint" style="font-size: 0.75rem;">Allow AI to project paths based on "What if I study?"</div>
+                </div>
+              </label>
+              
+              <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer;">
+                <input type="checkbox" checked>
+                <div>
+                  <div style="font-weight: 500;">Note Summarization</div>
+                  <div class="text-faint" style="font-size: 0.75rem;">Allow AI to summarize student notes.</div>
+                </div>
+              </label>
+
+              <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer;">
+                <input type="checkbox" checked>
+                <div>
+                  <div style="font-weight: 500;">Question Generation</div>
+                  <div class="text-faint" style="font-size: 0.75rem;">Allow AI to generate quizzes from subjects.</div>
+                </div>
+              </label>
+
+              <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer;">
+                <input type="checkbox" checked>
+                <div>
+                  <div style="font-weight: 500;">Progress Analysis</div>
+                  <div class="text-faint" style="font-size: 0.75rem;">AI provides insights on Growth Score trends.</div>
+                </div>
+              </label>
+
+              <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer;">
+                <input type="checkbox" checked>
+                <div>
+                  <div style="font-weight: 500;">Weakness Detection</div>
+                  <div class="text-faint" style="font-size: 0.75rem;">AI highlights subjects falling behind.</div>
+                </div>
+              </label>
+
+              <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer;">
+                <input type="checkbox" checked>
+                <div>
+                  <div style="font-weight: 500;">AI Tutor Chat</div>
+                  <div class="text-faint" style="font-size: 0.75rem;">Allow free-form chat with the AI assistant.</div>
+                </div>
+              </label>
+            </div>
+            <button type="button" id="save-toggles-btn" class="btn btn-outline mt-4">Save Toggles</button>
+          </div>
+
+        </div>
+
+        <div class="dashboard-side">
+          <div class="dashboard-panel">
+            <h2 class="panel-title">Usage Limits & Scope</h2>
+            <form>
+              <div class="form-group">
+                <label class="form-label">Daily Token Limit (per student)</label>
+                <input type="number" class="form-control tabular-nums" value="5000">
+              </div>
+              <div class="form-group mt-4">
+                <label class="form-label">Allowed Reference Scope</label>
+                <div style="margin-bottom: 0.5rem;">
+                  <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                    <input type="checkbox" checked>
+                    Student's Notes
+                  </label>
+                </div>
+                <div style="margin-bottom: 0.5rem;">
+                  <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                    <input type="checkbox" checked>
+                    Admin Resources
+                  </label>
+                </div>
+                <div style="margin-bottom: 0.5rem;">
+                  <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                    <input type="checkbox" checked>
+                    Study History
+                  </label>
+                </div>
+              </div>
+              <div class="form-group mt-4">
+                <label class="form-label">Quiz Generation</label>
+                <select class="form-control">
+                  <option>Enabled (Max 10 questions)</option>
+                  <option>Enabled (Max 20 questions)</option>
+                  <option>Disabled</option>
+                </select>
+              </div>
+              <button type="button" class="btn btn-outline" style="width: 100%;">Save Configuration</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="../js/main.js"></script>
+  <script src="../js/admin.js"></script>
+</body>
+</html>

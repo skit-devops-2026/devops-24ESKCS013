@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytics — Student360</title>
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/student.css">
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="sidebar-header"><span class="text-gold">Student</span>360</div>
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="sidebar-link">Dashboard</a>
+        <a href="study.html" class="sidebar-link">Study Tracker</a>
+        <a href="subjects.html" class="sidebar-link">Subjects</a>
+        <a href="notes.html" class="sidebar-link">Notes</a>
+        <a href="tasks.html" class="sidebar-link">Tasks</a>
+        <a href="goals.html" class="sidebar-link">Goals</a>
+        <a href="calendar.html" class="sidebar-link">Calendar</a>
+        <a href="progress.html" class="sidebar-link">Progress</a>
+        <a href="analytics.html" class="sidebar-link active">Analytics</a>
+        <a href="reflection.html" class="sidebar-link">Self Review</a>
+        <a href="ai.html" class="sidebar-link">AI Assistant</a>
+        <a href="resources.html" class="sidebar-link">Resources</a>
+        <a href="announcements.html" class="sidebar-link">Announcements</a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="profile.html" class="sidebar-link">Settings / Profile</a>
+        <a href="../index.html" class="sidebar-link text-faint">Logout</a>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="dashboard-header">
+        <div>
+          <h1 class="dashboard-title">Analytics</h1>
+          <p class="dashboard-subtitle">Deep dive into your performance metrics.</p>
+        </div>
+        <div>
+          <select class="form-control">
+            <option>This Month</option>
+            <option>Last 3 Months</option>
+            <option>This Semester</option>
+          </select>
+        </div>
+      </header>
+
+      <div class="dashboard-grid">
+        <div class="dashboard-main">
+
+          <div class="dashboard-panel">
+            <h2 class="panel-title">Study Time by Day (Last 7 Days)</h2>
+            <!-- Canvas drawn by analytics.js -->
+            <canvas id="study-time-chart" style="width:100%; height:200px; display:block;"></canvas>
+          </div>
+
+          <div class="dashboard-panel">
+            <h2 class="panel-title">Productivity Trend (Stars)</h2>
+            <canvas id="productivity-chart" style="width:100%; height:160px; display:block;"></canvas>
+          </div>
+
+        </div>
+
+        <div class="dashboard-side">
+
+          <div class="dashboard-panel">
+            <h2 class="panel-title">Time by Subject</h2>
+            <canvas id="subject-donut-chart" style="width:100%; height:200px; display:block;"></canvas>
+            <ul style="list-style:none; font-size:0.875rem; margin-top:1rem;">
+              <li style="display:flex;justify-content:space-between;margin-bottom:0.5rem;"><span style="display:flex;align-items:center;gap:0.5rem;"><span style="width:12px;height:12px;background:#2C2C2C;display:inline-block;"></span>Calculus II</span><span class="tabular-nums text-faint">45%</span></li>
+              <li style="display:flex;justify-content:space-between;margin-bottom:0.5rem;"><span style="display:flex;align-items:center;gap:0.5rem;"><span style="width:12px;height:12px;background:#5A5A5A;display:inline-block;"></span>Physics 101</span><span class="tabular-nums text-faint">25%</span></li>
+              <li style="display:flex;justify-content:space-between;margin-bottom:0.5rem;"><span style="display:flex;align-items:center;gap:0.5rem;"><span style="width:12px;height:12px;background:#B8974C;display:inline-block;"></span>Computer Science</span><span class="tabular-nums text-faint">20%</span></li>
+              <li style="display:flex;justify-content:space-between;"><span style="display:flex;align-items:center;gap:0.5rem;"><span style="width:12px;height:12px;background:#4A7C59;display:inline-block;"></span>Literature</span><span class="tabular-nums text-faint">10%</span></li>
+            </ul>
+          </div>
+
+          <div class="dashboard-panel">
+            <h2 class="panel-title">Consistency Ratio</h2>
+            <div style="text-align:center; margin-bottom:1.5rem;">
+              <span id="consistency-value" class="tabular-nums" style="font-family:var(--font-serif);font-size:3rem;line-height:1;">—</span>
+              <p class="text-faint" style="font-size:0.875rem;margin-top:0.5rem;">Active Days / Total Days</p>
+            </div>
+            <div class="progress-track">
+              <div id="consistency-bar" class="progress-fill" style="width:0%;"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="../js/main.js"></script>
+  <script src="../js/analytics.js"></script>
+</body>
+</html>

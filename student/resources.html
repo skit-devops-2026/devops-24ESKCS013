@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resources — Student360</title>
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/student.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <span class="text-gold">Student</span>360
+      </div>
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="sidebar-link">Dashboard</a>
+        <a href="study.html" class="sidebar-link">Study Tracker</a>
+        <a href="subjects.html" class="sidebar-link">Subjects</a>
+        <a href="notes.html" class="sidebar-link">Notes</a>
+        <a href="tasks.html" class="sidebar-link">Tasks</a>
+        <a href="goals.html" class="sidebar-link">Goals</a>
+        <a href="calendar.html" class="sidebar-link">Calendar</a>
+        <a href="progress.html" class="sidebar-link">Progress</a>
+        <a href="analytics.html" class="sidebar-link">Analytics</a>
+        <a href="reflection.html" class="sidebar-link">Self Review</a>
+        <a href="ai.html" class="sidebar-link">AI Assistant</a>
+        <a href="resources.html" class="sidebar-link active">Resources</a>
+        <a href="announcements.html" class="sidebar-link">Announcements</a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="profile.html" class="sidebar-link">Settings / Profile</a>
+        <a href="../index.html" class="sidebar-link text-faint">Logout</a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="dashboard-header">
+        <div>
+          <h1 class="dashboard-title">Resources</h1>
+          <p class="dashboard-subtitle">Course materials provided by your institution.</p>
+        </div>
+      </header>
+
+      <div class="dashboard-panel" style="margin-bottom: 2rem; padding: 1rem;">
+        <div style="display: flex; gap: 1rem;">
+          <input type="text" class="form-control" placeholder="Search resources..." style="flex: 1;">
+          <select class="form-control" style="width: 200px;">
+            <option>All Subjects</option>
+            <option>Calculus II</option>
+            <option>Physics 101</option>
+          </select>
+          <select class="form-control" style="width: 150px;">
+            <option>All Types</option>
+            <option>PDF Document</option>
+            <option>Video</option>
+            <option>External Link</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="dashboard-panel">
+        
+        <a href="#" class="ledger-row" style="text-decoration: none; color: inherit; display: flex;">
+          <div class="ledger-icon" style="color: var(--red);">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+          </div>
+          <div class="ledger-content">
+            <div class="ledger-title">Calculus Midterm Formula Sheet</div>
+            <div class="ledger-desc">Calculus II &bull; PDF Document &bull; Added Oct 10</div>
+          </div>
+          <button class="btn btn-outline">Download</button>
+        </a>
+
+        <a href="#" class="ledger-row" style="text-decoration: none; color: inherit; display: flex;">
+          <div class="ledger-icon" style="color: var(--ink);">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          </div>
+          <div class="ledger-content">
+            <div class="ledger-title">Kinematics Lecture Recording (Week 3)</div>
+            <div class="ledger-desc">Physics 101 &bull; Video &bull; Added Oct 12</div>
+          </div>
+          <button class="btn btn-outline">Watch</button>
+        </a>
+
+        <a href="#" class="ledger-row" style="text-decoration: none; color: inherit; display: flex;">
+          <div class="ledger-icon" style="color: var(--gold-ink);">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+          </div>
+          <div class="ledger-content">
+            <div class="ledger-title">Interactive Graphing Calculator</div>
+            <div class="ledger-desc">General &bull; External Link &bull; Added Sep 01</div>
+          </div>
+          <button class="btn btn-outline">Open</button>
+        </a>
+
+      </div>
+    </main>
+  </div>
+  <script src="../js/main.js"></script>
+</body>
+</html>

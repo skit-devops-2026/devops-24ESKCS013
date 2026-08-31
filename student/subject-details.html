@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculus II — Student360</title>
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/student.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <span class="text-gold">Student</span>360
+      </div>
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="sidebar-link">Dashboard</a>
+        <a href="study.html" class="sidebar-link">Study Tracker</a>
+        <a href="subjects.html" class="sidebar-link active">Subjects</a>
+        <a href="notes.html" class="sidebar-link">Notes</a>
+        <a href="tasks.html" class="sidebar-link">Tasks</a>
+        <a href="goals.html" class="sidebar-link">Goals</a>
+        <a href="calendar.html" class="sidebar-link">Calendar</a>
+        <a href="progress.html" class="sidebar-link">Progress</a>
+        <a href="analytics.html" class="sidebar-link">Analytics</a>
+        <a href="reflection.html" class="sidebar-link">Self Review</a>
+        <a href="ai.html" class="sidebar-link">AI Assistant</a>
+        <a href="resources.html" class="sidebar-link">Resources</a>
+        <a href="announcements.html" class="sidebar-link">Announcements</a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="profile.html" class="sidebar-link">Settings / Profile</a>
+        <a href="../index.html" class="sidebar-link text-faint">Logout</a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div style="margin-bottom: 1rem;">
+        <a href="subjects.html" class="text-faint" style="font-size: 0.875rem;">&larr; Back to Subjects</a>
+      </div>
+      
+      <header class="dashboard-header">
+        <div>
+          <h1 class="dashboard-title">Calculus II</h1>
+          <p class="dashboard-subtitle">Fall Semester &bull; 12 Topics</p>
+        </div>
+        <div>
+          <button class="btn btn-outline">Edit Subject</button>
+        </div>
+      </header>
+
+      <!-- Subject Stats -->
+      <div class="stats-grid" style="grid-template-columns: repeat(4, 1fr);">
+        <div class="stat-card">
+          <span class="stat-label">Overall Progress</span>
+          <span class="stat-value tabular-nums">75<span class="text-faint" style="font-size:1rem;">%</span></span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Study Time</span>
+          <span class="stat-value tabular-nums">42<span class="text-faint" style="font-size:1rem;">h</span></span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Questions Solved</span>
+          <span class="stat-value tabular-nums">340</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Confidence</span>
+          <span class="stat-value text-gold tabular-nums">High</span>
+        </div>
+      </div>
+
+      <div class="dashboard-grid">
+        <!-- Main Column: Topics -->
+        <div class="dashboard-main">
+          <div class="dashboard-panel">
+            <h2 class="panel-title">Topics</h2>
+            
+            <div class="ledger-row" style="padding: 1rem 0;">
+              <div class="ledger-icon" style="color: var(--green);">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+              </div>
+              <div class="ledger-content">
+                <div class="ledger-title">Integration by Parts</div>
+                <div class="ledger-desc">Advanced techniques for integrating products of functions.</div>
+              </div>
+              <div style="text-align: right; margin-left: 1rem; width: 100px;">
+                <span class="tabular-nums" style="font-size: 0.875rem; display: block; margin-bottom: 0.25rem;">100%</span>
+                <div class="progress-track"><div class="progress-fill" style="width: 100%; background-color: var(--green);"></div></div>
+              </div>
+            </div>
+
+            <div class="ledger-row" style="padding: 1rem 0;">
+              <div class="ledger-icon" style="color: var(--ink-soft);">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              </div>
+              <div class="ledger-content">
+                <div class="ledger-title">Trigonometric Substitution</div>
+                <div class="ledger-desc">Using trig identities to evaluate complex integrals.</div>
+              </div>
+              <div style="text-align: right; margin-left: 1rem; width: 100px;">
+                <span class="tabular-nums" style="font-size: 0.875rem; display: block; margin-bottom: 0.25rem;">60%</span>
+                <div class="progress-track"><div class="progress-fill" style="width: 60%;"></div></div>
+              </div>
+            </div>
+
+            <div class="ledger-row" style="padding: 1rem 0;">
+              <div class="ledger-icon" style="color: var(--ink-faint);">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" /></svg>
+              </div>
+              <div class="ledger-content">
+                <div class="ledger-title">Differential Equations</div>
+                <div class="ledger-desc">First-order linear and separable equations.</div>
+              </div>
+              <div style="text-align: right; margin-left: 1rem; width: 100px;">
+                <span class="tabular-nums" style="font-size: 0.875rem; display: block; margin-bottom: 0.25rem;">0%</span>
+                <div class="progress-track"><div class="progress-fill" style="width: 0%;"></div></div>
+              </div>
+            </div>
+            
+            <button class="btn btn-outline mt-4" style="width: 100%;">+ Add Topic</button>
+          </div>
+        </div>
+
+        <!-- Side Column: Related info -->
+        <div class="dashboard-side">
+          <div class="dashboard-panel ai-insight">
+            <h2 class="panel-title">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="20" height="20">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              Topic Recommendation
+            </h2>
+            <p class="ai-insight-text">You are 60% through Trigonometric Substitution. Review your notes from yesterday and attempt 10 practice questions to achieve mastery.</p>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+  <script src="../js/main.js"></script>
+</body>
+</html>

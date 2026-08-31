@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jane Doe — Admin Portal</title>
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Admin Sidebar -->
+    <aside class="sidebar admin-sidebar">
+      <div class="sidebar-header">
+        Admin Portal
+      </div>
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="sidebar-link">Dashboard</a>
+        <a href="students.html" class="sidebar-link active">Students</a>
+        <a href="analytics.html" class="sidebar-link">Analytics</a>
+        <a href="resources.html" class="sidebar-link">Resources</a>
+        <a href="announcements.html" class="sidebar-link">Announcements</a>
+        <a href="ai-management.html" class="sidebar-link">AI Management</a>
+        <a href="subjects.html" class="sidebar-link">Subjects</a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="settings.html" class="sidebar-link">Settings</a>
+        <a href="../index.html" class="sidebar-link">Logout</a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div style="margin-bottom: 1rem;">
+        <a href="students.html" class="text-faint" style="font-size: 0.875rem;">&larr; Back to Students</a>
+      </div>
+
+      <header class="dashboard-header">
+        <div>
+          <h1 class="dashboard-title">Jane Doe</h1>
+          <p class="dashboard-subtitle">B.Sc. Computer Science &bull; Active &bull; <span class="text-faint">jane@student360.edu</span></p>
+        </div>
+        <div>
+          <button class="btn btn-outline" style="color: var(--red); border-color: var(--red-soft);">Suspend Account</button>
+        </div>
+      </header>
+
+      <!-- NOTE: Privacy-by-design dictates we show aggregate analytics over raw private content. 
+           We do not display the student's personal notes or daily reflection text here. -->
+
+      <div class="stats-grid">
+        <div class="stat-card admin-stat-card">
+          <span class="stat-label">Growth Score</span>
+          <span class="stat-value tabular-nums text-green">84<span class="text-faint" style="font-size:1rem;">%</span></span>
+        </div>
+        <div class="stat-card admin-stat-card">
+          <span class="stat-label">Study Time (Total)</span>
+          <span class="stat-value tabular-nums">142<span class="text-faint" style="font-size:1rem;">h</span></span>
+        </div>
+        <div class="stat-card admin-stat-card">
+          <span class="stat-label">Current Streak</span>
+          <span class="stat-value tabular-nums">12<span class="text-faint" style="font-size:1rem;">d</span></span>
+        </div>
+        <div class="stat-card admin-stat-card">
+          <span class="stat-label">Goals Completed</span>
+          <span class="stat-value tabular-nums">7</span>
+        </div>
+      </div>
+
+      <div class="dashboard-grid">
+        <div class="dashboard-main">
+          
+          <div class="dashboard-panel">
+            <h2 class="panel-title">Per-Subject Performance</h2>
+            
+            <div class="progress-item">
+              <div class="progress-header">
+                <span>Computer Science</span>
+                <span class="tabular-nums">90%</span>
+              </div>
+              <div class="progress-track"><div class="progress-fill" style="width: 90%; background-color: var(--ink);"></div></div>
+            </div>
+
+            <div class="progress-item mt-4">
+              <div class="progress-header">
+                <span>Calculus II</span>
+                <span class="tabular-nums">75%</span>
+              </div>
+              <div class="progress-track"><div class="progress-fill" style="width: 75%; background-color: var(--ink);"></div></div>
+            </div>
+
+            <div class="progress-item mt-4">
+              <div class="progress-header">
+                <span>Physics 101</span>
+                <span class="tabular-nums">42%</span>
+              </div>
+              <div class="progress-track"><div class="progress-fill" style="width: 42%; background-color: var(--ink);"></div></div>
+            </div>
+          </div>
+
+          <div class="dashboard-panel">
+            <h2 class="panel-title">Recent Engagement Activity</h2>
+            <!-- Aggregate activity only, no private notes/reflections text -->
+            <div class="activity-item">
+              <div class="activity-time">Today</div>
+              <div class="activity-desc">Completed 1 hour study session in Calculus II.</div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-time">Yesterday</div>
+              <div class="activity-desc">Submitted daily self-review (Productivity: 4/5).</div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-time">2 days ago</div>
+              <div class="activity-desc">Completed milestone for goal "Score 90%+ on Calculus Midterm".</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="../js/main.js"></script>
+</body>
+</html>

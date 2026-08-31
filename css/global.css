@@ -1,0 +1,344 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;400;600&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  /* Color Tokens */
+  --ink: #161E2E;
+  --ink-soft: #55617B;
+  --ink-faint: #8992A6;
+  --paper: #F1F3F6;
+  --paper-raised: #FFFFFF;
+  --rule: #DCE1E9;
+  --rule-strong: #C3CAD6;
+  --gold: #D69A2D;
+  --gold-ink: #8A6013;
+  --green: #3D7A56;
+  --green-soft: #E7F1EB;
+  --red: #B4432F;
+  --red-soft: #F7E9E5;
+
+  /* Typography */
+  --font-sans: 'Inter', sans-serif;
+  --font-serif: 'Fraunces', serif;
+}
+
+/* Reset and Global Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--paper);
+  color: var(--ink);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  color: var(--ink);
+  line-height: 1.2;
+}
+
+a {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+/* Tabular Numerals */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Component Styles */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 0.875rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+  border: 1px solid transparent;
+}
+
+.btn-primary {
+  background-color: var(--ink);
+  color: var(--paper-raised);
+}
+
+.btn-primary:hover {
+  background-color: var(--ink-soft);
+}
+
+.btn-outline {
+  background-color: transparent;
+  border-color: var(--rule-strong);
+  color: var(--ink);
+}
+
+.btn-outline:hover {
+  border-color: var(--ink);
+}
+
+.btn-gold {
+  background-color: var(--gold);
+  color: var(--paper-raised);
+}
+
+.btn-gold:hover {
+  background-color: var(--gold-ink);
+}
+
+/* Form Fields */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: var(--ink);
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  color: var(--ink);
+  background-color: var(--paper-raised);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  transition: border-color 0.2s;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--ink-soft);
+}
+
+.form-control::placeholder {
+  color: var(--ink-faint);
+}
+
+/* Ledger Rows */
+.ledger-row {
+  display: flex;
+  align-items: flex-start;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.ledger-row:last-child {
+  border-bottom: none;
+}
+
+.ledger-icon {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1.5rem;
+  color: var(--ink-soft);
+}
+
+.ledger-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.ledger-content {
+  flex-grow: 1;
+}
+
+.ledger-title {
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.ledger-desc {
+  font-size: 0.875rem;
+  color: var(--ink-soft);
+  max-width: 80ch;
+}
+
+/* Container */
+.container {
+  max-width: 1024px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* Panels/Cards (Restrained) */
+.panel {
+  background-color: var(--paper-raised);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+}
+
+/* Nav */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.nav-brand {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.nav-links a {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+
+.nav-links a:hover {
+  color: var(--ink);
+}
+
+/* Sidebar Shell */
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--rule);
+  background-color: var(--paper-raised);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--font-serif);
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.sidebar-nav {
+  padding: 1rem 0;
+  flex-grow: 1;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  padding: 0.625rem 1.5rem;
+  font-size: 0.875rem;
+  color: var(--ink-soft);
+  text-decoration: none;
+}
+
+.sidebar-link:hover, .sidebar-link.active {
+  background-color: var(--paper);
+  color: var(--ink);
+}
+
+.sidebar-footer {
+  padding: 1rem 0;
+  border-top: 1px solid var(--rule);
+}
+
+.main-content {
+  flex-grow: 1;
+  padding: 2.5rem 3rem;
+  overflow-y: auto;
+}
+
+/* Timeline */
+.timeline {
+  display: flex;
+  align-items: flex-start;
+  gap: 2rem;
+  overflow-x: auto;
+  padding: 1rem 0;
+}
+
+.timeline-step {
+  flex: 1;
+  min-width: 150px;
+  position: relative;
+}
+
+.timeline-step::before {
+  content: '';
+  position: absolute;
+  top: 12px;
+  left: 24px;
+  right: -2rem;
+  height: 1px;
+  background-color: var(--rule);
+  z-index: 1;
+}
+
+.timeline-step:last-child::before {
+  display: none;
+}
+
+.timeline-number {
+  width: 24px;
+  height: 24px;
+  background-color: var(--paper-raised);
+  border: 1px solid var(--rule-strong);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  position: relative;
+  z-index: 2;
+}
+
+.timeline-title {
+  font-weight: 600;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.timeline-desc {
+  font-size: 0.875rem;
+  color: var(--ink-soft);
+}
+
+/* Utilities */
+.text-gold { color: var(--gold-ink); }
+.text-green { color: var(--green); }
+.text-red { color: var(--red); }
+.text-faint { color: var(--ink-faint); }
+.mt-1 { margin-top: 0.25rem; }
+.mt-2 { margin-top: 0.5rem; }
+.mt-4 { margin-top: 1rem; }
+.mt-8 { margin-top: 2rem; }
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-4 { margin-bottom: 1rem; }
+.mb-8 { margin-bottom: 2rem; }

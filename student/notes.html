@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notes — Student360</title>
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/student.css">
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="sidebar-header"><span class="text-gold">Student</span>360</div>
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="sidebar-link">Dashboard</a>
+        <a href="study.html" class="sidebar-link">Study Tracker</a>
+        <a href="subjects.html" class="sidebar-link">Subjects</a>
+        <a href="notes.html" class="sidebar-link active">Notes</a>
+        <a href="tasks.html" class="sidebar-link">Tasks</a>
+        <a href="goals.html" class="sidebar-link">Goals</a>
+        <a href="calendar.html" class="sidebar-link">Calendar</a>
+        <a href="progress.html" class="sidebar-link">Progress</a>
+        <a href="analytics.html" class="sidebar-link">Analytics</a>
+        <a href="reflection.html" class="sidebar-link">Self Review</a>
+        <a href="ai.html" class="sidebar-link">AI Assistant</a>
+        <a href="resources.html" class="sidebar-link">Resources</a>
+        <a href="announcements.html" class="sidebar-link">Announcements</a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="profile.html" class="sidebar-link">Settings / Profile</a>
+        <a href="../index.html" class="sidebar-link text-faint">Logout</a>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="dashboard-header">
+        <div>
+          <h1 class="dashboard-title">Notes</h1>
+          <p class="dashboard-subtitle">Your academic knowledge base.</p>
+        </div>
+        <div>
+          <button id="new-note-btn" class="btn btn-primary">+ New Note</button>
+        </div>
+      </header>
+
+      <!-- Search & Filters -->
+      <div class="dashboard-panel" style="margin-bottom: 2rem; padding: 1rem;">
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+          <input type="text" id="note-search" class="form-control" placeholder="Search notes…" style="flex: 1; min-width: 180px;">
+          <select id="note-subject-filter" class="form-control" style="width: 200px;">
+            <option>All Subjects</option>
+            <option>Calculus II</option>
+            <option>Physics 101</option>
+            <option>Computer Science</option>
+            <option>Literature</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Notes grid — rendered by notes.js -->
+      <div id="notes-grid" class="notes-grid"></div>
+    </main>
+  </div>
+  <script src="../js/main.js"></script>
+  <script src="../js/notes.js"></script>
+</body>
+</html>

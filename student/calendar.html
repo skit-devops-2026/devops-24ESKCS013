@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calendar — Student360</title>
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/student.css">
+  <style>
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 1px;
+      background-color: var(--rule);
+      border: 1px solid var(--rule);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .calendar-header-cell {
+      background-color: var(--paper);
+      padding: 0.75rem;
+      text-align: center;
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: var(--ink-soft);
+    }
+    .calendar-cell {
+      background-color: var(--paper-raised);
+      min-height: 120px;
+      padding: 0.5rem;
+      display: flex;
+      flex-direction: column;
+    }
+    .calendar-cell.other-month {
+      background-color: var(--paper);
+      color: var(--ink-faint);
+    }
+    .calendar-date {
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      align-self: flex-end;
+    }
+    .calendar-cell.today .calendar-date {
+      background-color: var(--ink);
+      color: white;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .cal-event {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 2px;
+      margin-bottom: 0.25rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      cursor: pointer;
+    }
+    .cal-study { background-color: var(--paper); border-left: 2px solid var(--ink-soft); }
+    .cal-task { background-color: var(--paper); border-left: 2px solid var(--gold); }
+    .cal-goal { background-color: var(--paper); border-left: 2px solid var(--green); }
+    .cal-deadline { background-color: var(--red-soft); color: var(--red); font-weight: 500; border-left: 2px solid var(--red); }
+  </style>
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <span class="text-gold">Student</span>360
+      </div>
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="sidebar-link">Dashboard</a>
+        <a href="study.html" class="sidebar-link">Study Tracker</a>
+        <a href="subjects.html" class="sidebar-link">Subjects</a>
+        <a href="notes.html" class="sidebar-link">Notes</a>
+        <a href="tasks.html" class="sidebar-link">Tasks</a>
+        <a href="goals.html" class="sidebar-link">Goals</a>
+        <a href="calendar.html" class="sidebar-link active">Calendar</a>
+        <a href="progress.html" class="sidebar-link">Progress</a>
+        <a href="analytics.html" class="sidebar-link">Analytics</a>
+        <a href="reflection.html" class="sidebar-link">Self Review</a>
+        <a href="ai.html" class="sidebar-link">AI Assistant</a>
+        <a href="resources.html" class="sidebar-link">Resources</a>
+        <a href="announcements.html" class="sidebar-link">Announcements</a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="profile.html" class="sidebar-link">Settings / Profile</a>
+        <a href="../index.html" class="sidebar-link text-faint">Logout</a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="dashboard-header">
+        <div>
+          <h1 class="dashboard-title">October 2026</h1>
+          <p class="dashboard-subtitle">Your academic schedule and deadlines.</p>
+        </div>
+        <div>
+          <button class="btn btn-outline">&lt;</button>
+          <button class="btn btn-outline">Today</button>
+          <button class="btn btn-outline">&gt;</button>
+        </div>
+      </header>
+
+      <div class="calendar-grid">
+        <!-- Headers -->
+        <div class="calendar-header-cell">Sun</div>
+        <div class="calendar-header-cell">Mon</div>
+        <div class="calendar-header-cell">Tue</div>
+        <div class="calendar-header-cell">Wed</div>
+        <div class="calendar-header-cell">Thu</div>
+        <div class="calendar-header-cell">Fri</div>
+        <div class="calendar-header-cell">Sat</div>
+
+        <!-- Row 1 (starts offset) -->
+        <div class="calendar-cell other-month"><span class="calendar-date">27</span></div>
+        <div class="calendar-cell other-month"><span class="calendar-date">28</span></div>
+        <div class="calendar-cell other-month"><span class="calendar-date">29</span></div>
+        <div class="calendar-cell other-month"><span class="calendar-date">30</span></div>
+        <div class="calendar-cell"><span class="calendar-date">1</span></div>
+        <div class="calendar-cell"><span class="calendar-date">2</span></div>
+        <div class="calendar-cell"><span class="calendar-date">3</span></div>
+
+        <!-- Row 2 -->
+        <div class="calendar-cell"><span class="calendar-date">4</span></div>
+        <div class="calendar-cell"><span class="calendar-date">5</span></div>
+        <div class="calendar-cell"><span class="calendar-date">6</span></div>
+        <div class="calendar-cell"><span class="calendar-date">7</span>
+          <div class="cal-event cal-study">Calculus (1h)</div>
+        </div>
+        <div class="calendar-cell"><span class="calendar-date">8</span></div>
+        <div class="calendar-cell"><span class="calendar-date">9</span></div>
+        <div class="calendar-cell"><span class="calendar-date">10</span></div>
+
+        <!-- Row 3 -->
+        <div class="calendar-cell"><span class="calendar-date">11</span></div>
+        <div class="calendar-cell"><span class="calendar-date">12</span></div>
+        <div class="calendar-cell"><span class="calendar-date">13</span></div>
+        <div class="calendar-cell"><span class="calendar-date">14</span></div>
+        <div class="calendar-cell"><span class="calendar-date">15</span>
+          <div class="cal-event cal-deadline">CS Midterm</div>
+        </div>
+        <div class="calendar-cell"><span class="calendar-date">16</span></div>
+        <div class="calendar-cell"><span class="calendar-date">17</span></div>
+
+        <!-- Row 4 -->
+        <div class="calendar-cell"><span class="calendar-date">18</span></div>
+        <div class="calendar-cell"><span class="calendar-date">19</span></div>
+        <div class="calendar-cell"><span class="calendar-date">20</span></div>
+        <div class="calendar-cell"><span class="calendar-date">21</span></div>
+        <div class="calendar-cell"><span class="calendar-date">22</span>
+          <div class="cal-event cal-study">Physics (45m)</div>
+        </div>
+        <div class="calendar-cell"><span class="calendar-date">23</span>
+          <div class="cal-event cal-task">Physics Lab</div>
+        </div>
+        <div class="calendar-cell today"><span class="calendar-date">24</span>
+          <div class="cal-event cal-study">Calculus (1h)</div>
+          <div class="cal-event cal-task">CS Assign 2</div>
+        </div>
+
+        <!-- Row 5 -->
+        <div class="calendar-cell"><span class="calendar-date">25</span></div>
+        <div class="calendar-cell"><span class="calendar-date">26</span></div>
+        <div class="calendar-cell"><span class="calendar-date">27</span></div>
+        <div class="calendar-cell"><span class="calendar-date">28</span></div>
+        <div class="calendar-cell"><span class="calendar-date">29</span></div>
+        <div class="calendar-cell"><span class="calendar-date">30</span>
+          <div class="cal-event cal-goal">Goal Target: Calculus</div>
+        </div>
+        <div class="calendar-cell"><span class="calendar-date">31</span></div>
+      </div>
+      
+      <div style="margin-top: 2rem; display: flex; gap: 1rem; font-size: 0.875rem;">
+        <span style="display: flex; align-items: center; gap: 0.5rem;"><span style="width: 12px; height: 12px; background-color: var(--ink-soft); display: inline-block;"></span> Study Sessions</span>
+        <span style="display: flex; align-items: center; gap: 0.5rem;"><span style="width: 12px; height: 12px; background-color: var(--gold); display: inline-block;"></span> Tasks</span>
+        <span style="display: flex; align-items: center; gap: 0.5rem;"><span style="width: 12px; height: 12px; background-color: var(--green); display: inline-block;"></span> Goals</span>
+        <span style="display: flex; align-items: center; gap: 0.5rem;"><span style="width: 12px; height: 12px; background-color: var(--red); display: inline-block;"></span> Deadlines</span>
+      </div>
+    </main>
+  </div>
+  <script src="../js/main.js"></script>
+</body>
+</html>

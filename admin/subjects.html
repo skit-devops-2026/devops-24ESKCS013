@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subjects — Admin Portal</title>
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/admin.css">
+  <style>
+    .tree-node {
+      border: 1px solid var(--rule);
+      border-radius: 4px;
+      margin-bottom: 1rem;
+      background-color: var(--paper-raised);
+    }
+    .tree-subject {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      background-color: var(--paper);
+      border-bottom: 1px solid var(--rule);
+      font-weight: 600;
+    }
+    .tree-topic {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 1.5rem 0.75rem 3rem;
+      border-bottom: 1px solid var(--rule);
+      font-size: 0.875rem;
+    }
+    .tree-topic:last-child {
+      border-bottom: none;
+    }
+    .tree-actions button {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.75rem;
+      margin-left: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Admin Sidebar -->
+    <aside class="sidebar admin-sidebar">
+      <div class="sidebar-header">
+        Admin Portal
+      </div>
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="sidebar-link">Dashboard</a>
+        <a href="students.html" class="sidebar-link">Students</a>
+        <a href="analytics.html" class="sidebar-link">Analytics</a>
+        <a href="resources.html" class="sidebar-link">Resources</a>
+        <a href="announcements.html" class="sidebar-link">Announcements</a>
+        <a href="ai-management.html" class="sidebar-link">AI Management</a>
+        <a href="subjects.html" class="sidebar-link active">Subjects</a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="settings.html" class="sidebar-link">Settings</a>
+        <a href="../index.html" class="sidebar-link">Logout</a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="dashboard-header">
+        <div>
+          <h1 class="dashboard-title">Subject Management</h1>
+          <p class="dashboard-subtitle">Define the curriculum tree for tracking progress.</p>
+        </div>
+        <div>
+          <button class="btn btn-primary">+ Add Subject</button>
+        </div>
+      </header>
+
+      <div class="dashboard-grid">
+        <div class="dashboard-main">
+          
+          <div class="tree-node">
+            <div class="tree-subject">
+              <div>Calculus II</div>
+              <div class="tree-actions">
+                <button class="btn btn-outline">+ Add Topic</button>
+                <button class="btn btn-outline">Edit</button>
+                <button class="btn btn-outline" style="color: var(--red); border-color: var(--red-soft);">Delete</button>
+              </div>
+            </div>
+            <div class="tree-topic">
+              <div>1. Integration by Parts</div>
+              <div class="tree-actions">
+                <button class="btn btn-outline">Reorder</button>
+                <button class="btn btn-outline">Edit</button>
+                <button class="btn btn-outline" style="color: var(--red); border-color: var(--red-soft);">Delete</button>
+              </div>
+            </div>
+            <div class="tree-topic">
+              <div>2. Trigonometric Substitution</div>
+              <div class="tree-actions">
+                <button class="btn btn-outline">Reorder</button>
+                <button class="btn btn-outline">Edit</button>
+                <button class="btn btn-outline" style="color: var(--red); border-color: var(--red-soft);">Delete</button>
+              </div>
+            </div>
+            <div class="tree-topic">
+              <div>3. Differential Equations</div>
+              <div class="tree-actions">
+                <button class="btn btn-outline">Reorder</button>
+                <button class="btn btn-outline">Edit</button>
+                <button class="btn btn-outline" style="color: var(--red); border-color: var(--red-soft);">Delete</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="tree-node">
+            <div class="tree-subject">
+              <div>Physics 101</div>
+              <div class="tree-actions">
+                <button class="btn btn-outline">+ Add Topic</button>
+                <button class="btn btn-outline">Edit</button>
+                <button class="btn btn-outline" style="color: var(--red); border-color: var(--red-soft);">Delete</button>
+              </div>
+            </div>
+            <div class="tree-topic">
+              <div>1. Kinematics</div>
+              <div class="tree-actions">
+                <button class="btn btn-outline">Reorder</button>
+                <button class="btn btn-outline">Edit</button>
+                <button class="btn btn-outline" style="color: var(--red); border-color: var(--red-soft);">Delete</button>
+              </div>
+            </div>
+            <div class="tree-topic">
+              <div>2. Newton's Laws of Motion</div>
+              <div class="tree-actions">
+                <button class="btn btn-outline">Reorder</button>
+                <button class="btn btn-outline">Edit</button>
+                <button class="btn btn-outline" style="color: var(--red); border-color: var(--red-soft);">Delete</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="../js/main.js"></script>
+</body>
+</html>

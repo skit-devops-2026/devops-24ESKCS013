@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resources — Admin Portal</title>
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Admin Sidebar -->
+    <aside class="sidebar admin-sidebar">
+      <div class="sidebar-header">
+        Admin Portal
+      </div>
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="sidebar-link">Dashboard</a>
+        <a href="students.html" class="sidebar-link">Students</a>
+        <a href="analytics.html" class="sidebar-link">Analytics</a>
+        <a href="resources.html" class="sidebar-link active">Resources</a>
+        <a href="announcements.html" class="sidebar-link">Announcements</a>
+        <a href="ai-management.html" class="sidebar-link">AI Management</a>
+        <a href="subjects.html" class="sidebar-link">Subjects</a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="settings.html" class="sidebar-link">Settings</a>
+        <a href="../index.html" class="sidebar-link">Logout</a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="dashboard-header">
+        <div>
+          <h1 class="dashboard-title">Manage Resources</h1>
+          <p class="dashboard-subtitle">Upload and distribute materials to students.</p>
+        </div>
+      </header>
+
+      <div class="dashboard-grid">
+        <div class="dashboard-main">
+          
+          <div class="dashboard-panel" style="padding: 0; overflow-x: auto;">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Type</th>
+                  <th>Subject</th>
+                  <th>Status</th>
+                  <th style="text-align: right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="font-weight: 500; color: var(--ink);">Calculus Midterm Formula Sheet</td>
+                  <td class="text-faint">PDF Document</td>
+                  <td>Calculus II</td>
+                  <td><span class="status-indicator status-active"></span>Published</td>
+                  <td style="text-align: right;">
+                    <button class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Edit</button>
+                    <button class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; color: var(--red); border-color: var(--red-soft);">Delete</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 500; color: var(--ink);">Kinematics Lecture Recording</td>
+                  <td class="text-faint">Video</td>
+                  <td>Physics 101</td>
+                  <td><span class="status-indicator status-active"></span>Published</td>
+                  <td style="text-align: right;">
+                    <button class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Edit</button>
+                    <button class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; color: var(--red); border-color: var(--red-soft);">Delete</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 500; color: var(--ink);">Advanced Data Structures Notes</td>
+                  <td class="text-faint">External Link</td>
+                  <td>Computer Science</td>
+                  <td><span class="status-indicator status-inactive"></span>Draft</td>
+                  <td style="text-align: right;">
+                    <button class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Edit</button>
+                    <button class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; color: var(--red); border-color: var(--red-soft);">Delete</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+
+        <div class="dashboard-side">
+          <div class="dashboard-panel">
+            <h2 class="panel-title">Add Resource</h2>
+            <form>
+              <div class="form-group">
+                <label class="form-label">Title</label>
+                <input type="text" class="form-control" placeholder="Resource title...">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Type</label>
+                <select class="form-control">
+                  <option>PDF Document</option>
+                  <option>Video</option>
+                  <option>External Link</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Subject</label>
+                <select class="form-control">
+                  <option>Calculus II</option>
+                  <option>Physics 101</option>
+                  <option>Computer Science</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">URL / File Path</label>
+                <input type="text" class="form-control" placeholder="https://...">
+              </div>
+              <button class="btn btn-outline" style="width: 100%; margin-bottom: 0.5rem;">Save as Draft</button>
+              <button class="btn btn-primary" style="width: 100%;">Publish</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="../js/main.js"></script>
+</body>
+</html>
