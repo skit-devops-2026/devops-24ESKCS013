@@ -3,39 +3,44 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Log and track your study sessions with a live focus timer and weekly heatmap.">
   <title>Study Tracker — Student360</title>
   <link rel="stylesheet" href="../css/global.css">
   <link rel="stylesheet" href="../css/student.css">
 </head>
 <body>
+  <button class="sidebar-hamburger" aria-label="Open navigation menu" aria-expanded="false">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
   <div class="app-layout">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <span class="text-gold">Student</span>360
+    <aside class="sidebar" aria-label="Student navigation">
+      <div class="sidebar-header" style="display:flex;align-items:center;justify-content:space-between;">
+        <span><span class="text-gold sidebar-brand-text">Student</span><span class="sidebar-brand-text">360</span></span>
+        <button class="sidebar-collapse-btn" aria-label="Collapse sidebar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7M18 19l-7-7 7-7"/></svg>
+        </button>
       </div>
-      <nav class="sidebar-nav">
-        <a href="dashboard.html" class="sidebar-link">Dashboard</a>
-        <a href="study.html" class="sidebar-link active">Study Tracker</a>
-        <a href="subjects.html" class="sidebar-link">Subjects</a>
-        <a href="notes.html" class="sidebar-link">Notes</a>
-        <a href="tasks.html" class="sidebar-link">Tasks</a>
-        <a href="goals.html" class="sidebar-link">Goals</a>
-        <a href="calendar.html" class="sidebar-link">Calendar</a>
-        <a href="progress.html" class="sidebar-link">Progress</a>
-        <a href="analytics.html" class="sidebar-link">Analytics</a>
-        <a href="reflection.html" class="sidebar-link">Self Review</a>
-        <a href="ai.html" class="sidebar-link">AI Assistant</a>
-        <a href="resources.html" class="sidebar-link">Resources</a>
-        <a href="announcements.html" class="sidebar-link">Announcements</a>
+      <nav class="sidebar-nav" aria-label="Main navigation">
+        <a href="dashboard.html" class="sidebar-link"><span class="link-label">Dashboard</span></a>
+        <a href="study.html"     class="sidebar-link active"><span class="link-label">Study Tracker</span></a>
+        <a href="subjects.html"  class="sidebar-link"><span class="link-label">Subjects</span></a>
+        <a href="notes.html"     class="sidebar-link"><span class="link-label">Notes</span></a>
+        <a href="tasks.html"     class="sidebar-link"><span class="link-label">Tasks</span></a>
+        <a href="goals.html"     class="sidebar-link"><span class="link-label">Goals</span></a>
+        <a href="calendar.html"  class="sidebar-link"><span class="link-label">Calendar</span></a>
+        <a href="progress.html"  class="sidebar-link"><span class="link-label">Progress</span></a>
+        <a href="analytics.html" class="sidebar-link"><span class="link-label">Analytics</span></a>
+        <a href="reflection.html" class="sidebar-link"><span class="link-label">Self Review</span></a>
+        <a href="ai.html"        class="sidebar-link"><span class="link-label">AI Assistant</span></a>
+        <a href="resources.html" class="sidebar-link"><span class="link-label">Resources</span></a>
+        <a href="announcements.html" class="sidebar-link"><span class="link-label">Announcements</span></a>
       </nav>
       <div class="sidebar-footer">
-        <a href="profile.html" class="sidebar-link">Settings / Profile</a>
-        <a href="../index.html" class="sidebar-link text-faint">Logout</a>
+        <a href="profile.html"  class="sidebar-link"><span class="link-label">Settings / Profile</span></a>
+        <a href="../index.html" class="sidebar-link text-faint"><span class="link-label">Logout</span></a>
       </div>
     </aside>
 
-    <!-- Main Content -->
     <main class="main-content">
       <header class="dashboard-header">
         <div>
@@ -48,17 +53,34 @@
         <!-- Main Form Column -->
         <div class="dashboard-main">
           <div class="dashboard-panel" style="text-align: center; padding: 3rem 2rem;">
-            <div id="timer-display" class="tabular-nums" style="font-size: 4rem; font-family: var(--font-serif); font-weight: 500; margin-bottom: 2rem; letter-spacing: 0.05em;">00:00:00</div>
-            
+
+            <!-- Timer ring + display -->
+            <div class="timer-ring-wrap" id="timer-ring-wrap" data-state="stopped" style="margin-bottom:2rem;">
+              <!-- SVG ring: r=70 → circumference ≈ 440 -->
+              <svg class="timer-ring-svg" width="170" height="170" viewBox="0 0 170 170" aria-hidden="true">
+                <circle class="timer-ring-circle" cx="85" cy="85" r="70"/>
+                <circle class="timer-ring-progress" id="timer-ring-progress" cx="85" cy="85" r="70"/>
+              </svg>
+              <div id="timer-display" class="tabular-nums" role="timer" aria-live="polite"
+                style="font-size: 3.5rem; font-family: var(--font-serif); font-weight: 500; letter-spacing: 0.05em; position:relative; z-index:1;">
+                00:00:00
+              </div>
+            </div>
+
+            <!-- Timer state label -->
+            <div id="timer-state-label" style="font-size:0.8125rem; color:var(--ink-faint); margin-top:-1.5rem; margin-bottom:1.5rem; letter-spacing:0.08em; text-transform:uppercase;">
+              Ready
+            </div>
+
             <div style="display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem;">
               <button id="timer-start" class="btn btn-primary" style="padding: 0.75rem 2.5rem;">Start Focus</button>
-              <button id="timer-pause" class="btn btn-outline" style="padding: 0.75rem 2rem;" disabled>Pause</button>
-              <button id="timer-stop" class="btn btn-outline" style="padding: 0.75rem 2rem; color: var(--red); border-color: var(--red-soft);" disabled>Stop / Save</button>
+              <button id="timer-pause" class="btn btn-outline" style="padding: 0.75rem 2rem;" disabled aria-label="Pause timer">Pause</button>
+              <button id="timer-stop"  class="btn btn-outline" style="padding: 0.75rem 2rem; color: var(--red); border-color: var(--red-soft);" disabled aria-label="Stop and save session">Stop / Save</button>
             </div>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; text-align: left; max-width: 500px; margin: 0 auto;">
               <div class="form-group">
-                <label class="form-label">Subject</label>
+                <label class="form-label" for="timer-subject">Subject</label>
                 <select id="timer-subject" class="form-control">
                   <option value="">Select subject…</option>
                   <option value="Calculus II">Calculus II</option>
@@ -68,7 +90,7 @@
                 </select>
               </div>
               <div class="form-group">
-                <label class="form-label">Activity Type</label>
+                <label class="form-label" for="timer-type">Activity Type</label>
                 <select id="timer-type" class="form-control">
                   <option value="Study">Study / Lecture Review</option>
                   <option value="Practice">Practice Problems</option>
@@ -76,25 +98,37 @@
                 </select>
               </div>
             </div>
-            
+
             <div class="form-group" style="text-align: left; max-width: 500px; margin: 1rem auto 0 auto;">
-              <label class="form-label">Quick Note</label>
+              <label class="form-label" for="timer-note">Quick Note</label>
               <input type="text" id="timer-note" class="form-control" placeholder="What are you focusing on right now?">
             </div>
           </div>
 
           <!-- Weekly Heatmap Grid -->
-          <div class="dashboard-panel" style="margin-top: 2rem;">
+          <div class="dashboard-panel" style="margin-top: 0;">
             <h2 class="panel-title">Weekly Focus Heatmap</h2>
-            <p class="text-faint" style="font-size: 0.875rem; margin-bottom: 1rem;">Visually tracking daily focus levels over the past week.</p>
-            <div style="display: flex; gap: 0.5rem; justify-content: center; margin-top: 1rem;">
-              <div class="heat-cell" data-date="2026-10-18" style="width: 32px; height: 32px; border-radius: 4px; border: 1px solid var(--rule); display: flex; align-items: center; justify-content: center; font-size: 0.7rem;">Su</div>
-              <div class="heat-cell" data-date="2026-10-19" style="width: 32px; height: 32px; border-radius: 4px; border: 1px solid var(--rule); display: flex; align-items: center; justify-content: center; font-size: 0.7rem;">M</div>
-              <div class="heat-cell" data-date="2026-10-20" style="width: 32px; height: 32px; border-radius: 4px; border: 1px solid var(--rule); display: flex; align-items: center; justify-content: center; font-size: 0.7rem;">Tu</div>
-              <div class="heat-cell" data-date="2026-10-21" style="width: 32px; height: 32px; border-radius: 4px; border: 1px solid var(--rule); display: flex; align-items: center; justify-content: center; font-size: 0.7rem;">W</div>
-              <div class="heat-cell" data-date="2026-10-22" style="width: 32px; height: 32px; border-radius: 4px; border: 1px solid var(--rule); display: flex; align-items: center; justify-content: center; font-size: 0.7rem;">Th</div>
-              <div class="heat-cell" data-date="2026-10-23" style="width: 32px; height: 32px; border-radius: 4px; border: 1px solid var(--rule); display: flex; align-items: center; justify-content: center; font-size: 0.7rem;">F</div>
-              <div class="heat-cell" data-date="2026-10-24" style="width: 32px; height: 32px; border-radius: 4px; border: 1px solid var(--rule); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: bold;">Sa</div>
+            <p class="text-faint" style="font-size: 0.875rem; margin-bottom: 1rem;">Hover a cell to see minutes studied that day.</p>
+            <div style="display: flex; gap: 0.5rem; justify-content: center; margin-top: 1rem;" role="list" aria-label="Weekly focus heatmap">
+              <div class="heat-cell" data-date="2026-10-18" data-tooltip="No data" role="listitem"
+                style="width: 40px; height: 40px; border-radius: 4px; border: 1px solid var(--rule); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; transition: border-color 0.2s;">Su</div>
+              <div class="heat-cell" data-date="2026-10-19" data-tooltip="No data" role="listitem"
+                style="width: 40px; height: 40px; border-radius: 4px; border: 1px solid var(--rule); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; transition: border-color 0.2s;">M</div>
+              <div class="heat-cell" data-date="2026-10-20" data-tooltip="No data" role="listitem"
+                style="width: 40px; height: 40px; border-radius: 4px; border: 1px solid var(--rule); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; transition: border-color 0.2s;">Tu</div>
+              <div class="heat-cell" data-date="2026-10-21" data-tooltip="No data" role="listitem"
+                style="width: 40px; height: 40px; border-radius: 4px; border: 1px solid var(--rule); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; transition: border-color 0.2s;">W</div>
+              <div class="heat-cell" data-date="2026-10-22" data-tooltip="No data" role="listitem"
+                style="width: 40px; height: 40px; border-radius: 4px; border: 1px solid var(--rule); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; transition: border-color 0.2s;">Th</div>
+              <div class="heat-cell" data-date="2026-10-23" data-tooltip="No data" role="listitem"
+                style="width: 40px; height: 40px; border-radius: 4px; border: 1px solid var(--rule); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; transition: border-color 0.2s;">F</div>
+              <div class="heat-cell" data-date="2026-10-24" data-tooltip="No data" role="listitem"
+                style="width: 40px; height: 40px; border-radius: 4px; border: 1px solid var(--rule); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; transition: border-color 0.2s; font-weight:bold;">Sa</div>
+            </div>
+            <div style="display:flex; justify-content:center; gap:1.5rem; margin-top:1rem; font-size:0.75rem; color:var(--ink-faint);">
+              <span style="display:flex;align-items:center;gap:0.375rem;"><span style="width:12px;height:12px;background:rgba(184,151,76,0.2);display:inline-block;border-radius:2px;"></span>Low</span>
+              <span style="display:flex;align-items:center;gap:0.375rem;"><span style="width:12px;height:12px;background:rgba(184,151,76,0.6);display:inline-block;border-radius:2px;"></span>Mid</span>
+              <span style="display:flex;align-items:center;gap:0.375rem;"><span style="width:12px;height:12px;background:rgba(184,151,76,1);display:inline-block;border-radius:2px;"></span>High</span>
             </div>
           </div>
         </div>
@@ -103,7 +137,7 @@
         <div class="dashboard-side">
           <div class="dashboard-panel">
             <h2 class="panel-title">Recent Sessions</h2>
-            <ul id="session-list" style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 1rem;">
+            <ul id="session-list" style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 1rem;" aria-live="polite" aria-label="Recent study sessions">
             </ul>
           </div>
         </div>

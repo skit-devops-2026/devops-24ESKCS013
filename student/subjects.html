@@ -3,39 +3,44 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="View and manage all your enrolled subjects and track syllabus completion.">
   <title>Subjects — Student360</title>
   <link rel="stylesheet" href="../css/global.css">
   <link rel="stylesheet" href="../css/student.css">
 </head>
 <body>
+  <button class="sidebar-hamburger" aria-label="Open navigation menu" aria-expanded="false">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
   <div class="app-layout">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <span class="text-gold">Student</span>360
+    <aside class="sidebar" aria-label="Student navigation">
+      <div class="sidebar-header" style="display:flex;align-items:center;justify-content:space-between;">
+        <span><span class="text-gold sidebar-brand-text">Student</span><span class="sidebar-brand-text">360</span></span>
+        <button class="sidebar-collapse-btn" aria-label="Collapse sidebar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7M18 19l-7-7 7-7"/></svg>
+        </button>
       </div>
-      <nav class="sidebar-nav">
-        <a href="dashboard.html" class="sidebar-link">Dashboard</a>
-        <a href="study.html" class="sidebar-link">Study Tracker</a>
-        <a href="subjects.html" class="sidebar-link active">Subjects</a>
-        <a href="notes.html" class="sidebar-link">Notes</a>
-        <a href="tasks.html" class="sidebar-link">Tasks</a>
-        <a href="goals.html" class="sidebar-link">Goals</a>
-        <a href="calendar.html" class="sidebar-link">Calendar</a>
-        <a href="progress.html" class="sidebar-link">Progress</a>
-        <a href="analytics.html" class="sidebar-link">Analytics</a>
-        <a href="reflection.html" class="sidebar-link">Self Review</a>
-        <a href="ai.html" class="sidebar-link">AI Assistant</a>
-        <a href="resources.html" class="sidebar-link">Resources</a>
-        <a href="announcements.html" class="sidebar-link">Announcements</a>
+      <nav class="sidebar-nav" aria-label="Main navigation">
+        <a href="dashboard.html" class="sidebar-link"><span class="link-label">Dashboard</span></a>
+        <a href="study.html"     class="sidebar-link"><span class="link-label">Study Tracker</span></a>
+        <a href="subjects.html"  class="sidebar-link active"><span class="link-label">Subjects</span></a>
+        <a href="notes.html"     class="sidebar-link"><span class="link-label">Notes</span></a>
+        <a href="tasks.html"     class="sidebar-link"><span class="link-label">Tasks</span></a>
+        <a href="goals.html"     class="sidebar-link"><span class="link-label">Goals</span></a>
+        <a href="calendar.html"  class="sidebar-link"><span class="link-label">Calendar</span></a>
+        <a href="progress.html"  class="sidebar-link"><span class="link-label">Progress</span></a>
+        <a href="analytics.html" class="sidebar-link"><span class="link-label">Analytics</span></a>
+        <a href="reflection.html" class="sidebar-link"><span class="link-label">Self Review</span></a>
+        <a href="ai.html"        class="sidebar-link"><span class="link-label">AI Assistant</span></a>
+        <a href="resources.html" class="sidebar-link"><span class="link-label">Resources</span></a>
+        <a href="announcements.html" class="sidebar-link"><span class="link-label">Announcements</span></a>
       </nav>
       <div class="sidebar-footer">
-        <a href="profile.html" class="sidebar-link">Settings / Profile</a>
-        <a href="../index.html" class="sidebar-link text-faint">Logout</a>
+        <a href="profile.html"  class="sidebar-link"><span class="link-label">Settings / Profile</span></a>
+        <a href="../index.html" class="sidebar-link text-faint"><span class="link-label">Logout</span></a>
       </div>
     </aside>
 
-    <!-- Main Content -->
     <main class="main-content">
       <header class="dashboard-header">
         <div>
@@ -43,14 +48,16 @@
           <p class="dashboard-subtitle">Manage your coursework and track overall syllabus completion.</p>
         </div>
         <div>
-          <button class="btn btn-outline">+ Add Subject</button>
+          <button class="btn btn-outline" id="add-subject-btn">+ Add Subject</button>
         </div>
       </header>
 
-      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
-        
-        <!-- Subject Card -->
-        <a href="subject-details.html" class="panel" style="padding: 1.5rem; text-decoration: none; color: inherit; display: block; transition: border-color 0.2s;">
+      <div id="subjects-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;" role="list" aria-label="Your subjects">
+
+        <!-- Subject Card: Calculus II -->
+        <a href="subject-details.html" class="panel subject-card" role="listitem"
+           style="padding: 1.5rem; text-decoration: none; color: inherit; display: flex; flex-direction: column;"
+           aria-label="Calculus II — 75% complete">
           <h2 class="panel-title" style="margin-bottom: 0.5rem; border: none; padding: 0;">Calculus II</h2>
           <p class="text-faint" style="font-size: 0.875rem; margin-bottom: 1.5rem;">12 Topics &bull; Fall Semester</p>
           <div class="progress-item" style="margin-bottom: 0;">
@@ -58,12 +65,15 @@
               <span>Completion</span>
               <span class="tabular-nums">75%</span>
             </div>
-            <div class="progress-track"><div class="progress-fill" style="width: 75%;"></div></div>
+            <div class="progress-track"><div class="progress-fill" data-pct="75"></div></div>
           </div>
+          <span class="subject-card-arrow" aria-hidden="true">→</span>
         </a>
 
-        <!-- Subject Card -->
-        <a href="#" class="panel" style="padding: 1.5rem; text-decoration: none; color: inherit; display: block; transition: border-color 0.2s;">
+        <!-- Subject Card: Physics 101 -->
+        <a href="#" class="panel subject-card" role="listitem"
+           style="padding: 1.5rem; text-decoration: none; color: inherit; display: flex; flex-direction: column;"
+           aria-label="Physics 101 — 42% complete">
           <h2 class="panel-title" style="margin-bottom: 0.5rem; border: none; padding: 0;">Physics 101</h2>
           <p class="text-faint" style="font-size: 0.875rem; margin-bottom: 1.5rem;">8 Topics &bull; Fall Semester</p>
           <div class="progress-item" style="margin-bottom: 0;">
@@ -71,12 +81,15 @@
               <span>Completion</span>
               <span class="tabular-nums">42%</span>
             </div>
-            <div class="progress-track"><div class="progress-fill" style="width: 42%;"></div></div>
+            <div class="progress-track"><div class="progress-fill" data-pct="42"></div></div>
           </div>
+          <span class="subject-card-arrow" aria-hidden="true">→</span>
         </a>
 
-        <!-- Subject Card -->
-        <a href="#" class="panel" style="padding: 1.5rem; text-decoration: none; color: inherit; display: block; transition: border-color 0.2s;">
+        <!-- Subject Card: Computer Science -->
+        <a href="#" class="panel subject-card" role="listitem"
+           style="padding: 1.5rem; text-decoration: none; color: inherit; display: flex; flex-direction: column;"
+           aria-label="Computer Science — 90% complete">
           <h2 class="panel-title" style="margin-bottom: 0.5rem; border: none; padding: 0;">Computer Science</h2>
           <p class="text-faint" style="font-size: 0.875rem; margin-bottom: 1.5rem;">15 Topics &bull; Fall Semester</p>
           <div class="progress-item" style="margin-bottom: 0;">
@@ -84,8 +97,9 @@
               <span>Completion</span>
               <span class="tabular-nums">90%</span>
             </div>
-            <div class="progress-track"><div class="progress-fill" style="width: 90%; background-color: var(--green);"></div></div>
+            <div class="progress-track"><div class="progress-fill" data-pct="90" style="background-color: var(--green);"></div></div>
           </div>
+          <span class="subject-card-arrow" aria-hidden="true">→</span>
         </a>
 
       </div>
