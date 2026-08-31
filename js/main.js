@@ -102,3 +102,138 @@ S360.formatDate = function (dateStr) {
 S360.today = function () {
   return new Date().toISOString().split('T')[0];
 };
+
+/* ── == uiux-student-track additions == ────────────────────────────── */
+
+/**
+ * S360.initSidebar()
+ * Handles:
+ *  - Desktop collapse toggle (icon-only mode), persisted in localStorage
+ *  - Mobile drawer open/close with backdrop
+ * Call after DOMContentLoaded on every student page (auto-called below).
+ */
+S360.initSidebar = function () {
+  const sidebar = document.querySelector('.sidebar');
+  if (!sidebar) return;
+
+  // ── Desktop collapse ───────────────────────────────────────────────
+  const collapseBtn = document.querySelector('.sidebar-collapse-btn');
+  const COLLAPSED_KEY = 's360_sidebar_collapsed';
+
+  function applySidebarState(collapsed) {
+    if (collapsed) {
+      sidebar.classList.add('collapsed');
+      if (collapseBtn) collapseBtn.setAttribute('aria-label', 'Expand sidebar');
+    } else {
+      sidebar.classList.remove('collapsed');
+      if (collapseBtn) collapseBtn.setAttribute('aria-label', 'Collapse sidebar');
+    }
+  }
+
+  // Restore persisted state
+  const savedCollapsed = localStorage.getItem(COLLAPSED_KEY) === 'true';
+  applySidebarState(savedCollapsed);
+
+  if (collapseBtn) {
+    collapseBtn.addEventListener('click', () => {
+      const nowCollapsed = !sidebar.classList.contains('collapsed');
+      localStorage.setItem(COLLAPSED_KEY, nowCollapsed);
+      applySidebarState(nowCollapsed);
+    });
+  }
+
+  // ── Mobile drawer ──────────────────────────────────────────────────
+  let backdrop = document.querySelector('.sidebar-backdrop');
+  if (!backdrop) {
+    backdrop = document.createElement('div');
+    backdrop.className = 'sidebar-backdrop';
+    backdrop.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(backdrop);
+  }
+
+  const hamburger = document.querySelector('.sidebar-hamburger');
+
+  function openMobileNav() {
+    sidebar.classList.add('mobile-open');
+    backdrop.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    if (hamburger) hamburger.setAttribute('aria-expanded', 'true');
+  }
+
+  function closeMobileNav() {
+    sidebar.classList.remove('mobile-open');
+    backdrop.classList.remove('open');
+    document.body.style.overflow = '';
+    if (hamburger) hamburger.setAttribute('aria-expanded', 'false');
+  }
+
+  if (hamburger) hamburger.addEventListener('click', openMobileNav);
+  backdrop.addEventListener('click', closeMobileNav);
+
+  // Close on Escape
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && sidebar.classList.contains('mobile-open')) closeMobileNav();
+  });
+};
+
+/**
+ * S360.countUp(element, target, duration)
+ * Animates a number from 0 → target inside `element` over `duration` ms.
+ * Respects prefers-reduced-motion.
+ */
+S360.countUp = function (el, target, duration = 900) {
+  if (!el) return;
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (prefersReduced) { el.textContent = target; return; }
+
+  const start = performance.now();
+  const startVal = 0;
+
+  function step(now) {
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+    const current = Math.round(startVal + (target - startVal) * eased);
+    el.textContent = current;
+    if (progress < 1) requestAnimationFrame(step);
+  }
+
+  requestAnimationFrame(step);
+};
+
+/**
+ * S360.initProgressBars()
+ * Triggers animated width on .progress-fill elements with data-pct attribute
+ * using IntersectionObserver so they animate on first paint into viewport.
+ */
+S360.initProgressBars = function () {
+  const fills = document.querySelectorAll('.progress-fill[data-pct]');
+  if (!fills.length) return;
+
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        const pct = el.dataset.pct;
+        if (prefersReduced) {
+          el.style.width = pct + '%';
+        } else {
+          requestAnimationFrame(() => {
+            el.style.width = pct + '%';
+          });
+        }
+        observer.unobserve(el);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  fills.forEach(el => observer.observe(el));
+};
+
+// Auto-init sidebar and progress bars on DOMContentLoaded
+document.addEventListener('DOMContentLoaded', () => {
+  S360.initSidebar();
+  S360.initProgressBars();
+});
