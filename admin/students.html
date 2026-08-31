@@ -8,70 +8,118 @@
   <link rel="stylesheet" href="../css/admin.css">
 </head>
 <body>
+  <!-- Mobile Header -->
+  <div class="admin-mobile-header">
+    <div style="font-family: var(--font-serif); font-weight: 600; font-size: 1.125rem;">Student360 <span style="font-size:0.75rem; opacity:0.7; font-family:var(--font-sans);">Admin</span></div>
+    <button type="button" class="admin-menu-btn" id="admin-menu-toggle" aria-label="Open navigation menu">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+    </button>
+  </div>
+  <div id="sidebar-backdrop" class="sidebar-backdrop" aria-hidden="true"></div>
+
   <div class="app-layout">
     <!-- Admin Sidebar -->
-    <aside class="sidebar admin-sidebar">
+    <aside class="sidebar admin-sidebar" aria-label="Admin navigation">
       <div class="sidebar-header">
-        Admin Portal
+        <div class="sidebar-brand">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+          <span>Admin Portal</span>
+        </div>
+        <button type="button" id="sidebar-collapse-toggle" class="sidebar-collapse-toggle" aria-label="Collapse or expand sidebar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+        </button>
       </div>
       <nav class="sidebar-nav">
-        <a href="dashboard.html" class="sidebar-link">Dashboard</a>
-        <a href="students.html" class="sidebar-link active">Students</a>
-        <a href="analytics.html" class="sidebar-link">Analytics</a>
-        <a href="resources.html" class="sidebar-link">Resources</a>
-        <a href="announcements.html" class="sidebar-link">Announcements</a>
-        <a href="ai-management.html" class="sidebar-link">AI Management</a>
-        <a href="subjects.html" class="sidebar-link">Subjects</a>
+        <a href="dashboard.html" class="sidebar-link" title="Dashboard">
+          <span class="sidebar-link-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg></span>
+          <span class="sidebar-link-text">Dashboard</span>
+        </a>
+        <a href="students.html" class="sidebar-link active" title="Students">
+          <span class="sidebar-link-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg></span>
+          <span class="sidebar-link-text">Students</span>
+        </a>
+        <a href="analytics.html" class="sidebar-link" title="Analytics">
+          <span class="sidebar-link-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg></span>
+          <span class="sidebar-link-text">Analytics</span>
+        </a>
+        <a href="resources.html" class="sidebar-link" title="Resources">
+          <span class="sidebar-link-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg></span>
+          <span class="sidebar-link-text">Resources</span>
+        </a>
+        <a href="announcements.html" class="sidebar-link" title="Announcements">
+          <span class="sidebar-link-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" /></svg></span>
+          <span class="sidebar-link-text">Announcements</span>
+        </a>
+        <a href="ai-management.html" class="sidebar-link" title="AI Management">
+          <span class="sidebar-link-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg></span>
+          <span class="sidebar-link-text">AI Management</span>
+        </a>
+        <a href="subjects.html" class="sidebar-link" title="Subjects">
+          <span class="sidebar-link-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg></span>
+          <span class="sidebar-link-text">Subjects</span>
+        </a>
       </nav>
       <div class="sidebar-footer">
-        <a href="settings.html" class="sidebar-link">Settings</a>
-        <a href="../index.html" class="sidebar-link">Logout</a>
+        <a href="settings.html" class="sidebar-link" title="Settings">
+          <span class="sidebar-link-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg></span>
+          <span class="sidebar-link-text">Settings</span>
+        </a>
+        <a href="../index.html" class="sidebar-link" title="Logout">
+          <span class="sidebar-link-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg></span>
+          <span class="sidebar-link-text">Logout</span>
+        </a>
       </div>
     </aside>
 
     <!-- Main Content -->
-    <main class="main-content">
+    <main class="main-content" role="main">
       <header class="dashboard-header">
         <div>
           <h1 class="dashboard-title">Students</h1>
-          <p class="dashboard-subtitle">Manage student accounts and view academic standing.</p>
+          <p class="dashboard-subtitle">Manage student accounts, monitoring academic standing and portal permissions.</p>
         </div>
         <div>
-          <button class="btn btn-primary">+ Invite Student</button>
+          <button type="button" class="btn btn-primary" onclick="S360.toast('Invitation link copied to clipboard.','success')">+ Invite Student</button>
         </div>
       </header>
 
-      <div class="dashboard-panel" style="margin-bottom: 2rem; padding: 1rem;">
-        <div style="display: flex; gap: 1rem;">
-          <input type="text" id="student-search" class="form-control" placeholder="Search by name or email…" style="flex: 1;">
-          <select id="student-course-filter" class="form-control" style="width: 200px;">
+      <!-- Status Filter Chips -->
+      <div class="status-chips filter-chips-row" role="region" aria-label="Filter students by status">
+        <button type="button" class="filter-chip active" data-status="All">All Students</button>
+        <button type="button" class="filter-chip" data-status="Active">Active</button>
+        <button type="button" class="filter-chip" data-status="At Risk">At Risk</button>
+        <button type="button" class="filter-chip" data-status="Inactive">Inactive</button>
+        <button type="button" class="filter-chip" data-status="Suspended">Suspended</button>
+      </div>
+
+      <!-- Search & Course Filter -->
+      <div class="dashboard-panel" style="margin-bottom: 1.5rem; padding: 1rem;">
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+          <input type="text" id="student-search" class="form-control" placeholder="Search by name or email…" style="flex: 1; min-width: 200px;">
+          <select id="student-course-filter" class="form-control" style="width: 220px;">
             <option>All Courses</option>
             <option>B.Sc. Computer Science</option>
             <option>B.Sc. Physics</option>
             <option>B.A. Literature</option>
           </select>
-          <select id="student-status-filter" class="form-control" style="width: 150px;">
-            <option>All Statuses</option>
-            <option>Active</option>
-            <option>At Risk</option>
-            <option>Inactive</option>
-            <option>Suspended</option>
-          </select>
         </div>
       </div>
 
+      <!-- Students Table with Sortable Columns -->
       <div class="dashboard-panel" style="padding: 0; overflow-x: auto;">
         <table class="admin-table">
           <thead>
             <tr>
-              <th>Student Name</th>
-              <th>Course</th>
-              <th>Growth Score</th>
-              <th>Status</th>
+              <th class="sortable sort-asc" data-col="name">Student Name <span class="sort-icon" aria-hidden="true">▲</span></th>
+              <th class="sortable" data-col="course">Course <span class="sort-icon" aria-hidden="true">▲</span></th>
+              <th class="sortable" data-col="score">Growth Score <span class="sort-icon" aria-hidden="true">▲</span></th>
+              <th class="sortable" data-col="status">Status <span class="sort-icon" aria-hidden="true">▲</span></th>
               <th style="text-align: right;">Actions</th>
             </tr>
           </thead>
-          <tbody id="students-table-body"></tbody>
+          <tbody id="students-table-body">
+            <!-- Rendered by js/admin.js -->
+          </tbody>
         </table>
       </div>
       
