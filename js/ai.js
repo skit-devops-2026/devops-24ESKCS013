@@ -1,7 +1,7 @@
 /**
  * Student360 — ai.js
  * AI Assistant chat interface + "What if I study?" projector.
- * Phase 2: Simulated responses. Phase 5: Real API calls.
+ * Phase 2.5: Animated chat entrance, blinking typing indicator, projector progress bars.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (!chatHistory) return;
 
-  /* Mock knowledge base (Phase 2) */
+  /* Mock knowledge base */
   function mockAIReply(userMsg) {
     const m = userMsg.toLowerCase();
     if (m.includes('quiz') || m.includes('question'))
@@ -33,6 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function appendMessage(text, role) {
     const isAI = role === 'ai';
     const div = document.createElement('div');
+    div.className = 'chat-message';
     div.style.cssText = `display:flex;gap:1rem;align-items:flex-start;${isAI ? '' : 'flex-direction:row-reverse;align-self:flex-end;'}`;
 
     const avatar = document.createElement('div');
@@ -44,6 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
 
     const bubble = document.createElement('div');
+    bubble.className = 'chat-bubble';
     bubble.style.cssText = `
       background:${isAI ? 'var(--paper)' : 'var(--paper-raised)'};
       padding:1rem;border-radius:4px;border:1px solid var(--rule);
@@ -55,19 +57,31 @@ document.addEventListener('DOMContentLoaded', () => {
     div.appendChild(avatar);
     div.appendChild(bubble);
     chatHistory.appendChild(div);
-    chatHistory.scrollTop = chatHistory.scrollHeight;
+    
+    // Trigger entrance animation
+    requestAnimationFrame(() => {
+      div.classList.add('visible');
+      chatHistory.scrollTop = chatHistory.scrollHeight;
+    });
   }
 
   function showTypingIndicator() {
     const div = document.createElement('div');
     div.id = 'typing-indicator';
+    div.className = 'chat-message';
     div.style.cssText = 'display:flex;gap:1rem;align-items:center;';
     div.innerHTML = `
       <div style="width:32px;height:32px;border-radius:4px;background:var(--ink);color:var(--paper);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:600;">AI</div>
-      <span class="text-faint" style="font-size:0.875rem;">Thinking…</span>
+      <div class="typing-dots">
+        <span></span><span></span><span></span>
+      </div>
     `;
     chatHistory.appendChild(div);
-    chatHistory.scrollTop = chatHistory.scrollHeight;
+    
+    requestAnimationFrame(() => {
+      div.classList.add('visible');
+      chatHistory.scrollTop = chatHistory.scrollHeight;
+    });
   }
 
   function removeTypingIndicator() {
@@ -84,12 +98,11 @@ document.addEventListener('DOMContentLoaded', () => {
     showTypingIndicator();
     sendBtn.disabled = true;
 
-    // Simulate AI response latency
     setTimeout(() => {
       removeTypingIndicator();
       appendMessage(mockAIReply(text), 'ai');
       sendBtn.disabled = false;
-    }, 800 + Math.random() * 600);
+    }, 1000 + Math.random() * 800);
   }
 
   if (chatForm) {
@@ -116,7 +129,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const minsPerDay= parseFloat(document.getElementById('proj-time').value)     || 0;
       const days      = parseFloat(document.getElementById('proj-days').value)      || 0;
 
-      // Rough projection formula: each 60 min/day for 7 days ≈ +5% progress
       const totalMins = minsPerDay * days;
       const gain      = Math.min((totalMins / 60) * 0.8, 100 - current);
       const projected = Math.min(Math.round(current + gain), 100);
@@ -125,14 +137,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (projResult) {
         projResult.innerHTML = `
-          <div style="border-top:1px dashed var(--rule-strong);padding-top:1rem;margin-top:1rem;">
+          <div style="border-top:1px dashed var(--rule-strong);padding-top:1rem;margin-top:1rem;" aria-live="polite">
             <h3 style="font-size:0.875rem;font-weight:600;margin-bottom:0.75rem;">Projected Results</h3>
+            
+            <div style="margin-bottom: 1rem;">
+              <div style="display:flex; justify-content:space-between; font-size:0.875rem; margin-bottom:0.25rem;">
+                <span>Progress</span>
+                <span class="tabular-nums"><strong>${current}% &rarr; ${projected}%</strong></span>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill" style="width: ${current}%; background-color: var(--ink-soft); position: absolute; left: 0; top: 0; bottom: 0;"></div>
+                <div class="progress-fill" style="width: 0%; left: ${current}%; background-color: var(--gold); position: absolute; top: 0; bottom: 0;" id="projected-gain-bar"></div>
+              </div>
+            </div>
+
             <ul style="list-style:none;font-size:0.875rem;">
-              <li style="margin-bottom:0.25rem;">Progress: <strong>${current}% → ${projected}%</strong> (+${projected - Math.round(current)}%)</li>
               <li style="margin-bottom:0.25rem;">New Topics Covered: ~<strong>${topics}</strong></li>
               <li>Questions Completed: ~<strong>${questions}</strong></li>
             </ul>
           </div>`;
+          
+        // Animate the projected gain bar
+        requestAnimationFrame(() => {
+          const gainBar = document.getElementById('projected-gain-bar');
+          if (gainBar) {
+            requestAnimationFrame(() => {
+              gainBar.style.width = (projected - current) + '%';
+            });
+          }
+        });
+        
         S360.toast('Projection calculated!', 'success');
       }
     });

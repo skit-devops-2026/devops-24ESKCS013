@@ -3,39 +3,44 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Daily self review to reflect on your academic progress and productivity.">
   <title>Self Review — Student360</title>
   <link rel="stylesheet" href="../css/global.css">
   <link rel="stylesheet" href="../css/student.css">
 </head>
 <body>
+  <button class="sidebar-hamburger" aria-label="Open navigation menu" aria-expanded="false">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
   <div class="app-layout">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <span class="text-gold">Student</span>360
+    <aside class="sidebar" aria-label="Student navigation">
+      <div class="sidebar-header" style="display:flex;align-items:center;justify-content:space-between;">
+        <span><span class="text-gold sidebar-brand-text">Student</span><span class="sidebar-brand-text">360</span></span>
+        <button class="sidebar-collapse-btn" aria-label="Collapse sidebar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7M18 19l-7-7 7-7"/></svg>
+        </button>
       </div>
-      <nav class="sidebar-nav">
-        <a href="dashboard.html" class="sidebar-link">Dashboard</a>
-        <a href="study.html" class="sidebar-link">Study Tracker</a>
-        <a href="subjects.html" class="sidebar-link">Subjects</a>
-        <a href="notes.html" class="sidebar-link">Notes</a>
-        <a href="tasks.html" class="sidebar-link">Tasks</a>
-        <a href="goals.html" class="sidebar-link">Goals</a>
-        <a href="calendar.html" class="sidebar-link">Calendar</a>
-        <a href="progress.html" class="sidebar-link">Progress</a>
-        <a href="analytics.html" class="sidebar-link">Analytics</a>
-        <a href="reflection.html" class="sidebar-link active">Self Review</a>
-        <a href="ai.html" class="sidebar-link">AI Assistant</a>
-        <a href="resources.html" class="sidebar-link">Resources</a>
-        <a href="announcements.html" class="sidebar-link">Announcements</a>
+      <nav class="sidebar-nav" aria-label="Main navigation">
+        <a href="dashboard.html" class="sidebar-link"><span class="link-label">Dashboard</span></a>
+        <a href="study.html"     class="sidebar-link"><span class="link-label">Study Tracker</span></a>
+        <a href="subjects.html"  class="sidebar-link"><span class="link-label">Subjects</span></a>
+        <a href="notes.html"     class="sidebar-link"><span class="link-label">Notes</span></a>
+        <a href="tasks.html"     class="sidebar-link"><span class="link-label">Tasks</span></a>
+        <a href="goals.html"     class="sidebar-link"><span class="link-label">Goals</span></a>
+        <a href="calendar.html"  class="sidebar-link"><span class="link-label">Calendar</span></a>
+        <a href="progress.html"  class="sidebar-link"><span class="link-label">Progress</span></a>
+        <a href="analytics.html" class="sidebar-link"><span class="link-label">Analytics</span></a>
+        <a href="reflection.html" class="sidebar-link active"><span class="link-label">Self Review</span></a>
+        <a href="ai.html"        class="sidebar-link"><span class="link-label">AI Assistant</span></a>
+        <a href="resources.html" class="sidebar-link"><span class="link-label">Resources</span></a>
+        <a href="announcements.html" class="sidebar-link"><span class="link-label">Announcements</span></a>
       </nav>
       <div class="sidebar-footer">
-        <a href="profile.html" class="sidebar-link">Settings / Profile</a>
-        <a href="../index.html" class="sidebar-link text-faint">Logout</a>
+        <a href="profile.html"  class="sidebar-link"><span class="link-label">Settings / Profile</span></a>
+        <a href="../index.html" class="sidebar-link text-faint"><span class="link-label">Logout</span></a>
       </div>
     </aside>
 
-    <!-- Main Content -->
     <main class="main-content">
       <header class="dashboard-header">
         <div>
@@ -43,40 +48,55 @@
           <p class="dashboard-subtitle">Reflect on your day to improve your Growth Score.</p>
         </div>
       </header>
+      
+      <!-- Last completed banner (hidden by default) -->
+      <div id="reflection-done-banner" class="dashboard-panel" style="display: none; background-color: var(--green-soft); border-color: var(--green); color: var(--green-ink); margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+          <div style="font-size: 2rem;">🌟</div>
+          <div>
+            <h3 style="margin-bottom: 0.25rem;">You've already reflected today!</h3>
+            <p style="font-size: 0.875rem;">Great job building consistency. You can update your reflection below if you'd like.</p>
+          </div>
+        </div>
+      </div>
 
       <div class="dashboard-grid">
         <div class="dashboard-main">
           
           <div class="dashboard-panel">
             <h2 class="panel-title">Today's Reflection</h2>
-            <form>
+            <form id="reflection-form">
               <div class="form-group">
-                <label class="form-label">What did you learn today?</label>
-                <textarea class="form-control" rows="3" placeholder="Summarize your key takeaways..."></textarea>
+                <label class="form-label" for="ref-learn">What did you learn today?</label>
+                <textarea id="ref-learn" class="form-control" rows="3" placeholder="Summarize your key takeaways..."></textarea>
               </div>
               <div class="form-group">
-                <label class="form-label">What was difficult?</label>
-                <textarea class="form-control" rows="3" placeholder="Any concepts you struggled with?"></textarea>
+                <label class="form-label" for="ref-diff">What was difficult?</label>
+                <textarea id="ref-diff" class="form-control" rows="3" placeholder="Any concepts you struggled with?"></textarea>
               </div>
               <div class="form-group">
-                <label class="form-label">What distracted you?</label>
-                <textarea class="form-control" rows="2" placeholder="Be honest..."></textarea>
+                <label class="form-label" for="ref-distract">What distracted you?</label>
+                <textarea id="ref-distract" class="form-control" rows="2" placeholder="Be honest..."></textarea>
               </div>
               
               <div class="form-group" style="margin-top: 2rem;">
                 <label class="form-label">Overall Productivity Rating</label>
-                <!-- Mock Star Rating -->
-                <div style="display: flex; gap: 0.5rem; color: var(--rule-strong); font-size: 1.5rem; cursor: pointer;">
-                  <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                <div class="star-rating" id="star-rating-container" role="radiogroup" aria-label="Productivity rating">
+                  <span class="star" data-val="1" role="radio" aria-checked="false" tabindex="0" aria-label="1 star">★</span>
+                  <span class="star" data-val="2" role="radio" aria-checked="false" tabindex="0" aria-label="2 stars">★</span>
+                  <span class="star" data-val="3" role="radio" aria-checked="false" tabindex="0" aria-label="3 stars">★</span>
+                  <span class="star" data-val="4" role="radio" aria-checked="false" tabindex="0" aria-label="4 stars">★</span>
+                  <span class="star" data-val="5" role="radio" aria-checked="false" tabindex="0" aria-label="5 stars">★</span>
                 </div>
+                <input type="hidden" id="ref-rating" value="0">
               </div>
 
               <div class="form-group mt-4">
-                <label class="form-label">What will you improve tomorrow?</label>
-                <textarea class="form-control" rows="2" placeholder="Set a specific intention..."></textarea>
+                <label class="form-label" for="ref-improve">What will you improve tomorrow?</label>
+                <textarea id="ref-improve" class="form-control" rows="2" placeholder="Set a specific intention..."></textarea>
               </div>
 
-              <button type="button" class="btn btn-primary mt-4" style="padding: 0.75rem 2rem;">Submit Reflection</button>
+              <button type="submit" class="btn btn-primary mt-4" style="padding: 0.75rem 2rem;">Submit Reflection</button>
             </form>
           </div>
 
@@ -112,5 +132,80 @@
     </main>
   </div>
   <script src="../js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const starsContainer = document.getElementById('star-rating-container');
+      const stars = document.querySelectorAll('.star-rating .star');
+      const ratingInput = document.getElementById('ref-rating');
+      const form = document.getElementById('reflection-form');
+      const doneBanner = document.getElementById('reflection-done-banner');
+
+      // Check if already completed today
+      const todayStr = S360.today();
+      if (localStorage.getItem('s360_reflection_last_date') === todayStr) {
+        doneBanner.style.display = 'block';
+        ratingInput.value = localStorage.getItem('s360_reflection_last_rating') || '0';
+        updateStars(parseInt(ratingInput.value));
+      }
+
+      // Star rating hover & click logic
+      function updateStars(val) {
+        stars.forEach(s => {
+          const sVal = parseInt(s.dataset.val);
+          if (sVal <= val) {
+            s.classList.add('active');
+            s.setAttribute('aria-checked', 'true');
+          } else {
+            s.classList.remove('active');
+            s.setAttribute('aria-checked', 'false');
+          }
+        });
+      }
+
+      stars.forEach(star => {
+        // Hover
+        star.addEventListener('mouseenter', () => {
+          const val = parseInt(star.dataset.val);
+          stars.forEach(s => s.classList.toggle('hover', parseInt(s.dataset.val) <= val));
+        });
+        
+        star.addEventListener('mouseleave', () => {
+          stars.forEach(s => s.classList.remove('hover'));
+        });
+
+        // Click / Keyboard selection
+        const selectStar = () => {
+          const val = parseInt(star.dataset.val);
+          ratingInput.value = val;
+          updateStars(val);
+        };
+        
+        star.addEventListener('click', selectStar);
+        star.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            selectStar();
+          }
+        });
+      });
+
+      // Form submission
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const rating = parseInt(ratingInput.value);
+        if (rating === 0) {
+          S360.toast('Please provide a star rating.', 'error');
+          return;
+        }
+
+        // Save mock state
+        localStorage.setItem('s360_reflection_last_date', todayStr);
+        localStorage.setItem('s360_reflection_last_rating', rating);
+
+        doneBanner.style.display = 'block';
+        S360.toast('Reflection saved! +5 Growth Score', 'success');
+      });
+    });
+  </script>
 </body>
 </html>

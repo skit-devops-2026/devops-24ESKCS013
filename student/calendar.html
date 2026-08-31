@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Academic calendar to track study sessions, tasks, goals, and deadlines.">
   <title>Calendar — Student360</title>
   <link rel="stylesheet" href="../css/global.css">
   <link rel="stylesheet" href="../css/student.css">
@@ -51,7 +52,9 @@
       align-items: center;
       justify-content: center;
     }
+    /* Hide detailed events on smaller screens or in base view, use dots instead */
     .cal-event {
+      display: none;
       font-size: 0.75rem;
       padding: 0.25rem 0.5rem;
       border-radius: 2px;
@@ -61,6 +64,10 @@
       text-overflow: ellipsis;
       cursor: pointer;
     }
+    @media (min-width: 1024px) {
+      .cal-event { display: block; }
+      .cal-density-row { display: none !important; }
+    }
     .cal-study { background-color: var(--paper); border-left: 2px solid var(--ink-soft); }
     .cal-task { background-color: var(--paper); border-left: 2px solid var(--gold); }
     .cal-goal { background-color: var(--paper); border-left: 2px solid var(--green); }
@@ -68,34 +75,38 @@
   </style>
 </head>
 <body>
+  <button class="sidebar-hamburger" aria-label="Open navigation menu" aria-expanded="false">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
   <div class="app-layout">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <span class="text-gold">Student</span>360
+    <aside class="sidebar" aria-label="Student navigation">
+      <div class="sidebar-header" style="display:flex;align-items:center;justify-content:space-between;">
+        <span><span class="text-gold sidebar-brand-text">Student</span><span class="sidebar-brand-text">360</span></span>
+        <button class="sidebar-collapse-btn" aria-label="Collapse sidebar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7M18 19l-7-7 7-7"/></svg>
+        </button>
       </div>
-      <nav class="sidebar-nav">
-        <a href="dashboard.html" class="sidebar-link">Dashboard</a>
-        <a href="study.html" class="sidebar-link">Study Tracker</a>
-        <a href="subjects.html" class="sidebar-link">Subjects</a>
-        <a href="notes.html" class="sidebar-link">Notes</a>
-        <a href="tasks.html" class="sidebar-link">Tasks</a>
-        <a href="goals.html" class="sidebar-link">Goals</a>
-        <a href="calendar.html" class="sidebar-link active">Calendar</a>
-        <a href="progress.html" class="sidebar-link">Progress</a>
-        <a href="analytics.html" class="sidebar-link">Analytics</a>
-        <a href="reflection.html" class="sidebar-link">Self Review</a>
-        <a href="ai.html" class="sidebar-link">AI Assistant</a>
-        <a href="resources.html" class="sidebar-link">Resources</a>
-        <a href="announcements.html" class="sidebar-link">Announcements</a>
+      <nav class="sidebar-nav" aria-label="Main navigation">
+        <a href="dashboard.html" class="sidebar-link"><span class="link-label">Dashboard</span></a>
+        <a href="study.html"     class="sidebar-link"><span class="link-label">Study Tracker</span></a>
+        <a href="subjects.html"  class="sidebar-link"><span class="link-label">Subjects</span></a>
+        <a href="notes.html"     class="sidebar-link"><span class="link-label">Notes</span></a>
+        <a href="tasks.html"     class="sidebar-link"><span class="link-label">Tasks</span></a>
+        <a href="goals.html"     class="sidebar-link"><span class="link-label">Goals</span></a>
+        <a href="calendar.html"  class="sidebar-link active"><span class="link-label">Calendar</span></a>
+        <a href="progress.html"  class="sidebar-link"><span class="link-label">Progress</span></a>
+        <a href="analytics.html" class="sidebar-link"><span class="link-label">Analytics</span></a>
+        <a href="reflection.html" class="sidebar-link"><span class="link-label">Self Review</span></a>
+        <a href="ai.html"        class="sidebar-link"><span class="link-label">AI Assistant</span></a>
+        <a href="resources.html" class="sidebar-link"><span class="link-label">Resources</span></a>
+        <a href="announcements.html" class="sidebar-link"><span class="link-label">Announcements</span></a>
       </nav>
       <div class="sidebar-footer">
-        <a href="profile.html" class="sidebar-link">Settings / Profile</a>
-        <a href="../index.html" class="sidebar-link text-faint">Logout</a>
+        <a href="profile.html"  class="sidebar-link"><span class="link-label">Settings / Profile</span></a>
+        <a href="../index.html" class="sidebar-link text-faint"><span class="link-label">Logout</span></a>
       </div>
     </aside>
 
-    <!-- Main Content -->
     <main class="main-content">
       <header class="dashboard-header">
         <div>
@@ -103,79 +114,102 @@
           <p class="dashboard-subtitle">Your academic schedule and deadlines.</p>
         </div>
         <div>
-          <button class="btn btn-outline">&lt;</button>
+          <button class="btn btn-outline" aria-label="Previous month">&lt;</button>
           <button class="btn btn-outline">Today</button>
-          <button class="btn btn-outline">&gt;</button>
+          <button class="btn btn-outline" aria-label="Next month">&gt;</button>
         </div>
       </header>
 
-      <div class="calendar-grid">
+      <div class="calendar-grid" role="grid" aria-label="October 2026 calendar">
         <!-- Headers -->
-        <div class="calendar-header-cell">Sun</div>
-        <div class="calendar-header-cell">Mon</div>
-        <div class="calendar-header-cell">Tue</div>
-        <div class="calendar-header-cell">Wed</div>
-        <div class="calendar-header-cell">Thu</div>
-        <div class="calendar-header-cell">Fri</div>
-        <div class="calendar-header-cell">Sat</div>
+        <div class="calendar-header-cell" role="columnheader">Sun</div>
+        <div class="calendar-header-cell" role="columnheader">Mon</div>
+        <div class="calendar-header-cell" role="columnheader">Tue</div>
+        <div class="calendar-header-cell" role="columnheader">Wed</div>
+        <div class="calendar-header-cell" role="columnheader">Thu</div>
+        <div class="calendar-header-cell" role="columnheader">Fri</div>
+        <div class="calendar-header-cell" role="columnheader">Sat</div>
 
         <!-- Row 1 (starts offset) -->
-        <div class="calendar-cell other-month"><span class="calendar-date">27</span></div>
-        <div class="calendar-cell other-month"><span class="calendar-date">28</span></div>
-        <div class="calendar-cell other-month"><span class="calendar-date">29</span></div>
-        <div class="calendar-cell other-month"><span class="calendar-date">30</span></div>
-        <div class="calendar-cell"><span class="calendar-date">1</span></div>
-        <div class="calendar-cell"><span class="calendar-date">2</span></div>
-        <div class="calendar-cell"><span class="calendar-date">3</span></div>
+        <div class="calendar-cell other-month" role="gridcell"><span class="calendar-date">27</span></div>
+        <div class="calendar-cell other-month" role="gridcell"><span class="calendar-date">28</span></div>
+        <div class="calendar-cell other-month" role="gridcell"><span class="calendar-date">29</span></div>
+        <div class="calendar-cell other-month" role="gridcell"><span class="calendar-date">30</span></div>
+        <div class="calendar-cell" role="gridcell"><span class="calendar-date">1</span></div>
+        <div class="calendar-cell" role="gridcell"><span class="calendar-date">2</span></div>
+        <div class="calendar-cell" role="gridcell"><span class="calendar-date">3</span></div>
 
         <!-- Row 2 -->
-        <div class="calendar-cell"><span class="calendar-date">4</span></div>
-        <div class="calendar-cell"><span class="calendar-date">5</span></div>
-        <div class="calendar-cell"><span class="calendar-date">6</span></div>
-        <div class="calendar-cell"><span class="calendar-date">7</span>
+        <div class="calendar-cell" role="gridcell"><span class="calendar-date">4</span></div>
+        <div class="calendar-cell" role="gridcell"><span class="calendar-date">5</span></div>
+        <div class="calendar-cell" role="gridcell"><span class="calendar-date">6</span></div>
+        <div class="calendar-cell" role="gridcell" tabindex="0" data-day="Oct 7" data-events='[{"title":"Calculus (1h)", "type":"study"}]'>
+          <span class="calendar-date">7</span>
           <div class="cal-event cal-study">Calculus (1h)</div>
+          <div class="cal-density-row"><span class="cal-density-dot med"></span></div>
         </div>
-        <div class="calendar-cell"><span class="calendar-date">8</span></div>
-        <div class="calendar-cell"><span class="calendar-date">9</span></div>
-        <div class="calendar-cell"><span class="calendar-date">10</span></div>
+        <div class="calendar-cell" role="gridcell"><span class="calendar-date">8</span></div>
+        <div class="calendar-cell" role="gridcell"><span class="calendar-date">9</span></div>
+        <div class="calendar-cell" role="gridcell"><span class="calendar-date">10</span></div>
 
         <!-- Row 3 -->
-        <div class="calendar-cell"><span class="calendar-date">11</span></div>
-        <div class="calendar-cell"><span class="calendar-date">12</span></div>
-        <div class="calendar-cell"><span class="calendar-date">13</span></div>
-        <div class="calendar-cell"><span class="calendar-date">14</span></div>
-        <div class="calendar-cell"><span class="calendar-date">15</span>
+        <div class="calendar-cell" role="gridcell"><span class="calendar-date">11</span></div>
+        <div class="calendar-cell" role="gridcell"><span class="calendar-date">12</span></div>
+        <div class="calendar-cell" role="gridcell"><span class="calendar-date">13</span></div>
+        <div class="calendar-cell" role="gridcell"><span class="calendar-date">14</span></div>
+        <div class="calendar-cell" role="gridcell" tabindex="0" data-day="Oct 15" data-events='[{"title":"CS Midterm", "type":"deadline"}]'>
+          <span class="calendar-date">15</span>
           <div class="cal-event cal-deadline">CS Midterm</div>
+          <div class="cal-density-row"><span class="cal-density-dot high" style="background:var(--red);"></span></div>
         </div>
-        <div class="calendar-cell"><span class="calendar-date">16</span></div>
-        <div class="calendar-cell"><span class="calendar-date">17</span></div>
+        <div class="calendar-cell" role="gridcell"><span class="calendar-date">16</span></div>
+        <div class="calendar-cell" role="gridcell"><span class="calendar-date">17</span></div>
 
         <!-- Row 4 -->
-        <div class="calendar-cell"><span class="calendar-date">18</span></div>
-        <div class="calendar-cell"><span class="calendar-date">19</span></div>
-        <div class="calendar-cell"><span class="calendar-date">20</span></div>
-        <div class="calendar-cell"><span class="calendar-date">21</span></div>
-        <div class="calendar-cell"><span class="calendar-date">22</span>
+        <div class="calendar-cell" role="gridcell"><span class="calendar-date">18</span></div>
+        <div class="calendar-cell" role="gridcell"><span class="calendar-date">19</span></div>
+        <div class="calendar-cell" role="gridcell"><span class="calendar-date">20</span></div>
+        <div class="calendar-cell" role="gridcell"><span class="calendar-date">21</span></div>
+        <div class="calendar-cell" role="gridcell" tabindex="0" data-day="Oct 22" data-events='[{"title":"Physics (45m)", "type":"study"}]'>
+          <span class="calendar-date">22</span>
           <div class="cal-event cal-study">Physics (45m)</div>
+          <div class="cal-density-row"><span class="cal-density-dot low"></span></div>
         </div>
-        <div class="calendar-cell"><span class="calendar-date">23</span>
+        <div class="calendar-cell" role="gridcell" tabindex="0" data-day="Oct 23" data-events='[{"title":"Physics Lab", "type":"task"}]'>
+          <span class="calendar-date">23</span>
           <div class="cal-event cal-task">Physics Lab</div>
+          <div class="cal-density-row"><span class="cal-density-dot med"></span></div>
         </div>
-        <div class="calendar-cell today"><span class="calendar-date">24</span>
+        <div class="calendar-cell today" role="gridcell" tabindex="0" data-day="Oct 24 (Today)" data-events='[{"title":"Calculus (1h)", "type":"study"}, {"title":"CS Assign 2", "type":"task"}]' aria-current="date">
+          <span class="calendar-date">24</span>
           <div class="cal-event cal-study">Calculus (1h)</div>
           <div class="cal-event cal-task">CS Assign 2</div>
+          <div class="cal-density-row"><span class="cal-density-dot med"></span><span class="cal-density-dot med"></span></div>
         </div>
 
         <!-- Row 5 -->
-        <div class="calendar-cell"><span class="calendar-date">25</span></div>
-        <div class="calendar-cell"><span class="calendar-date">26</span></div>
-        <div class="calendar-cell"><span class="calendar-date">27</span></div>
-        <div class="calendar-cell"><span class="calendar-date">28</span></div>
-        <div class="calendar-cell"><span class="calendar-date">29</span></div>
-        <div class="calendar-cell"><span class="calendar-date">30</span>
+        <div class="calendar-cell" role="gridcell"><span class="calendar-date">25</span></div>
+        <div class="calendar-cell" role="gridcell"><span class="calendar-date">26</span></div>
+        <div class="calendar-cell" role="gridcell"><span class="calendar-date">27</span></div>
+        <div class="calendar-cell" role="gridcell"><span class="calendar-date">28</span></div>
+        <div class="calendar-cell" role="gridcell"><span class="calendar-date">29</span></div>
+        <div class="calendar-cell" role="gridcell" tabindex="0" data-day="Oct 30" data-events='[{"title":"Goal Target: Calculus", "type":"goal"}]'>
+          <span class="calendar-date">30</span>
           <div class="cal-event cal-goal">Goal Target: Calculus</div>
+          <div class="cal-density-row"><span class="cal-density-dot high" style="background:var(--green);"></span></div>
         </div>
-        <div class="calendar-cell"><span class="calendar-date">31</span></div>
+        <div class="calendar-cell" role="gridcell"><span class="calendar-date">31</span></div>
+      </div>
+      
+      <!-- Day Detail Panel (Slide/fade in transition) -->
+      <div id="cal-day-detail" class="cal-day-detail" aria-live="polite">
+        <div class="cal-day-detail-inner">
+          <h3 id="detail-date-title" style="font-family:var(--font-serif); font-size:1.25rem; margin-bottom:1rem;">Select a day</h3>
+          <div id="detail-events-list">
+            <!-- Events injected here -->
+          </div>
+          <button class="btn btn-outline" style="margin-top:1.5rem; font-size:0.75rem;" id="close-detail-btn">Close Panel</button>
+        </div>
       </div>
       
       <div style="margin-top: 2rem; display: flex; gap: 1rem; font-size: 0.875rem;">
@@ -187,5 +221,57 @@
     </main>
   </div>
   <script src="../js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const detailPanel = document.getElementById('cal-day-detail');
+      const detailTitle = document.getElementById('detail-date-title');
+      const detailList  = document.getElementById('detail-events-list');
+      const closeBtn    = document.getElementById('close-detail-btn');
+      const cells       = document.querySelectorAll('.calendar-cell[data-events]');
+
+      function openDetail(cell) {
+        const dateStr = cell.dataset.day;
+        const events = JSON.parse(cell.dataset.events || '[]');
+        
+        detailTitle.textContent = `Schedule for ${dateStr}`;
+        
+        if (events.length === 0) {
+          detailList.innerHTML = '<p class="text-faint">No events scheduled.</p>';
+        } else {
+          detailList.innerHTML = events.map(e => `
+            <div style="padding: 0.75rem; border: 1px solid var(--rule); border-radius: 4px; margin-bottom: 0.5rem; display: flex; gap: 0.75rem; align-items: center; background: var(--paper);">
+              <div style="width:12px; height:12px; border-radius:50%; background: ${
+                e.type === 'study' ? 'var(--ink-soft)' :
+                e.type === 'task' ? 'var(--gold)' :
+                e.type === 'goal' ? 'var(--green)' : 'var(--red)'
+              };"></div>
+              <div>
+                <div style="font-weight: 500;">${e.title}</div>
+                <div class="text-faint" style="font-size:0.75rem; text-transform:capitalize;">${e.type}</div>
+              </div>
+            </div>
+          `).join('');
+        }
+        
+        detailPanel.classList.add('open');
+      }
+
+      cells.forEach(cell => {
+        cell.addEventListener('click', () => openDetail(cell));
+        cell.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openDetail(cell);
+          }
+        });
+      });
+
+      if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+          detailPanel.classList.remove('open');
+        });
+      }
+    });
+  </script>
 </body>
 </html>
