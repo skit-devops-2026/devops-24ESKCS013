@@ -8,21 +8,25 @@
   <link rel="stylesheet" href="../css/auth.css">
 </head>
 <body class="auth-layout">
-  <div class="auth-panel">
+  <main class="auth-panel" role="main">
     <div class="auth-header">
       <h1 class="auth-title">Create Account</h1>
       <p class="auth-desc">Start building your academic ledger today.</p>
     </div>
     
-    <form class="auth-form" id="student-register-form">
+    <form class="auth-form" id="student-register-form" novalidate>
       <div class="form-group">
         <label for="reg-name" class="form-label">Full Name</label>
-        <input type="text" id="reg-name" name="name" class="form-control" placeholder="Jane Doe" required>
+        <input type="text" id="reg-name" name="name" class="form-control" placeholder="Jane Doe" required autocomplete="name">
+        <div id="name-error" class="field-error-msg" aria-live="polite"></div>
       </div>
+
       <div class="form-group">
         <label for="reg-email" class="form-label">Email Address</label>
-        <input type="email" id="reg-email" name="email" class="form-control" placeholder="student@example.com" required>
+        <input type="email" id="reg-email" name="email" class="form-control" placeholder="student@example.com" required autocomplete="email">
+        <div id="email-error" class="field-error-msg" aria-live="polite"></div>
       </div>
+
       <div class="form-group">
         <label for="reg-course" class="form-label">Course / Programme</label>
         <select id="reg-course" name="course" class="form-control" required>
@@ -32,28 +36,42 @@
           <option>B.A. Literature</option>
           <option>B.Sc. Mathematics</option>
         </select>
+        <div id="course-error" class="field-error-msg" aria-live="polite"></div>
       </div>
+
       <div class="form-group">
         <label for="reg-password" class="form-label">Password</label>
-        <input type="password" id="reg-password" name="password" class="form-control" placeholder="Minimum 8 characters" required>
-        <!-- Password strength bar -->
-        <div style="height: 3px; background: var(--rule); border-radius: 2px; margin-top: 0.5rem;">
-          <div id="pw-strength-bar" style="height: 100%; width: 0%; border-radius: 2px; transition: width 0.3s, background-color 0.3s;"></div>
+        <div class="password-input-wrapper">
+          <input type="password" id="reg-password" name="password" class="form-control" placeholder="Minimum 8 characters" required autocomplete="new-password">
+          <button type="button" class="password-toggle-btn" data-target="reg-password" aria-label="Show password"></button>
         </div>
+        <!-- Password strength bar -->
+        <div style="height: 3px; background: var(--rule); border-radius: 2px; margin-top: 0.5rem; overflow: hidden;" aria-hidden="true">
+          <div id="pw-strength-bar" style="height: 100%; width: 0%; border-radius: 2px; transition: width 0.3s ease, background-color 0.3s ease;"></div>
+        </div>
+        <div id="password-error" class="field-error-msg" aria-live="polite"></div>
       </div>
+
       <div class="form-group">
         <label for="reg-confirm-password" class="form-label">Confirm Password</label>
-        <input type="password" id="reg-confirm-password" name="confirmPassword" class="form-control" placeholder="••••••••" required>
+        <div class="password-input-wrapper">
+          <input type="password" id="reg-confirm-password" name="confirmPassword" class="form-control" placeholder="••••••••" required autocomplete="new-password">
+          <button type="button" class="password-toggle-btn" data-target="reg-confirm-password" aria-label="Show password"></button>
+        </div>
+        <div id="confirm-error" class="field-error-msg" aria-live="polite"></div>
       </div>
       
-      <button type="submit" class="btn btn-primary mt-4" style="width: 100%; padding: 0.75rem;">Create Account</button>
+      <button type="submit" class="btn btn-primary mt-4" style="width: 100%; padding: 0.75rem;">
+        <span class="btn-spinner" aria-hidden="true"></span>
+        <span class="btn-text">Create Account</span>
+      </button>
     </form>
 
     <div class="auth-footer">
       <p>Already have an account? <a href="student-login.html">Sign in</a></p>
       <p class="mt-2"><a href="login.html" class="text-faint">&larr; Back to role selection</a></p>
     </div>
-  </div>
+  </main>
   <script src="../js/main.js"></script>
   <script src="../js/auth.js"></script>
 </body>

@@ -1,53 +1,371 @@
-/* Admin UI Theme Overrides */
+/* ==========================================================================
+   Student360 — Admin Portal Styles (Track A)
+   ========================================================================== */
 
+/* ── 1. Admin Sidebar & Collapsible / Mobile Drawer ───────────────────────── */
 .admin-sidebar {
   background-color: var(--ink);
   color: var(--paper);
-  border-right: none;
+  border-right: 1px solid #232a36;
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  z-index: 50;
+  width: 250px;
 }
 
 .admin-sidebar .sidebar-header {
-  border-bottom-color: #2D3748;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #2D3748;
   color: var(--paper-raised);
+  padding: 1.25rem 1.5rem;
+}
+
+.admin-sidebar .sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-serif);
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.sidebar-collapse-toggle {
+  background: transparent;
+  border: 1px solid #3d495d;
+  color: var(--ink-faint);
+  border-radius: 4px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.sidebar-collapse-toggle:hover {
+  color: var(--paper-raised);
+  border-color: #5b6a82;
+  background-color: #2D3748;
+}
+
+.sidebar-collapse-toggle:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 1px;
+}
+
+.admin-sidebar .sidebar-nav {
+  padding: 1rem 0;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .admin-sidebar .sidebar-link {
-  color: var(--ink-faint);
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  color: #A0AEC0;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color 0.2s ease, color 0.2s ease, border-left 0.2s ease;
+  border-left: 3px solid transparent;
+  white-space: nowrap;
 }
 
-.admin-sidebar .sidebar-link:hover, 
-.admin-sidebar .sidebar-link.active {
-  background-color: #2D3748;
+.admin-sidebar .sidebar-link-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  opacity: 0.8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-sidebar .sidebar-link:hover {
+  background-color: #232B3A;
   color: var(--paper-raised);
 }
 
-.admin-sidebar .sidebar-footer {
-  border-top-color: #2D3748;
+.admin-sidebar .sidebar-link.active {
+  background-color: #2D3748;
+  color: #FFFFFF;
+  border-left-color: var(--gold);
 }
 
-/* Admin Dashboard Specifics */
+.admin-sidebar .sidebar-link.active .sidebar-link-icon {
+  opacity: 1;
+  color: var(--gold);
+}
+
+.admin-sidebar .sidebar-footer {
+  border-top: 1px solid #2D3748;
+  padding: 0.75rem 0;
+}
+
+/* Collapsed Sidebar Mode */
+.admin-sidebar.collapsed {
+  width: 72px;
+}
+
+.admin-sidebar.collapsed .sidebar-brand span,
+.admin-sidebar.collapsed .sidebar-link-text {
+  opacity: 0;
+  width: 0;
+  pointer-events: none;
+  display: none;
+}
+
+.admin-sidebar.collapsed .sidebar-header {
+  padding: 1.25rem 0.75rem;
+  justify-content: center;
+}
+
+.admin-sidebar.collapsed .sidebar-link {
+  padding: 0.75rem 0;
+  justify-content: center;
+}
+
+.admin-sidebar.collapsed .sidebar-collapse-toggle svg {
+  transform: rotate(180deg);
+}
+
+/* Mobile Header & Drawer */
+.admin-mobile-header {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--ink);
+  color: var(--paper);
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #2D3748;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+
+.admin-menu-btn {
+  background: none;
+  border: 1px solid #3d495d;
+  color: var(--paper);
+  padding: 0.35rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-menu-btn:focus-visible {
+  outline: 2px solid var(--gold);
+}
+
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+  z-index: 45;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.sidebar-backdrop.active {
+  display: block;
+  opacity: 1;
+}
+
+/* ── 2. Admin Dashboard Cards & Count-Up ───────────────────────────────────── */
 .admin-stat-card {
   border-top: 4px solid var(--ink-soft);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+.admin-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+}
+
+.stat-value.counting {
+  display: inline-block;
+  will-change: transform;
+}
+
+/* Interactive Attention Required Panel */
 .admin-attention-panel {
-  background-color: var(--red-soft);
-  border-color: #E5C3BC;
+  background-color: rgba(184, 75, 41, 0.04);
+  border: 1px solid #E5C3BC;
 }
 
 .admin-attention-panel .panel-title {
   color: var(--red);
   border-bottom-color: #E5C3BC;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-/* Admin Tables */
+.attention-item {
+  padding: 0.75rem;
+  background-color: var(--paper-raised);
+  border: 1px solid #E5C3BC;
+  border-radius: 4px;
+  margin-bottom: 0.75rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.attention-item:hover {
+  border-color: var(--red);
+  box-shadow: 0 4px 12px rgba(184, 75, 41, 0.08);
+}
+
+.attention-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.attention-details {
+  display: none;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px dashed #E5C3BC;
+  font-size: 0.8125rem;
+  color: var(--ink-soft);
+}
+
+.attention-details.is-open {
+  display: block;
+  animation: fadeIn 0.25s ease;
+}
+
+/* ── 3. Visual Activity Graph with Gridlines & Legend ─────────────────────── */
+.chart-container {
+  position: relative;
+  padding-top: 1rem;
+}
+
+.chart-gridlines {
+  position: absolute;
+  top: 1rem;
+  left: 0;
+  right: 0;
+  bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.chart-gridline {
+  border-bottom: 1px dashed var(--rule);
+  width: 100%;
+}
+
+.chart-legend {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: flex-end;
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+  margin-bottom: 0.75rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+.chart-bar-interactive {
+  position: relative;
+  cursor: pointer;
+}
+
+.chart-tooltip {
+  position: absolute;
+  bottom: 105%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--ink);
+  color: var(--paper-raised);
+  padding: 0.35rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.chart-bar-interactive:hover .chart-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-4px);
+}
+
+/* ── 4. Sortable Tables & Filter Chips ────────────────────────────────────── */
+.filter-chips-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.filter-chip {
+  background: var(--paper-raised);
+  border: 1px solid var(--rule);
+  padding: 0.35rem 0.85rem;
+  border-radius: 20px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-chip:hover {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+.filter-chip.active {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper-raised);
+}
+
+.filter-chip:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
 .admin-table {
   width: 100%;
   border-collapse: collapse;
 }
 
 .admin-table th, .admin-table td {
-  padding: 1rem;
+  padding: 1rem 1.25rem;
   text-align: left;
   border-bottom: 1px solid var(--rule);
   font-size: 0.875rem;
@@ -56,6 +374,35 @@
 .admin-table th {
   font-weight: 600;
   color: var(--ink-soft);
+  background-color: rgba(0, 0, 0, 0.01);
+  user-select: none;
+}
+
+.admin-table th.sortable {
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.admin-table th.sortable:hover {
+  color: var(--ink);
+}
+
+.sort-icon {
+  display: inline-block;
+  margin-left: 0.35rem;
+  font-size: 0.75rem;
+  opacity: 0.4;
+  transition: opacity 0.2s ease;
+}
+
+th.sort-asc .sort-icon {
+  opacity: 1;
+  color: var(--ink);
+}
+
+th.sort-desc .sort-icon {
+  opacity: 1;
+  color: var(--ink);
 }
 
 .status-indicator {
@@ -67,5 +414,373 @@
 }
 
 .status-active { background-color: var(--green); }
-.status-inactive { background-color: var(--red); }
-.status-warning { background-color: var(--gold); }
+.status-inactive { background-color: var(--ink-faint); }
+.status-warning { background-color: var(--gold-ink); }
+.status-danger { background-color: var(--red); }
+
+/* Priority Badges */
+.badge-priority {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge-priority.normal {
+  background-color: rgba(74, 124, 89, 0.1);
+  color: var(--green);
+  border: 1px solid rgba(74, 124, 89, 0.2);
+}
+
+.badge-priority.high {
+  background-color: rgba(184, 151, 76, 0.1);
+  color: var(--gold-ink);
+  border: 1px solid rgba(184, 151, 76, 0.25);
+}
+
+.badge-priority.urgent {
+  background-color: rgba(184, 75, 41, 0.1);
+  color: var(--red);
+  border: 1px solid rgba(184, 75, 41, 0.25);
+}
+
+/* ── 5. Empty States ──────────────────────────────────────────────────────── */
+.admin-empty-state {
+  padding: 4rem 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-state-icon {
+  width: 48px;
+  height: 48px;
+  color: var(--ink-faint);
+  margin-bottom: 1rem;
+}
+
+.empty-state-title {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+.empty-state-desc {
+  font-size: 0.875rem;
+  color: var(--ink-soft);
+  max-width: 40ch;
+  margin-bottom: 1.5rem;
+}
+
+/* ── 6. In-Page Dismissible Confirm Dialogs ────────────────────────────────── */
+.confirm-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(2px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.confirm-modal-backdrop.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.confirm-modal-box {
+  background: var(--paper-raised);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 2rem;
+  max-width: 440px;
+  width: 100%;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15);
+  transform: translateY(12px) scale(0.98);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.confirm-modal-backdrop.active .confirm-modal-box {
+  transform: translateY(0) scale(1);
+}
+
+.confirm-modal-title {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.confirm-modal-desc {
+  font-size: 0.875rem;
+  color: var(--ink-soft);
+  line-height: 1.5;
+  margin-bottom: 1.75rem;
+}
+
+.confirm-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+/* ── 7. AI Management Switch Toggles & Character Counter ──────────────────── */
+.switch-toggle-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.875rem 1rem;
+  background-color: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.switch-toggle-label:hover {
+  border-color: var(--ink);
+}
+
+.switch-toggle {
+  position: relative;
+  width: 40px;
+  height: 22px;
+  flex-shrink: 0;
+  margin-left: 1rem;
+}
+
+.switch-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch-slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: #CBD5E0;
+  transition: 0.25s;
+  border-radius: 22px;
+}
+
+.switch-slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.switch-toggle input:checked + .switch-slider {
+  background-color: var(--ink);
+}
+
+.switch-toggle input:checked + .switch-slider:before {
+  transform: translateX(18px);
+}
+
+.switch-toggle input:focus-visible + .switch-slider {
+  outline: 2px solid var(--gold);
+}
+
+.char-counter {
+  font-size: 0.75rem;
+  color: var(--ink-faint);
+  text-align: right;
+  margin-top: 0.35rem;
+}
+
+.unsaved-changes-banner {
+  display: none;
+  background-color: var(--gold);
+  color: var(--paper-raised);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  animation: fadeIn 0.2s ease;
+}
+
+.unsaved-changes-banner.visible {
+  display: flex;
+}
+
+/* ── 8. Subjects Tree View (Expand/Collapse & Drag Handles) ────────────────── */
+.tree-node {
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  background-color: var(--paper-raised);
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+}
+
+.tree-node:hover {
+  border-color: var(--rule-strong);
+}
+
+.tree-subject {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  background-color: var(--paper);
+  border-bottom: 1px solid var(--rule);
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+}
+
+.tree-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tree-chevron {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  color: var(--ink-soft);
+}
+
+.tree-node.is-collapsed .tree-chevron {
+  transform: rotate(-90deg);
+}
+
+.tree-topics-container {
+  max-height: 500px;
+  overflow: hidden;
+  transition: max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+}
+
+.tree-node.is-collapsed .tree-topics-container {
+  max-height: 0;
+  opacity: 0;
+}
+
+.tree-topic {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1.25rem 0.75rem 2.5rem;
+  border-bottom: 1px solid var(--rule);
+  font-size: 0.875rem;
+  transition: background-color 0.15s ease;
+}
+
+.tree-topic:hover {
+  background-color: rgba(0, 0, 0, 0.015);
+}
+
+.tree-topic:last-child {
+  border-bottom: none;
+}
+
+.drag-handle {
+  cursor: grab;
+  color: var(--ink-faint);
+  display: inline-flex;
+  align-items: center;
+  margin-right: 0.5rem;
+  padding: 0.2rem;
+  border-radius: 2px;
+}
+
+.drag-handle:hover {
+  color: var(--ink);
+  background-color: var(--paper);
+}
+
+/* ── 9. Settings Running Total & Sliders ───────────────────────────────────── */
+.weight-badge {
+  padding: 0.35rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.weight-badge.is-valid {
+  background-color: rgba(74, 124, 89, 0.12);
+  color: var(--green);
+  border: 1px solid rgba(74, 124, 89, 0.3);
+}
+
+.weight-badge.is-invalid {
+  background-color: rgba(184, 75, 41, 0.12);
+  color: var(--red);
+  border: 1px solid rgba(184, 75, 41, 0.3);
+}
+
+/* Focus Visible */
+*:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Responsive Rules ─────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .admin-mobile-header {
+    display: flex;
+  }
+
+  .admin-sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.3);
+  }
+
+  .admin-sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  .admin-sidebar.collapsed {
+    width: 250px;
+  }
+
+  .admin-sidebar.collapsed .sidebar-brand span,
+  .admin-sidebar.collapsed .sidebar-link-text {
+    opacity: 1;
+    width: auto;
+    display: inline;
+  }
+
+  .sidebar-collapse-toggle {
+    display: none;
+  }
+
+  .main-content {
+    padding: 1.5rem;
+  }
+}
