@@ -9,11 +9,12 @@
 
 .auth-panel {
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
   background-color: var(--paper-raised);
   border: 1px solid var(--rule);
-  border-radius: 4px;
+  border-radius: 6px;
   padding: 2.5rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
 }
 
 .auth-panel-wide {
@@ -27,18 +28,128 @@
 
 .auth-title {
   font-family: var(--font-serif);
-  font-size: 1.5rem;
+  font-size: 1.625rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
+  letter-spacing: -0.01em;
 }
 
 .auth-desc {
   font-size: 0.875rem;
   color: var(--ink-soft);
+  line-height: 1.5;
 }
 
 .auth-form .form-group {
   margin-bottom: 1.25rem;
+  position: relative;
+}
+
+/* Input Password Wrapper & Toggle */
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-wrapper .form-control {
+  padding-right: 2.75rem;
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 0.25rem;
+  cursor: pointer;
+  color: var(--ink-faint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: color 0.2s ease;
+}
+
+.password-toggle-btn:hover {
+  color: var(--ink);
+}
+
+.password-toggle-btn:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 1px;
+}
+
+.password-toggle-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Field Validation States & Smooth Messages */
+.form-control.is-invalid {
+  border-color: var(--red) !important;
+  background-color: rgba(184, 75, 41, 0.02);
+}
+
+.form-control.is-valid {
+  border-color: var(--green) !important;
+}
+
+.field-error-msg {
+  font-size: 0.75rem;
+  color: var(--red);
+  margin-top: 0.35rem;
+  min-height: 1rem;
+  line-height: 1.3;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.field-error-msg.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Loading State for Buttons */
+.btn-spinner {
+  display: none;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  margin-right: 0.5rem;
+}
+
+.btn-primary .btn-spinner {
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+}
+
+.btn-outline .btn-spinner {
+  border: 2px solid rgba(0, 0, 0, 0.15);
+  border-top-color: var(--ink);
+}
+
+.btn.is-loading {
+  opacity: 0.8;
+  pointer-events: none;
+  cursor: not-allowed;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn.is-loading .btn-spinner {
+  display: inline-block;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 .auth-options {
@@ -52,6 +163,11 @@
 .auth-options a {
   color: var(--ink-soft);
   text-decoration: underline;
+  transition: color 0.2s ease;
+}
+
+.auth-options a:hover {
+  color: var(--ink);
 }
 
 .auth-footer {
@@ -67,6 +183,7 @@
   text-decoration: underline;
 }
 
+/* Role Selection Cards */
 .role-cards {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -77,28 +194,43 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2rem;
+  padding: 2.25rem 2rem;
   border: 1px solid var(--rule);
-  border-radius: 4px;
+  border-radius: 6px;
+  background-color: var(--paper-raised);
   text-decoration: none;
-  transition: border-color 0.2s, background-color 0.2s;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, box-shadow 0.25s ease, background-color 0.2s ease;
   text-align: center;
+  position: relative;
+  will-change: transform;
 }
 
 .role-card:hover {
-  border-color: var(--ink);
+  border-color: var(--gold);
   background-color: var(--paper);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.05);
+}
+
+.role-card:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+  border-color: var(--gold-ink);
+  transform: translateY(-3px);
 }
 
 .role-icon {
   width: 48px;
   height: 48px;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
   color: var(--ink-soft);
+  transition: color 0.2s ease, transform 0.25s ease;
 }
 
-.role-card:hover .role-icon {
-  color: var(--ink);
+.role-card:hover .role-icon,
+.role-card:focus-visible .role-icon {
+  color: var(--gold-ink);
+  transform: scale(1.05);
 }
 
 .role-title {
@@ -112,10 +244,26 @@
 .role-desc {
   font-size: 0.875rem;
   color: var(--ink-soft);
+  line-height: 1.5;
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .role-card,
+  .role-icon,
+  .field-error-msg,
+  .btn-spinner {
+    transition: none !important;
+    transform: none !important;
+    animation: none !important;
+  }
 }
 
 @media (max-width: 640px) {
   .role-cards {
     grid-template-columns: 1fr;
+  }
+  .auth-panel {
+    padding: 2rem 1.5rem;
   }
 }
