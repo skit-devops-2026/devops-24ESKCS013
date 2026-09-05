@@ -69,7 +69,6 @@
   padding-bottom: 0.5rem;
 }
 
-/* Mock Chart */
 .mock-chart {
   display: flex;
   align-items: flex-end;
@@ -105,7 +104,6 @@
   margin-top: 0.5rem;
 }
 
-/* Progress Bars */
 .progress-item {
   margin-bottom: 1rem;
 }
@@ -130,7 +128,6 @@
   background-color: var(--ink);
 }
 
-/* Tasks */
 .task-item {
   display: flex;
   align-items: flex-start;
@@ -157,9 +154,8 @@
   color: var(--ink-soft);
 }
 
-/* AI Insight Panel */
 .ai-insight {
-  background-color: #FDF9F1; /* subtle gold tint */
+  background-color: #FDF9F1; 
   border-color: #EEDCA8;
 }
 
@@ -177,7 +173,6 @@
   line-height: 1.6;
 }
 
-/* Activity Feed */
 .activity-item {
   position: relative;
   padding-left: 1.5rem;

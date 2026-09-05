@@ -1,8 +1,5 @@
-/* ==========================================================================
-   Student360 — Admin Portal Styles (Track A)
-   ========================================================================== */
 
-/* ── 1. Admin Sidebar & Collapsible / Mobile Drawer ───────────────────────── */
+
 .admin-sidebar {
   background-color: var(--ink);
   color: var(--paper);
@@ -110,7 +107,6 @@
   padding: 0.75rem 0;
 }
 
-/* Collapsed Sidebar Mode */
 .admin-sidebar.collapsed {
   width: 72px;
 }
@@ -137,7 +133,6 @@
   transform: rotate(180deg);
 }
 
-/* Mobile Header & Drawer */
 .admin-mobile-header {
   display: none;
   align-items: center;
@@ -183,7 +178,6 @@
   opacity: 1;
 }
 
-/* ── 2. Admin Dashboard Cards & Count-Up ───────────────────────────────────── */
 .admin-stat-card {
   border-top: 4px solid var(--ink-soft);
   position: relative;
@@ -201,7 +195,6 @@
   will-change: transform;
 }
 
-/* Interactive Attention Required Panel */
 .admin-attention-panel {
   background-color: rgba(184, 75, 41, 0.04);
   border: 1px solid #E5C3BC;
@@ -250,7 +243,6 @@
   animation: fadeIn 0.25s ease;
 }
 
-/* ── 3. Visual Activity Graph with Gridlines & Legend ─────────────────────── */
 .chart-container {
   position: relative;
   padding-top: 1rem;
@@ -322,7 +314,6 @@
   transform: translateX(-50%) translateY(-4px);
 }
 
-/* ── 4. Sortable Tables & Filter Chips ────────────────────────────────────── */
 .filter-chips-row {
   display: flex;
   gap: 0.5rem;
@@ -418,7 +409,6 @@ th.sort-desc .sort-icon {
 .status-warning { background-color: var(--gold-ink); }
 .status-danger { background-color: var(--red); }
 
-/* Priority Badges */
 .badge-priority {
   display: inline-flex;
   align-items: center;
@@ -447,7 +437,6 @@ th.sort-desc .sort-icon {
   border: 1px solid rgba(184, 75, 41, 0.25);
 }
 
-/* ── 5. Empty States ──────────────────────────────────────────────────────── */
 .admin-empty-state {
   padding: 4rem 2rem;
   text-align: center;
@@ -478,7 +467,6 @@ th.sort-desc .sort-icon {
   margin-bottom: 1.5rem;
 }
 
-/* ── 6. In-Page Dismissible Confirm Dialogs ────────────────────────────────── */
 .confirm-modal-backdrop {
   position: fixed;
   inset: 0;
@@ -535,7 +523,6 @@ th.sort-desc .sort-icon {
   gap: 0.75rem;
 }
 
-/* ── 7. AI Management Switch Toggles & Character Counter ──────────────────── */
 .switch-toggle-label {
   display: flex;
   align-items: center;
@@ -625,7 +612,6 @@ th.sort-desc .sort-icon {
   display: flex;
 }
 
-/* ── 8. Subjects Tree View (Expand/Collapse & Drag Handles) ────────────────── */
 .tree-node {
   border: 1px solid var(--rule);
   border-radius: 4px;
@@ -712,7 +698,6 @@ th.sort-desc .sort-icon {
   background-color: var(--paper);
 }
 
-/* ── 9. Settings Running Total & Sliders ───────────────────────────────────── */
 .weight-badge {
   padding: 0.35rem 0.75rem;
   border-radius: 4px;
@@ -735,7 +720,6 @@ th.sort-desc .sort-icon {
   border: 1px solid rgba(184, 75, 41, 0.3);
 }
 
-/* Focus Visible */
 *:focus-visible {
   outline: 2px solid var(--gold);
   outline-offset: 2px;
@@ -746,7 +730,6 @@ th.sort-desc .sort-icon {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* ── Responsive Rules ─────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
   .admin-mobile-header {
     display: flex;

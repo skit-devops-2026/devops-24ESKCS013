@@ -1,4 +1,4 @@
-/* Hero Section */
+
 .hero {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -28,7 +28,6 @@
   flex-wrap: wrap;
 }
 
-/* Sticky Navbar Shrink & Shadow */
 .navbar {
   position: sticky;
   top: 0;
@@ -47,7 +46,6 @@
   border-bottom: 1px solid var(--rule);
 }
 
-/* Mock Ledger Panel */
 .mock-ledger {
   padding: 2rem;
   background-color: var(--paper-raised);
@@ -152,7 +150,6 @@
   line-height: 1.5;
 }
 
-/* Scroll-triggered reveal states */
 .reveal-item {
   opacity: 0;
   transform: translateY(20px);
@@ -165,7 +162,6 @@
   transform: translateY(0);
 }
 
-/* Tablet Responsive Refinements (768px - 1024px) */
 @media (min-width: 769px) and (max-width: 1024px) {
   .hero {
     gap: 2.5rem;
@@ -195,7 +191,6 @@
   }
 }
 
-/* Mobile Responsive */
 @media (max-width: 768px) {
   .hero {
     grid-template-columns: 1fr;
@@ -224,7 +219,7 @@
   }
   
   .timeline-step::before {
-    display: none; /* Hide horizontal rule on mobile */
+    display: none; 
   }
 
   .mock-stats {
@@ -232,7 +227,6 @@
   }
 }
 
-/* Accessibility: Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
   .mock-ledger {
     animation: none;

@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;400;600&family=Inter:wght@400;500;600&display=swap');
 
 :root {
-  /* Color Tokens */
+  
   --ink: #161E2E;
   --ink-soft: #55617B;
   --ink-faint: #8992A6;
@@ -16,12 +16,10 @@
   --red: #B4432F;
   --red-soft: #F7E9E5;
 
-  /* Typography */
   --font-sans: 'Inter', sans-serif;
   --font-serif: 'Fraunces', serif;
 }
 
-/* Reset and Global Styles */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -49,12 +47,10 @@ a {
   text-decoration: none;
 }
 
-/* Tabular Numerals */
 .tabular-nums {
   font-variant-numeric: tabular-nums;
 }
 
-/* Component Styles */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -97,7 +93,6 @@ a {
   background-color: var(--gold-ink);
 }
 
-/* Form Fields */
 .form-group {
   margin-bottom: 1rem;
 }
@@ -131,7 +126,6 @@ a {
   color: var(--ink-faint);
 }
 
-/* Ledger Rows */
 .ledger-row {
   display: flex;
   align-items: flex-start;
@@ -175,21 +169,18 @@ a {
   max-width: 80ch;
 }
 
-/* Container */
 .container {
   max-width: 1024px;
   margin: 0 auto;
   padding: 0 1.5rem;
 }
 
-/* Panels/Cards (Restrained) */
 .panel {
   background-color: var(--paper-raised);
   border: 1px solid var(--rule);
   border-radius: 4px;
 }
 
-/* Nav */
 .navbar {
   display: flex;
   align-items: center;
@@ -220,7 +211,6 @@ a {
   color: var(--ink);
 }
 
-/* Sidebar Shell */
 .app-layout {
   display: flex;
   min-height: 100vh;
@@ -273,7 +263,6 @@ a {
   overflow-y: auto;
 }
 
-/* Timeline */
 .timeline {
   display: flex;
   align-items: flex-start;
@@ -330,7 +319,6 @@ a {
   color: var(--ink-soft);
 }
 
-/* Utilities */
 .text-gold { color: var(--gold-ink); }
 .text-green { color: var(--green); }
 .text-red { color: var(--red); }

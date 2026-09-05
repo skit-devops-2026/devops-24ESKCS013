@@ -45,7 +45,6 @@
   position: relative;
 }
 
-/* Input Password Wrapper & Toggle */
 .password-input-wrapper {
   position: relative;
   display: flex;
@@ -87,7 +86,6 @@
   height: 18px;
 }
 
-/* Field Validation States & Smooth Messages */
 .form-control.is-invalid {
   border-color: var(--red) !important;
   background-color: rgba(184, 75, 41, 0.02);
@@ -113,7 +111,6 @@
   transform: translateY(0);
 }
 
-/* Loading State for Buttons */
 .btn-spinner {
   display: none;
   width: 14px;
@@ -183,7 +180,6 @@
   text-decoration: underline;
 }
 
-/* Role Selection Cards */
 .role-cards {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -247,7 +243,6 @@
   line-height: 1.5;
 }
 
-/* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
   .role-card,
   .role-icon,

@@ -1,9 +1,5 @@
-/**
- * Student360 — main.js
- * Shared utilities: sidebar active-link, toast notifications, logout, helpers.
- */
 
-/* ─── Sidebar active link ─────────────────────────────────────────────────── */
+
 document.addEventListener('DOMContentLoaded', () => {
   const currentPath = window.location.pathname.split('/').pop();
   document.querySelectorAll('.sidebar-link').forEach(link => {
@@ -15,7 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Logout links
   document.querySelectorAll('a[href="../index.html"], a[href="index.html"]').forEach(el => {
     if (el.textContent.trim().toLowerCase().includes('logout')) {
       el.addEventListener('click', e => {
@@ -27,7 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-/* ─── Toast notification system ──────────────────────────────────────────── */
 window.S360 = window.S360 || {};
 
 S360.toast = function (message, type = 'info', duration = 3000) {
@@ -72,7 +66,6 @@ S360.toast = function (message, type = 'info', duration = 3000) {
   }, duration);
 };
 
-/* ─── Simple localStorage session helpers ────────────────────────────────── */
 S360.getSession = function () {
   try { return JSON.parse(localStorage.getItem('s360_session') || 'null'); }
   catch { return null; }
@@ -86,7 +79,6 @@ S360.clearSession = function () {
   localStorage.removeItem('s360_session');
 };
 
-/* ─── Format helpers ─────────────────────────────────────────────────────── */
 S360.formatMinutes = function (mins) {
   if (mins < 60) return `${mins}m`;
   const h = Math.floor(mins / 60);

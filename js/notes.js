@@ -1,11 +1,7 @@
-/**
- * Student360 — notes.js
- * Notes listing, search, tag filtering, and the note editor.
- */
+
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  /* ── Data layer ─────────────────────────────────────────────────────────── */
   function getNotes() {
     const defaults = [
       { id:1, title:'Integration by Parts — Key Formulas', subject:'Calculus II', tags:['formulas','exam-prep'], content:'∫u dv = uv − ∫v du\n\nRemember the LIATE rule for choosing u: Logarithmic, Inverse trig, Algebraic, Trigonometric, Exponential.', updatedAt:'2026-10-22T14:30:00Z' },
@@ -17,9 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem('s360_notes', JSON.stringify(notes));
   }
 
-  /* ─────────────────────────────────────────────────────────────────────────
-     NOTES LISTING PAGE (notes.html)
-  ──────────────────────────────────────────────────────────────────────────*/
   const notesGrid   = document.getElementById('notes-grid');
   const noteSearch  = document.getElementById('note-search');
   const noteSubjFlt = document.getElementById('note-subject-filter');
@@ -75,9 +68,6 @@ document.addEventListener('DOMContentLoaded', () => {
     renderNotes();
   }
 
-  /* ─────────────────────────────────────────────────────────────────────────
-     NOTE EDITOR PAGE (note-editor.html)
-  ──────────────────────────────────────────────────────────────────────────*/
   const editorForm    = document.getElementById('note-editor-form');
   const editorTitle   = document.getElementById('editor-title');
   const editorSubject = document.getElementById('editor-subject');

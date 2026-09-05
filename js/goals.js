@@ -1,11 +1,7 @@
-/**
- * Student360 — goals.js
- * Goal creation, milestone toggling, progress calculation.
- */
+
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  /* ── Data layer ─────────────────────────────────────────────────────────── */
   function getGoals() {
     const defaults = [
       {
@@ -34,13 +30,11 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem('s360_goals', JSON.stringify(goals));
   }
 
-  /* ── DOM refs ─────────────────────────────────────────────────────────────*/
   const goalsContainer = document.getElementById('goals-container');
   const createGoalForm = document.getElementById('create-goal-form');
 
   if (!goalsContainer) return;
 
-  /* ── Rendering ──────────────────────────────────────────────────────────── */
   function renderGoals() {
     const goals = getGoals();
 
@@ -81,7 +75,6 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>`;
     }).join('');
 
-    // Milestone toggles
     goalsContainer.querySelectorAll('.milestone-toggle').forEach(cb => {
       cb.addEventListener('change', () => {
         const goalId = +cb.closest('[data-goal]').dataset.goal;
@@ -96,7 +89,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
-    // Delete goal
     goalsContainer.querySelectorAll('.goal-delete').forEach(btn => {
       btn.addEventListener('click', () => {
         saveGoals(getGoals().filter(g => g.id !== +btn.dataset.id));
@@ -106,7 +98,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ── Create goal form ───────────────────────────────────────────────────── */
   if (createGoalForm) {
     createGoalForm.addEventListener('submit', e => {
       e.preventDefault();

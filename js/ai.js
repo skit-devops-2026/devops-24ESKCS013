@@ -1,12 +1,7 @@
-/**
- * Student360 — ai.js
- * AI Assistant chat interface + "What if I study?" projector.
- * Phase 2: Simulated responses. Phase 5: Real API calls.
- */
+
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  /* ── Chat ──────────────────────────────────────────────────────────────── */
   const chatForm    = document.getElementById('chat-form');
   const chatInput   = document.getElementById('chat-input');
   const chatHistory = document.getElementById('chat-history');
@@ -14,7 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (!chatHistory) return;
 
-  /* Mock knowledge base (Phase 2) */
   function mockAIReply(userMsg) {
     const m = userMsg.toLowerCase();
     if (m.includes('quiz') || m.includes('question'))
@@ -84,7 +78,6 @@ document.addEventListener('DOMContentLoaded', () => {
     showTypingIndicator();
     sendBtn.disabled = true;
 
-    // Simulate AI response latency
     setTimeout(() => {
       removeTypingIndicator();
       appendMessage(mockAIReply(text), 'ai');
@@ -104,7 +97,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ── "What if I study?" Projector ────────────────────────────────────────*/
   const projectForm    = document.getElementById('projector-form');
   const projResult     = document.getElementById('projector-result');
 
@@ -116,7 +108,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const minsPerDay= parseFloat(document.getElementById('proj-time').value)     || 0;
       const days      = parseFloat(document.getElementById('proj-days').value)      || 0;
 
-      // Rough projection formula: each 60 min/day for 7 days ≈ +5% progress
       const totalMins = minsPerDay * days;
       const gain      = Math.min((totalMins / 60) * 0.8, 100 - current);
       const projected = Math.min(Math.round(current + gain), 100);

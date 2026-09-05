@@ -1,19 +1,12 @@
-/**
- * Student360 — admin.js
- * Enhanced admin interactions: collapsible sidebar, mobile drawer, stat count-up,
- * sortable table columns, status filter chips, empty states, in-page confirmation modals,
- * AI dirty state indicators, subject tree toggles, and Growth Score weights validator.
- */
+
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  /* ── 1. Admin Sidebar (Collapse & Mobile Drawer) ────────────────────────── */
   const sidebar = document.querySelector('.admin-sidebar');
   const collapseToggle = document.getElementById('sidebar-collapse-toggle');
   const mobileToggle = document.getElementById('admin-menu-toggle');
   const backdrop = document.getElementById('sidebar-backdrop');
 
-  // Restore collapsed state
   const isCollapsed = localStorage.getItem('s360_admin_sidebar_collapsed') === 'true';
   if (sidebar && isCollapsed && window.innerWidth > 768) {
     sidebar.classList.add('collapsed');
@@ -38,7 +31,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Active route auto-highlighting
   const currentPage = window.location.pathname.split('/').pop() || 'dashboard.html';
   document.querySelectorAll('.admin-sidebar .sidebar-link').forEach(link => {
     const href = link.getAttribute('href');
@@ -49,7 +41,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  /* ── 2. In-Page Confirmation Modal Helper ────────────────────────────────── */
   function showConfirmModal({ title, message, confirmText = 'Confirm', confirmStyle = 'danger', onConfirm }) {
     let modalEl = document.getElementById('admin-confirm-modal');
     if (!modalEl) {
@@ -108,7 +99,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ── 3. Number Count-Up Animation (Dashboard Stats) ──────────────────────── */
   const countUpElements = document.querySelectorAll('[data-count]');
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -118,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const prefix = el.getAttribute('data-prefix') || '';
       const suffix = el.getAttribute('data-suffix') || '';
       const decimals = parseInt(el.getAttribute('data-decimals') || '0', 10);
-      const duration = 1000; // ms
+      const duration = 1000; 
 
       if (prefersReducedMotion || isNaN(target)) {
         el.textContent = `${prefix}${decimals > 0 ? target.toFixed(decimals) : target.toLocaleString()}${suffix}`;
@@ -129,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const animateCount = timestamp => {
         if (!startTime) startTime = timestamp;
         const progress = Math.min((timestamp - startTime) / duration, 1);
-        // easeOutQuart
+        
         const ease = 1 - Math.pow(1 - progress, 4);
         const current = target * ease;
 
@@ -145,7 +135,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ── 4. Expandable "Attention Required" Accordions ────────────────────────── */
   document.querySelectorAll('.attention-item-header').forEach(header => {
     header.addEventListener('click', () => {
       const details = header.nextElementSibling;
@@ -155,7 +144,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  /* ── 5. Students Table (Sorting & Filter Chips) ──────────────────────────── */
   const studentsTable = document.getElementById('students-table-body');
   if (studentsTable) {
     let STUDENTS = JSON.parse(localStorage.getItem('s360_admin_students') || 'null') || [
@@ -195,7 +183,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (course !== 'All Courses') rows = rows.filter(s => s.course === course);
       if (currentStatusFilter !== 'All') rows = rows.filter(s => s.status === currentStatusFilter);
 
-      // Sorting
       rows.sort((a, b) => {
         let valA = a[sortColumn];
         let valB = b[sortColumn];
@@ -247,7 +234,6 @@ document.addEventListener('DOMContentLoaded', () => {
         </tr>
       `).join('');
 
-      // Suspend / Unsuspend with confirm dialog
       studentsTable.querySelectorAll('.suspend-btn').forEach(btn => {
         btn.addEventListener('click', () => {
           const stu = STUDENTS.find(s => s.id === btn.dataset.id);
@@ -274,7 +260,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // Filter chip clicks
     filterChips.forEach(chip => {
       chip.addEventListener('click', () => {
         filterChips.forEach(c => c.classList.remove('active'));
@@ -287,7 +272,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (searchEl) searchEl.addEventListener('input', renderStudents);
     if (courseEl) courseEl.addEventListener('change', renderStudents);
 
-    // Sort column headers
     document.querySelectorAll('.admin-table th.sortable').forEach(th => {
       th.addEventListener('click', () => {
         const col = th.getAttribute('data-col');
@@ -310,7 +294,6 @@ document.addEventListener('DOMContentLoaded', () => {
     renderStudents();
   }
 
-  /* ── 6. Announcements Management ─────────────────────────────────────────── */
   const announcementsBody = document.getElementById('announcements-table-body');
   const announcementForm = document.getElementById('new-announcement-form');
 
@@ -412,7 +395,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  /* ── 7. Resources Management ─────────────────────────────────────────────── */
   const resourcesBody = document.getElementById('resources-table-body');
   const resourceForm = document.getElementById('new-resource-form');
 
@@ -524,7 +506,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  /* ── 8. AI Management (Character Count & Dirty Indicator) ────────────────── */
   const promptTextarea = document.getElementById('ai-system-prompt');
   const charCounter = document.getElementById('ai-char-counter');
   const unsavedBanner = document.getElementById('ai-unsaved-banner');
@@ -568,10 +549,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ── 9. Subjects Tree View (Expand/Collapse) ────────────────────────────── */
   document.querySelectorAll('.tree-subject').forEach(header => {
     header.addEventListener('click', e => {
-      // Don't collapse if clicking buttons inside tree-actions
+      
       if (e.target.closest('.tree-actions')) return;
       const node = header.closest('.tree-node');
       if (node) {
@@ -580,7 +560,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  /* ── 10. Growth Score Weights Validator (Settings) ──────────────────────── */
   const weightsForm = document.getElementById('growth-weights-form');
   const weightBadge = document.getElementById('weight-total-badge');
   const weightFeedback = document.getElementById('weight-feedback-text');

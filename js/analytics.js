@@ -1,12 +1,7 @@
-/**
- * Student360 — analytics.js
- * Draws bar/donut charts using the Canvas API (no external dependencies).
- * Reads data from localStorage for a fully offline Phase 2 experience.
- */
+
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  /* ── Helpers ─────────────────────────────────────────────────────────────*/
   function getSessions() {
     return JSON.parse(localStorage.getItem('s360_study_sessions') || '[]');
   }
@@ -14,13 +9,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const SUBJECTS = ['Calculus II', 'Physics 101', 'Computer Science', 'Literature'];
   const COLORS   = ['#2C2C2C', '#5A5A5A', '#B8974C', '#4A7C59'];
 
-  /* ── Study-time bar chart ────────────────────────────────────────────────*/
   const barCanvas = document.getElementById('study-time-chart');
   if (barCanvas) {
     const ctx = barCanvas.getContext('2d');
     const sessions = getSessions();
 
-    // Aggregate by weekday (last 7 days)
     const dayLabels = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
     const minutesByDay = Array(7).fill(0);
     const today = new Date();
@@ -33,12 +26,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // Fallback mock data if nothing in storage
     const data = minutesByDay.some(v => v > 0) ? minutesByDay : [40, 95, 60, 120, 80, 30, 70];
     drawBarChart(ctx, barCanvas, data, dayLabels, '#2C2C2C');
   }
 
-  /* ── Subject-breakdown donut ─────────────────────────────────────────────*/
   const donutCanvas = document.getElementById('subject-donut-chart');
   if (donutCanvas) {
     const ctx = donutCanvas.getContext('2d');
@@ -56,7 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
     drawDonutChart(ctx, donutCanvas, values, labels, COLORS);
   }
 
-  /* ── Productivity trend (stars bar) ─────────────────────────────────────*/
   const trendCanvas = document.getElementById('productivity-chart');
   if (trendCanvas) {
     const ctx = trendCanvas.getContext('2d');
@@ -65,7 +55,6 @@ document.addEventListener('DOMContentLoaded', () => {
     drawBarChart(ctx, trendCanvas, data, weekLabels, '#B8974C', 0, 5);
   }
 
-  /* ── Canvas drawing functions ────────────────────────────────────────────*/
   function drawBarChart(ctx, canvas, data, labels, color, yMin = 0, yMax = null) {
     const W = canvas.width  = canvas.offsetWidth;
     const H = canvas.height = canvas.offsetHeight || 200;
@@ -78,7 +67,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const min = yMin;
     const barW = chartW / data.length;
 
-    // Gridlines
     ctx.strokeStyle = 'rgba(0,0,0,0.07)';
     ctx.lineWidth   = 1;
     for (let i = 0; i <= 4; i++) {
@@ -86,7 +74,6 @@ document.addEventListener('DOMContentLoaded', () => {
       ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(padL + chartW, y); ctx.stroke();
     }
 
-    // Bars
     data.forEach((val, i) => {
       const pct = (val - min) / (max - min);
       const bH  = Math.max(pct * chartH, 2);
@@ -97,7 +84,6 @@ document.addEventListener('DOMContentLoaded', () => {
       ctx.fillStyle = color;
       ctx.fillRect(x, y, bW, bH);
 
-      // Label
       ctx.fillStyle = '#888';
       ctx.font = '11px Inter, sans-serif';
       ctx.textAlign = 'center';
@@ -127,14 +113,12 @@ document.addEventListener('DOMContentLoaded', () => {
       angle += slice;
     });
 
-    // Donut hole
     ctx.beginPath();
     ctx.arc(cx, cy, innerR, 0, 2 * Math.PI);
     ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--paper-raised').trim() || '#F7F5F0';
     ctx.fill();
   }
 
-  /* ── Consistency ratio live calc ─────────────────────────────────────────*/
   const consistencyEl = document.getElementById('consistency-value');
   if (consistencyEl) {
     const sessions = getSessions();

@@ -1,11 +1,7 @@
-/**
- * Student360 — tasks.js
- * Task creation, completion toggling, filtering, and delete.
- */
+
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  /* ── Data layer ─────────────────────────────────────────────────────────── */
   function getTasks() {
     const defaults = [
       { id:1, title:'Submit Physics Lab Report',  subject:'Physics 101',   priority:'High',   dueDate:'2026-10-23', estMins:120, done:false },
@@ -20,7 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem('s360_tasks', JSON.stringify(tasks));
   }
 
-  /* ── DOM refs ─────────────────────────────────────────────────────────────*/
   const taskListEl   = document.getElementById('task-list');
   const newTaskForm  = document.getElementById('new-task-form');
   const filterStatus = document.getElementById('filter-status');
@@ -29,7 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (!taskListEl) return;
 
-  /* ── Rendering ──────────────────────────────────────────────────────────── */
   function isOverdue(task) {
     return !task.done && task.dueDate && task.dueDate < S360.today();
   }
@@ -40,7 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderTasks() {
     let tasks = getTasks();
 
-    // Filters
     const statusFilter = filterStatus ? filterStatus.value : 'All Tasks';
     const subjFilter   = filterSubj   ? filterSubj.value   : 'All Subjects';
     const q            = searchInput  ? searchInput.value.toLowerCase() : '';
@@ -84,7 +77,6 @@ document.addEventListener('DOMContentLoaded', () => {
       section('Upcoming', upcoming, 'var(--ink-faint)') +
       section('Done',     done,     'var(--green)');
 
-    // Attach events
     taskListEl.querySelectorAll('.task-toggle').forEach(cb => {
       cb.addEventListener('change', () => {
         const id = +cb.closest('[data-id]').dataset.id;
@@ -105,7 +97,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ── New task form ──────────────────────────────────────────────────────── */
   if (newTaskForm) {
     newTaskForm.addEventListener('submit', e => {
       e.preventDefault();
@@ -136,7 +127,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ── Filters / search ───────────────────────────────────────────────────── */
   [filterStatus, filterSubj, searchInput].forEach(el => {
     if (el) el.addEventListener('change', renderTasks);
   });

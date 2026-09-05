@@ -1,15 +1,11 @@
-/**
- * Student360 — study.js
- * Manages the live study timer and session logging on study.html.
- */
+
 
 document.addEventListener('DOMContentLoaded', () => {
-  /* ── State ──────────────────────────────────────────────────────────────── */
+  
   let timerInterval = null;
   let elapsedSeconds = 0;
   let isRunning = false;
 
-  // LocalStorage data store (mock — Phase 3 replaces with API)
   function getSessions() {
     return JSON.parse(localStorage.getItem('s360_study_sessions') || '[]');
   }
@@ -17,7 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem('s360_study_sessions', JSON.stringify(sessions));
   }
 
-  /* ── DOM refs ─────────────────────────────────────────────────────────────*/
   const display     = document.getElementById('timer-display');
   const startBtn    = document.getElementById('timer-start');
   const pauseBtn    = document.getElementById('timer-pause');
@@ -27,9 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const noteInput   = document.getElementById('timer-note');
   const sessionList = document.getElementById('session-list');
 
-  if (!display) return; // Not on study page
+  if (!display) return; 
 
-  /* ── Timer helpers ──────────────────────────────────────────────────────── */
   function formatTime(secs) {
     const h = String(Math.floor(secs / 3600)).padStart(2, '0');
     const m = String(Math.floor((secs % 3600) / 60)).padStart(2, '0');
@@ -42,7 +36,6 @@ document.addEventListener('DOMContentLoaded', () => {
     display.textContent = formatTime(elapsedSeconds);
   }
 
-  /* ── Timer controls ─────────────────────────────────────────────────────── */
   if (startBtn) {
     startBtn.addEventListener('click', () => {
       if (isRunning) return;
@@ -96,7 +89,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       S360.toast(`Session saved — ${S360.formatMinutes(Math.round(elapsedSeconds / 60))} logged for ${session.subject}!`, 'success');
 
-      // Reset UI
       elapsedSeconds = 0;
       display.textContent = '00:00:00';
       startBtn.disabled = false;
@@ -108,7 +100,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ── Session list renderer ──────────────────────────────────────────────── */
   function renderSessions() {
     if (!sessionList) return;
     const sessions = getSessions();
@@ -129,7 +120,6 @@ document.addEventListener('DOMContentLoaded', () => {
       </li>
     `).join('');
 
-    // Delete handlers
     sessionList.querySelectorAll('[data-id]').forEach(btn => {
       btn.addEventListener('click', () => {
         const updated = getSessions().filter(s => s.id != btn.dataset.id);
@@ -142,7 +132,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   renderSessions();
 
-  /* ── Weekly heatmap updater (reads stored sessions) ──────────────────────*/
   const heatCells = document.querySelectorAll('.heat-cell[data-date]');
   if (heatCells.length) {
     const sessions = getSessions();
@@ -153,14 +142,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     heatCells.forEach(cell => {
       const mins = minutesByDate[cell.dataset.date] || 0;
-      // 0 = 0%, 60 = low, 120 = mid, 240+ = high
+      
       let intensity = 0;
       if (mins >= 240) intensity = 1;
       else if (mins >= 120) intensity = 0.7;
       else if (mins >= 60)  intensity = 0.45;
       else if (mins > 0)    intensity = 0.2;
       cell.style.backgroundColor = intensity
-        ? `rgba(184,151,76,${intensity})`  // gold tint for heat
+        ? `rgba(184,151,76,${intensity})`  
         : '';
       cell.title = mins ? `${mins} mins studied` : 'No data';
     });
