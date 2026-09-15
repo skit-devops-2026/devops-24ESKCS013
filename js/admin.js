@@ -411,8 +411,37 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (resourcesBody) {
+    const resSearchEl = document.getElementById('resource-search');
+    const resTypeEl = document.getElementById('resource-type-filter');
+    const resSubjectEl = document.getElementById('resource-subject-filter');
+    const resFilterChips = document.querySelectorAll('[aria-label="Filter resources by status"] .filter-chip');
+    
+    let currentResStatus = 'All';
+    let resSortCol = 'title';
+    let resSortAsc = true;
+
     function renderResources() {
-      const resList = getResources();
+      let resList = getResources();
+
+      const q = resSearchEl ? resSearchEl.value.toLowerCase().trim() : '';
+      const type = resTypeEl ? resTypeEl.value : 'All Types';
+      const subject = resSubjectEl ? resSubjectEl.value : 'All Subjects';
+
+      if (q) resList = resList.filter(r => r.title.toLowerCase().includes(q));
+      if (type !== 'All Types') resList = resList.filter(r => r.type === type);
+      if (subject !== 'All Subjects') resList = resList.filter(r => r.subject === subject);
+      if (currentResStatus !== 'All' && currentResStatus !== 'All Resources') {
+        const targetStatus = currentResStatus === 'Draft' ? 'Draft' : 'Published';
+        resList = resList.filter(r => r.status === targetStatus);
+      }
+
+      resList.sort((a, b) => {
+        let valA = (a[resSortCol] || '').toString().toLowerCase();
+        let valB = (b[resSortCol] || '').toString().toLowerCase();
+        if (valA < valB) return resSortAsc ? -1 : 1;
+        if (valA > valB) return resSortAsc ? 1 : -1;
+        return 0;
+      });
 
       if (!resList.length) {
         resourcesBody.innerHTML = `
@@ -468,6 +497,40 @@ document.addEventListener('DOMContentLoaded', () => {
               renderResources();
             }
           });
+        });
+      });
+    }
+
+    if (resSearchEl) resSearchEl.addEventListener('input', renderResources);
+    if (resTypeEl) resTypeEl.addEventListener('change', renderResources);
+    if (resSubjectEl) resSubjectEl.addEventListener('change', renderResources);
+
+    if (resFilterChips) {
+      resFilterChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+          resFilterChips.forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+          currentResStatus = chip.getAttribute('data-status') || 'All';
+          renderResources();
+        });
+      });
+    }
+
+    const resSortableThs = resourcesBody.closest('table').querySelectorAll('th.sortable');
+    if (resSortableThs) {
+      resSortableThs.forEach(th => {
+        th.addEventListener('click', () => {
+          const col = th.getAttribute('data-col');
+          if (resSortCol === col) {
+            resSortAsc = !resSortAsc;
+          } else {
+            resSortCol = col;
+            resSortAsc = true;
+          }
+
+          resSortableThs.forEach(header => header.classList.remove('sort-asc', 'sort-desc'));
+          th.classList.add(resSortAsc ? 'sort-asc' : 'sort-desc');
+          renderResources();
         });
       });
     }

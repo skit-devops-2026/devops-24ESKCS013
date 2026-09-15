@@ -82,14 +82,38 @@
       <div class="dashboard-grid">
         <div class="dashboard-main">
           
+          <div class="status-chips filter-chips-row" role="region" aria-label="Filter resources by status" style="margin-bottom: 1rem;">
+            <button type="button" class="filter-chip active" data-status="All">All Resources</button>
+            <button type="button" class="filter-chip" data-status="Published">Published</button>
+            <button type="button" class="filter-chip" data-status="Draft">Draft</button>
+          </div>
+
+          <div class="dashboard-panel" style="margin-bottom: 1.5rem; padding: 1rem;">
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+              <input type="text" id="resource-search" class="form-control" placeholder="Search by title…" style="flex: 1; min-width: 200px;">
+              <select id="resource-type-filter" class="form-control" style="width: 180px;">
+                <option>All Types</option>
+                <option>PDF Document</option>
+                <option>Video</option>
+                <option>External Link</option>
+              </select>
+              <select id="resource-subject-filter" class="form-control" style="width: 180px;">
+                <option>All Subjects</option>
+                <option>Calculus II</option>
+                <option>Physics 101</option>
+                <option>Computer Science</option>
+              </select>
+            </div>
+          </div>
+
           <div class="dashboard-panel" style="padding: 0; overflow-x: auto;">
             <table class="admin-table">
               <thead>
                 <tr>
-                  <th>Title</th>
-                  <th>Type</th>
-                  <th>Subject</th>
-                  <th>Status</th>
+                  <th class="sortable sort-asc" data-col="title">Title <span class="sort-icon" aria-hidden="true">▲</span></th>
+                  <th class="sortable" data-col="type">Type <span class="sort-icon" aria-hidden="true">▲</span></th>
+                  <th class="sortable" data-col="subject">Subject <span class="sort-icon" aria-hidden="true">▲</span></th>
+                  <th class="sortable" data-col="status">Status <span class="sort-icon" aria-hidden="true">▲</span></th>
                   <th style="text-align: right;">Actions</th>
                 </tr>
               </thead>
