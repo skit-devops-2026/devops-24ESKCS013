@@ -28,7 +28,11 @@ jobs:
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Tag for GHCR
-        run: docker tag todo-practice ghcr.io/${{ github.actor }}/todo-practice:${{ github.sha }}
+        run: |
+          ACTOR=$(echo "${{ github.actor }}" | tr '[:upper:]' '[:lower:]')
+          docker tag todo-practice ghcr.io/${ACTOR}/todo-practice:${{ github.sha }}
 
       - name: Push to GHCR
-        run: docker push ghcr.io/${{ github.actor }}/todo-practice:${{ github.sha }}
+        run: |
+          ACTOR=$(echo "${{ github.actor }}" | tr '[:upper:]' '[:lower:]')
+          docker push ghcr.io/${ACTOR}/todo-practice:${{ github.sha }}
