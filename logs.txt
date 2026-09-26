@@ -1,0 +1,262 @@
+﻿2026-09-26T07:37:29.4968862Z Current runner version: '2.337.0'
+2026-09-26T07:37:29.4992984Z ##[group]Runner Image Provisioner
+2026-09-26T07:37:29.4993720Z Hosted Compute Agent
+2026-09-26T07:37:29.4994269Z Version: 20260828.587
+2026-09-26T07:37:29.4994821Z Commit: abac92662cab4cc7352de4f9f9d2e2419aad9c29
+2026-09-26T07:37:29.4995412Z Build Date: 2026-08-28T16:44:25Z
+2026-09-26T07:37:29.4996374Z Worker ID: {8fa2f564-e44f-405e-8a0f-28e84a0379f4}
+2026-09-26T07:37:29.4997029Z Azure Region: centralus
+2026-09-26T07:37:29.4997523Z ##[endgroup]
+2026-09-26T07:37:29.4998715Z ##[group]Operating System
+2026-09-26T07:37:29.4999267Z Ubuntu
+2026-09-26T07:37:29.4999740Z 24.04.5
+2026-09-26T07:37:29.5000213Z LTS
+2026-09-26T07:37:29.5000655Z ##[endgroup]
+2026-09-26T07:37:29.5001144Z ##[group]Runner Image
+2026-09-26T07:37:29.5001640Z Image: ubuntu-24.04
+2026-09-26T07:37:29.5002209Z Version: 20260920.314.1
+2026-09-26T07:37:29.5003258Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260920.314/images/ubuntu/Ubuntu2404-Readme.md
+2026-09-26T07:37:29.5004694Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260920.314
+2026-09-26T07:37:29.5005518Z ##[endgroup]
+2026-09-26T07:37:29.5007046Z ##[group]GITHUB_TOKEN Permissions
+2026-09-26T07:37:29.5009009Z Contents: read
+2026-09-26T07:37:29.5009570Z Metadata: read
+2026-09-26T07:37:29.5010159Z Packages: write
+2026-09-26T07:37:29.5010696Z ##[endgroup]
+2026-09-26T07:37:29.5012760Z Secret source: Actions
+2026-09-26T07:37:29.5013485Z Cache mode: write
+2026-09-26T07:37:29.5014424Z Prepare workflow directory
+2026-09-26T07:37:29.5281042Z Prepare all required actions
+2026-09-26T07:37:29.5321652Z Getting action download info
+2026-09-26T07:37:29.7648314Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-09-26T07:37:29.9425936Z Complete job name: build-and-test
+2026-09-26T07:37:30.0011023Z ##[group]Run actions/checkout@v4
+2026-09-26T07:37:30.0011867Z with:
+2026-09-26T07:37:30.0012399Z   repository: skit-devops-2026/devops-24ESKCS013
+2026-09-26T07:37:30.0016070Z   token: ***
+2026-09-26T07:37:30.0016510Z   ssh-strict: true
+2026-09-26T07:37:30.0016986Z   ssh-user: git
+2026-09-26T07:37:30.0017425Z   persist-credentials: true
+2026-09-26T07:37:30.0017926Z   clean: true
+2026-09-26T07:37:30.0018381Z   sparse-checkout-cone-mode: true
+2026-09-26T07:37:30.0018895Z   fetch-depth: 1
+2026-09-26T07:37:30.0019346Z   fetch-tags: false
+2026-09-26T07:37:30.0019784Z   show-progress: true
+2026-09-26T07:37:30.0020241Z   lfs: false
+2026-09-26T07:37:30.0020666Z   submodules: false
+2026-09-26T07:37:30.0021106Z   set-safe-directory: true
+2026-09-26T07:37:30.0021606Z   allow-unsafe-pr-checkout: false
+2026-09-26T07:37:30.0022255Z ##[endgroup]
+2026-09-26T07:37:30.0890855Z Syncing repository: skit-devops-2026/devops-24ESKCS013
+2026-09-26T07:37:30.0892936Z ##[group]Getting Git version info
+2026-09-26T07:37:30.0893763Z Working directory is '/home/runner/work/devops-24ESKCS013/devops-24ESKCS013'
+2026-09-26T07:37:30.0895085Z [command]/usr/bin/git version
+2026-09-26T07:37:30.0951878Z git version 2.55.0
+2026-09-26T07:37:30.0990369Z ##[endgroup]
+2026-09-26T07:37:30.0996357Z Temporarily overriding HOME='/home/runner/work/_temp/564241ed-1f29-4c45-a817-3db1b2093e41' before making global git config changes
+2026-09-26T07:37:30.0998212Z Adding repository directory to the temporary git global config as a safe directory
+2026-09-26T07:37:30.0999871Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/devops-24ESKCS013/devops-24ESKCS013
+2026-09-26T07:37:30.1028483Z Deleting the contents of '/home/runner/work/devops-24ESKCS013/devops-24ESKCS013'
+2026-09-26T07:37:30.1032087Z ##[group]Initializing the repository
+2026-09-26T07:37:30.1034979Z [command]/usr/bin/git init /home/runner/work/devops-24ESKCS013/devops-24ESKCS013
+2026-09-26T07:37:30.1110575Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-09-26T07:37:30.1112432Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-09-26T07:37:30.1114047Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-09-26T07:37:30.1115207Z hint: call:
+2026-09-26T07:37:30.1116235Z hint:
+2026-09-26T07:37:30.1117086Z hint: 	git config --global init.defaultBranch <name>
+2026-09-26T07:37:30.1118178Z hint:
+2026-09-26T07:37:30.1119174Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-09-26T07:37:30.1120567Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-09-26T07:37:30.1121676Z hint:
+2026-09-26T07:37:30.1122455Z hint: 	git branch -m <name>
+2026-09-26T07:37:30.1123329Z hint:
+2026-09-26T07:37:30.1124298Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-09-26T07:37:30.1126156Z Initialized empty Git repository in /home/runner/work/devops-24ESKCS013/devops-24ESKCS013/.git/
+2026-09-26T07:37:30.1131516Z [command]/usr/bin/git remote add origin https://github.com/skit-devops-2026/devops-24ESKCS013
+2026-09-26T07:37:30.1167313Z ##[endgroup]
+2026-09-26T07:37:30.1168552Z ##[group]Disabling automatic garbage collection
+2026-09-26T07:37:30.1170090Z [command]/usr/bin/git config --local gc.auto 0
+2026-09-26T07:37:30.1210923Z ##[endgroup]
+2026-09-26T07:37:30.1212199Z ##[group]Setting up auth
+2026-09-26T07:37:30.1213296Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-26T07:37:30.1229447Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-26T07:37:30.1503084Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-26T07:37:30.1534583Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-26T07:37:30.1697530Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-26T07:37:30.1728197Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-26T07:37:30.1884368Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-09-26T07:37:30.1912964Z ##[endgroup]
+2026-09-26T07:37:30.1913890Z ##[group]Fetching the repository
+2026-09-26T07:37:30.1921229Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +c55e963b993664e89e616ddbf1bead49bd05f11f:refs/remotes/origin/main
+2026-09-26T07:37:30.6830108Z From https://github.com/skit-devops-2026/devops-24ESKCS013
+2026-09-26T07:37:30.6831200Z  * [new ref]         c55e963b993664e89e616ddbf1bead49bd05f11f -> origin/main
+2026-09-26T07:37:30.6835163Z ##[endgroup]
+2026-09-26T07:37:30.6836944Z ##[group]Determining the checkout info
+2026-09-26T07:37:30.6838502Z ##[endgroup]
+2026-09-26T07:37:30.6843474Z [command]/usr/bin/git sparse-checkout disable
+2026-09-26T07:37:30.6885803Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-09-26T07:37:30.6910146Z ##[group]Checking out the ref
+2026-09-26T07:37:30.6913347Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+2026-09-26T07:37:30.6982800Z Switched to a new branch 'main'
+2026-09-26T07:37:30.6987096Z branch 'main' set up to track 'origin/main'.
+2026-09-26T07:37:30.6989399Z ##[endgroup]
+2026-09-26T07:37:30.7018180Z [command]/usr/bin/git log -1 --format=%H
+2026-09-26T07:37:30.7035400Z c55e963b993664e89e616ddbf1bead49bd05f11f
+2026-09-26T07:37:30.7233690Z ##[group]Run docker build -t todo-practice .
+2026-09-26T07:37:30.7234555Z [36;1mdocker build -t todo-practice .[0m
+2026-09-26T07:37:30.7393108Z shell: /usr/bin/bash -e {0}
+2026-09-26T07:37:30.7393820Z ##[endgroup]
+2026-09-26T07:37:31.4692728Z #0 building with "default" instance using docker driver
+2026-09-26T07:37:31.4693100Z 
+2026-09-26T07:37:31.4693394Z #1 [internal] load build definition from Dockerfile
+2026-09-26T07:37:31.4694145Z #1 transferring dockerfile: 195B 0.1s done
+2026-09-26T07:37:31.4694521Z #1 DONE 0.1s
+2026-09-26T07:37:31.4694728Z 
+2026-09-26T07:37:31.4694992Z #2 [internal] load metadata for docker.io/library/nginx:alpine
+2026-09-26T07:37:31.7827049Z #2 ...
+2026-09-26T07:37:31.7827699Z 
+2026-09-26T07:37:31.7828156Z #3 [auth] library/nginx:pull token for registry-1.docker.io
+2026-09-26T07:37:31.7828784Z #3 DONE 0.0s
+2026-09-26T07:37:31.9323793Z 
+2026-09-26T07:37:31.9324348Z #2 [internal] load metadata for docker.io/library/nginx:alpine
+2026-09-26T07:37:32.2218078Z #2 DONE 0.8s
+2026-09-26T07:37:32.3410956Z 
+2026-09-26T07:37:32.3411905Z #4 [internal] load .dockerignore
+2026-09-26T07:37:32.3412975Z #4 transferring context: 92B done
+2026-09-26T07:37:32.3413837Z #4 DONE 0.0s
+2026-09-26T07:37:32.3414418Z 
+2026-09-26T07:37:32.3414745Z #5 [internal] load build context
+2026-09-26T07:37:32.3415542Z #5 transferring context: 349.53kB done
+2026-09-26T07:37:32.3416165Z #5 DONE 0.0s
+2026-09-26T07:37:32.3416463Z 
+2026-09-26T07:37:32.3417273Z #6 [1/4] FROM docker.io/library/nginx:alpine@sha256:1ed1b0e1d7652937d6cbdaf4018c7b6fc009a7dd6c3047351e2eddda745de43f
+2026-09-26T07:37:32.3418078Z #6 resolve docker.io/library/nginx:alpine@sha256:1ed1b0e1d7652937d6cbdaf4018c7b6fc009a7dd6c3047351e2eddda745de43f done
+2026-09-26T07:37:32.3418788Z #6 sha256:e2de96513ba9eb53b431787ec8a65cdde380ac4772a3e4c4b714dcfde2a102b5 0B / 3.85MB 0.1s
+2026-09-26T07:37:32.3419407Z #6 sha256:1ed1b0e1d7652937d6cbdaf4018c7b6fc009a7dd6c3047351e2eddda745de43f 10.33kB / 10.33kB done
+2026-09-26T07:37:32.3420187Z #6 sha256:0530961ff0592b58c10f767535cc0abdfccf9e389ff7cc90f87320c1bc7e8506 2.50kB / 2.50kB done
+2026-09-26T07:37:32.3420970Z #6 sha256:3dd08163706a20b20622f310ec10258cc96e9007ab357f7201955bc880ac17f4 12.32kB / 12.32kB done
+2026-09-26T07:37:32.3421583Z #6 sha256:d9aae54b58315e84b9c3ac5f00bad6610e0e28ad9ff28fcde694647e0be13131 0B / 1.93MB 0.1s
+2026-09-26T07:37:32.3422154Z #6 sha256:6c53d0b2a666ed8f8fad8d9982e30cf24eb085036c17b27591665ca25e1ba40c 0B / 629B 0.1s
+2026-09-26T07:37:32.4563942Z #6 sha256:e2de96513ba9eb53b431787ec8a65cdde380ac4772a3e4c4b714dcfde2a102b5 3.85MB / 3.85MB 0.2s done
+2026-09-26T07:37:32.4565528Z #6 extracting sha256:e2de96513ba9eb53b431787ec8a65cdde380ac4772a3e4c4b714dcfde2a102b5
+2026-09-26T07:37:32.4566979Z #6 sha256:745dfb2690dd8627e1593941caccc756f14943df7930a478beb4e808c5695cb9 965B / 965B 0.2s done
+2026-09-26T07:37:32.4567994Z #6 sha256:9a9a644fdd6a3681d43dace44c8cfef374cfd7b24f433113379ea483692498a8 404B / 404B 0.2s
+2026-09-26T07:37:32.4569550Z #6 sha256:64c8194480fee2c03e01cc561cf5542733627d2c7de493a028139677025f975c 0B / 1.21kB 0.2s
+2026-09-26T07:37:32.5787611Z #6 sha256:d9aae54b58315e84b9c3ac5f00bad6610e0e28ad9ff28fcde694647e0be13131 1.93MB / 1.93MB 0.2s done
+2026-09-26T07:37:32.5788739Z #6 sha256:6c53d0b2a666ed8f8fad8d9982e30cf24eb085036c17b27591665ca25e1ba40c 629B / 629B 0.1s done
+2026-09-26T07:37:32.5789703Z #6 extracting sha256:e2de96513ba9eb53b431787ec8a65cdde380ac4772a3e4c4b714dcfde2a102b5 0.1s done
+2026-09-26T07:37:32.5790707Z #6 sha256:9a9a644fdd6a3681d43dace44c8cfef374cfd7b24f433113379ea483692498a8 404B / 404B 0.2s done
+2026-09-26T07:37:32.5791696Z #6 sha256:64c8194480fee2c03e01cc561cf5542733627d2c7de493a028139677025f975c 1.21kB / 1.21kB 0.2s done
+2026-09-26T07:37:32.5792803Z #6 extracting sha256:d9aae54b58315e84b9c3ac5f00bad6610e0e28ad9ff28fcde694647e0be13131 0.1s done
+2026-09-26T07:37:32.5793853Z #6 sha256:e72112c14215406dc7f23ef8e5cfdfddeb8662176167382ad64ec86f52b7a88e 0B / 20.53MB 0.3s
+2026-09-26T07:37:32.5795137Z #6 sha256:e76228b47809e8a4bd37a6ba52a04d282d8c72ddf0ff9e8b83fd6318631abd52 1.40kB / 1.40kB 0.3s done
+2026-09-26T07:37:32.7414462Z #6 sha256:e72112c14215406dc7f23ef8e5cfdfddeb8662176167382ad64ec86f52b7a88e 20.53MB / 20.53MB 0.5s
+2026-09-26T07:37:32.9008897Z #6 sha256:e72112c14215406dc7f23ef8e5cfdfddeb8662176167382ad64ec86f52b7a88e 20.53MB / 20.53MB 0.5s done
+2026-09-26T07:37:32.9017192Z #6 extracting sha256:6c53d0b2a666ed8f8fad8d9982e30cf24eb085036c17b27591665ca25e1ba40c
+2026-09-26T07:37:33.0606901Z #6 extracting sha256:6c53d0b2a666ed8f8fad8d9982e30cf24eb085036c17b27591665ca25e1ba40c done
+2026-09-26T07:37:33.0608349Z #6 extracting sha256:745dfb2690dd8627e1593941caccc756f14943df7930a478beb4e808c5695cb9 done
+2026-09-26T07:37:33.0609520Z #6 extracting sha256:9a9a644fdd6a3681d43dace44c8cfef374cfd7b24f433113379ea483692498a8 done
+2026-09-26T07:37:33.0610876Z #6 extracting sha256:64c8194480fee2c03e01cc561cf5542733627d2c7de493a028139677025f975c done
+2026-09-26T07:37:33.0612519Z #6 extracting sha256:e76228b47809e8a4bd37a6ba52a04d282d8c72ddf0ff9e8b83fd6318631abd52 done
+2026-09-26T07:37:33.0613831Z #6 extracting sha256:e72112c14215406dc7f23ef8e5cfdfddeb8662176167382ad64ec86f52b7a88e 0.1s
+2026-09-26T07:37:33.2646094Z #6 extracting sha256:e72112c14215406dc7f23ef8e5cfdfddeb8662176167382ad64ec86f52b7a88e 0.3s done
+2026-09-26T07:37:33.6185448Z #6 DONE 1.4s
+2026-09-26T07:37:33.7695458Z 
+2026-09-26T07:37:33.7696420Z #7 [2/4] RUN apk add --no-cache nodejs npm
+2026-09-26T07:37:34.0956071Z #7 0.476 (1/8) Installing ada-libs (3.3.0-r0)
+2026-09-26T07:37:34.2069513Z #7 0.493 (2/8) Installing icu-data-en (78.1-r0)
+2026-09-26T07:37:34.2070032Z #7 0.530   Executing icu-data-en-78.1-r0.post-install
+2026-09-26T07:37:34.2070847Z #7 0.532   * If you need ICU with non-English locales and legacy charset support, install
+2026-09-26T07:37:34.2071501Z #7 0.532   * package icu-data-full.
+2026-09-26T07:37:34.2072003Z #7 0.532 (3/8) Installing icu-libs (78.1-r0)
+2026-09-26T07:37:34.2072501Z #7 0.575 (4/8) Installing simdjson (4.2.4-r0)
+2026-09-26T07:37:34.2073042Z #7 0.588 (5/8) Installing simdutf (9.0.0-r0)
+2026-09-26T07:37:34.3961558Z #7 0.603 (6/8) Installing sqlite-libs (3.53.4-r0)
+2026-09-26T07:37:34.3962216Z #7 0.627 (7/8) Installing nodejs (24.18.1-r0)
+2026-09-26T07:37:34.5217969Z #7 0.902 (8/8) Installing npm (11.12.1-r0)
+2026-09-26T07:37:34.6357117Z #7 1.000 Executing busybox-1.37.0-r31.trigger
+2026-09-26T07:37:34.6358069Z #7 1.016 OK: 130.3 MiB in 79 packages
+2026-09-26T07:37:35.1091622Z #7 DONE 1.5s
+2026-09-26T07:37:35.2998024Z 
+2026-09-26T07:37:35.2998704Z #8 [3/4] COPY . /usr/share/nginx/html
+2026-09-26T07:37:35.2999240Z #8 DONE 0.0s
+2026-09-26T07:37:35.2999535Z 
+2026-09-26T07:37:35.2999703Z #9 [4/4] WORKDIR /usr/share/nginx/html
+2026-09-26T07:37:35.3000061Z #9 DONE 0.0s
+2026-09-26T07:37:35.3000209Z 
+2026-09-26T07:37:35.3000359Z #10 exporting to image
+2026-09-26T07:37:35.3000720Z #10 exporting layers
+2026-09-26T07:37:36.0081589Z #10 exporting layers 0.9s done
+2026-09-26T07:37:36.0258176Z #10 writing image sha256:a3be141878fa67891e30487f2c1afa513bdc9d2f8d62b202785325bd7844c7b0 done
+2026-09-26T07:37:36.0259091Z #10 naming to docker.io/library/todo-practice done
+2026-09-26T07:37:36.0267307Z #10 DONE 0.9s
+2026-09-26T07:37:36.0658130Z ##[group]Run docker run --rm todo-practice npm test
+2026-09-26T07:37:36.0658643Z [36;1mdocker run --rm todo-practice npm test[0m
+2026-09-26T07:37:36.0697166Z shell: /usr/bin/bash -e {0}
+2026-09-26T07:37:36.0697538Z ##[endgroup]
+2026-09-26T07:37:36.3491838Z 
+2026-09-26T07:37:36.3492703Z > todo-ci-practice@1.0.0 test
+2026-09-26T07:37:36.3493118Z > node test.js
+2026-09-26T07:37:36.3493409Z 
+2026-09-26T07:37:36.3854410Z All tests passed.
+2026-09-26T07:37:36.5088321Z ##[group]Run docker tag todo-practice todo-practice:c55e963b993664e89e616ddbf1bead49bd05f11f
+2026-09-26T07:37:36.5089006Z [36;1mdocker tag todo-practice todo-practice:c55e963b993664e89e616ddbf1bead49bd05f11f[0m
+2026-09-26T07:37:36.5124057Z shell: /usr/bin/bash -e {0}
+2026-09-26T07:37:36.5124373Z ##[endgroup]
+2026-09-26T07:37:36.5329301Z ##[group]Run echo "***" | docker login ghcr.io -u Abhimanyu2211 --password-stdin
+2026-09-26T07:37:36.5331549Z [36;1mecho "***" | docker login ghcr.io -u Abhimanyu2211 --password-stdin[0m
+2026-09-26T07:37:36.5359626Z shell: /usr/bin/bash -e {0}
+2026-09-26T07:37:36.5359979Z ##[endgroup]
+2026-09-26T07:37:36.8975179Z 
+2026-09-26T07:37:36.8976186Z WARNING! Your credentials are stored unencrypted in '/home/runner/.docker/config.json'.
+2026-09-26T07:37:36.8977039Z Configure a credential helper to remove this warning. See
+2026-09-26T07:37:36.8978045Z https://docs.docker.com/go/credential-store/
+2026-09-26T07:37:36.8978399Z 
+2026-09-26T07:37:36.8978575Z Login Succeeded
+2026-09-26T07:37:36.9017093Z ##[group]Run OWNER=$(echo "skit-devops-2026" | tr '[:upper:]' '[:lower:]')
+2026-09-26T07:37:36.9017598Z [36;1mOWNER=$(echo "skit-devops-2026" | tr '[:upper:]' '[:lower:]')[0m
+2026-09-26T07:37:36.9018168Z [36;1mdocker tag todo-practice ghcr.io/${OWNER}/todo-practice:c55e963b993664e89e616ddbf1bead49bd05f11f[0m
+2026-09-26T07:37:36.9053369Z shell: /usr/bin/bash -e {0}
+2026-09-26T07:37:36.9053722Z ##[endgroup]
+2026-09-26T07:37:36.9273117Z ##[group]Run OWNER=$(echo "skit-devops-2026" | tr '[:upper:]' '[:lower:]')
+2026-09-26T07:37:36.9273589Z [36;1mOWNER=$(echo "skit-devops-2026" | tr '[:upper:]' '[:lower:]')[0m
+2026-09-26T07:37:36.9274095Z [36;1mdocker push ghcr.io/${OWNER}/todo-practice:c55e963b993664e89e616ddbf1bead49bd05f11f[0m
+2026-09-26T07:37:36.9301073Z shell: /usr/bin/bash -e {0}
+2026-09-26T07:37:36.9301419Z ##[endgroup]
+2026-09-26T07:37:36.9559886Z The push refers to repository [ghcr.io/skit-devops-2026/todo-practice]
+2026-09-26T07:37:37.0626829Z 5f70bf18a086: Preparing
+2026-09-26T07:37:37.0627442Z 760b9487a429: Preparing
+2026-09-26T07:37:37.0628033Z c2f5abe76301: Preparing
+2026-09-26T07:37:37.0628396Z 001b5608a929: Preparing
+2026-09-26T07:37:37.0628727Z c86f6810da0b: Preparing
+2026-09-26T07:37:37.0629054Z 41473198c04a: Preparing
+2026-09-26T07:37:37.0629509Z 149ab1e5d6ca: Preparing
+2026-09-26T07:37:37.0629929Z 2a7ed9afc1c3: Preparing
+2026-09-26T07:37:37.0630329Z 641b74319bab: Preparing
+2026-09-26T07:37:37.0630898Z 379f51bf5b58: Preparing
+2026-09-26T07:37:37.0631302Z 74d97c428c51: Preparing
+2026-09-26T07:37:37.0631692Z 41473198c04a: Waiting
+2026-09-26T07:37:37.0632135Z 149ab1e5d6ca: Waiting
+2026-09-26T07:37:37.0632454Z 2a7ed9afc1c3: Waiting
+2026-09-26T07:37:37.0632705Z 641b74319bab: Waiting
+2026-09-26T07:37:37.0632987Z 379f51bf5b58: Waiting
+2026-09-26T07:37:37.0633334Z 74d97c428c51: Waiting
+2026-09-26T07:37:37.9715293Z denied: permission_denied: write_package
+2026-09-26T07:37:37.9733000Z ##[error]Process completed with exit code 1.
+2026-09-26T07:37:37.9849479Z Post job cleanup.
+2026-09-26T07:37:38.0567721Z [command]/usr/bin/git version
+2026-09-26T07:37:38.0604460Z git version 2.55.0
+2026-09-26T07:37:38.0639021Z Temporarily overriding HOME='/home/runner/work/_temp/9cb5d5f1-eb18-4c61-9161-6eec522c1461' before making global git config changes
+2026-09-26T07:37:38.0639868Z Adding repository directory to the temporary git global config as a safe directory
+2026-09-26T07:37:38.0645829Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/devops-24ESKCS013/devops-24ESKCS013
+2026-09-26T07:37:38.0676136Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-26T07:37:38.0703485Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-26T07:37:38.0891151Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-26T07:37:38.0910744Z http.https://github.com/.extraheader
+2026-09-26T07:37:38.0920156Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-09-26T07:37:38.0945523Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-26T07:37:38.1113156Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-26T07:37:38.1141086Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-26T07:37:38.1413642Z Cleaning up orphan processes
+2026-09-26T07:37:38.1682161Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
