@@ -29,10 +29,10 @@ jobs:
 
       - name: Tag for GHCR
         run: |
-          ACTOR=$(echo "${{ github.actor }}" | tr '[:upper:]' '[:lower:]')
-          docker tag todo-practice ghcr.io/${ACTOR}/todo-practice:${{ github.sha }}
+          OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          docker tag todo-practice ghcr.io/${OWNER}/todo-practice:${{ github.sha }}
 
       - name: Push to GHCR
         run: |
-          ACTOR=$(echo "${{ github.actor }}" | tr '[:upper:]' '[:lower:]')
-          docker push ghcr.io/${ACTOR}/todo-practice:${{ github.sha }}
+          OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          docker push ghcr.io/${OWNER}/todo-practice:${{ github.sha }}
