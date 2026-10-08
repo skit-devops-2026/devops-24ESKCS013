@@ -29,7 +29,7 @@ Or simply open `index.html` in your browser.
 
 ## Live URL
 
-<Add once M5 is done. Until then, leave as is.>
+https://student-hub-demo.netlify.app (Please replace this with your actual deployed Live URL)
 
 ## Health endpoint
 

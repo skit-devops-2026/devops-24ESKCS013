@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fsd-project
+  labels:
+    app: fsd-project
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: fsd-project
+  template:
+    metadata:
+      labels:
+        app: fsd-project
+    spec:
+      containers:
+      - name: fsd-project
+        image: devops-project:latest # You'll need to update this to your actual registry image (e.g., your-dockerhub-username/devops-project:latest)
+        ports:
+        - containerPort: 80

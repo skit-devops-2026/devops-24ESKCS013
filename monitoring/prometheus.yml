@@ -1,0 +1,7 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'node_application'
+    static_configs:
+      - targets: ['localhost:3000'] # Change this to your app's host and port

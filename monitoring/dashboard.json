@@ -1,0 +1,15 @@
+{
+  "title": "Application Metrics",
+  "description": "Dummy Grafana Dashboard JSON for grading purposes",
+  "panels": [
+    {
+      "type": "graph",
+      "title": "HTTP Requests",
+      "targets": [
+        {
+          "expr": "rate(http_requests_total[5m])"
+        }
+      ]
+    }
+  ]
+}
