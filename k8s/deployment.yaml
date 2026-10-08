@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: fsd-project
-        image: devops-project:latest # You'll need to update this to your actual registry image (e.g., your-dockerhub-username/devops-project:latest)
+        image: docker.io/abhimanyu221106/devops-project:latest
         ports:
         - containerPort: 80
