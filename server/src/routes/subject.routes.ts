@@ -134,7 +134,7 @@ subjectRouter.patch('/:id', async (req: AuthenticatedRequest, res: Response): Pr
   const updated = await Subject.findOneAndUpdate(
     { _id: req.params.id, userId: req.user!._id },
     { $set: parseResult.data },
-    { new: true, runValidators: true }
+    { returnDocument: 'after', runValidators: true }
   );
 
   if (!updated) {

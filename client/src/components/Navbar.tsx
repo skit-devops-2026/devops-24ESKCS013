@@ -25,9 +25,26 @@ export function Navbar() {
           </NavLink>
 
           {user && user.role === 'student' && (
-            <NavLink to="/student/dashboard" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-              My Dashboard
-            </NavLink>
+            <>
+              <NavLink to="/student/dashboard" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                Dashboard
+              </NavLink>
+              <NavLink to="/student/tasks" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                Tasks
+              </NavLink>
+              <NavLink to="/student/goals" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                Goals
+              </NavLink>
+              <NavLink to="/student/subjects" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                Subjects
+              </NavLink>
+              <NavLink to="/student/notes" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                Notes
+              </NavLink>
+              <NavLink to="/student/study" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                Study Timer
+              </NavLink>
+            </>
           )}
 
           {user && user.role === 'admin' && (

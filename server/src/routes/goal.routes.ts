@@ -153,7 +153,7 @@ goalRouter.patch('/:id', async (req: AuthenticatedRequest, res: Response): Promi
   const updated = await Goal.findOneAndUpdate(
     { _id: req.params.id, userId: req.user!._id },
     { $set: updates },
-    { new: true, runValidators: true }
+    { returnDocument: 'after', runValidators: true }
   );
 
   res.status(200).json({ status: 'ok', data: updated });

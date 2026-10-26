@@ -9,6 +9,12 @@ import { AdminDashboardPreview } from './pages/AdminDashboardPreview';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { ApiHealthCheck } from './components/ApiHealthCheck';
+import { TasksPage } from './pages/student/TasksPage';
+import { GoalsPage } from './pages/student/GoalsPage';
+import { SubjectsPage } from './pages/student/SubjectsPage';
+import { SubjectDetailPage } from './pages/student/SubjectDetailPage';
+import { NotesPage } from './pages/student/NotesPage';
+import { StudyTimerPage } from './pages/student/StudyTimerPage';
 
 export function App() {
   return (
@@ -37,6 +43,54 @@ export function App() {
             element={
               <ProtectedRoute allowedRole="student">
                 <StudentDashboardPreview />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="student/tasks"
+            element={
+              <ProtectedRoute allowedRole="student">
+                <TasksPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="student/goals"
+            element={
+              <ProtectedRoute allowedRole="student">
+                <GoalsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="student/subjects"
+            element={
+              <ProtectedRoute allowedRole="student">
+                <SubjectsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="student/subjects/:id"
+            element={
+              <ProtectedRoute allowedRole="student">
+                <SubjectDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="student/notes"
+            element={
+              <ProtectedRoute allowedRole="student">
+                <NotesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="student/study"
+            element={
+              <ProtectedRoute allowedRole="student">
+                <StudyTimerPage />
               </ProtectedRoute>
             }
           />

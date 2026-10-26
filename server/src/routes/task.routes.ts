@@ -160,7 +160,7 @@ taskRouter.patch('/:id', async (req: AuthenticatedRequest, res: Response): Promi
   const updated = await Task.findOneAndUpdate(
     { _id: req.params.id, userId: req.user!._id },
     { $set: updates },
-    { new: true, runValidators: true }
+    { returnDocument: 'after', runValidators: true }
   );
 
   if (!updated) {

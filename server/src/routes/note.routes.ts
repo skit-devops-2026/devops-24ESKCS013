@@ -131,7 +131,7 @@ const updateHandler = async (req: AuthenticatedRequest, res: Response): Promise<
   const updated = await Note.findOneAndUpdate(
     { _id: req.params.id, userId: req.user!._id },
     { $set: updates },
-    { new: true, runValidators: true }
+    { returnDocument: 'after', runValidators: true }
   );
 
   if (!updated) {
