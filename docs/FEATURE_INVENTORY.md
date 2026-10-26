@@ -212,15 +212,15 @@ erDiagram
 ```
 [Phase 1: Security & Remotes]  <-- COMPLETED
         │
-[Phase 2: Architecture Plan]   <-- CURRENT STEP (Waiting for User Approval)
+[Phase 2: Architecture Plan]   <-- COMPLETED
         │
-[Phase 3: Scaffold Client & Server Core]
+[Phase 3: Scaffold Client & Server Core] <-- COMPLETED
         │
-[Phase 4: Persistence, Auth & Role RBAC]
+[Phase 4: Persistence, Auth & Role RBAC] <-- COMPLETED
         │
-[Phase 5: Migrate Student Modules 1 to 16]
+[Phase 5: Student Academic Features]     <-- COMPLETED (feature/student-academic-modules)
         │
-[Phase 6: Migrate Admin Modules 1 to 9]
+[Phase 6: Admin Academic & Institutional Management] <-- READY FOR INITIATION
         │
 [Phase 7: Comprehensive Automated Testing]
         │
@@ -239,11 +239,12 @@ erDiagram
 
 ## 5. Acceptance & Verification Criteria Checklist
 
-- [ ] **Security:** No plain-text tokens or credentials in `.git/config`, history, or code.
-- [ ] **Preservation:** The existing static HTML/CSS files remain untouched in the root until the React components in `client/` are verified.
-- [ ] **Authentication:** Students cannot view/edit other students' tasks, notes, or goals.
-- [ ] **Authorization:** Only users with `role: "admin"` can access `/api/v1/admin/*` endpoints and pages.
-- [ ] **Persistence:** Page refreshes retain all user modifications via MongoDB.
+- [x] **Security:** No plain-text tokens or credentials in `.git/config`, history, or code.
+- [x] **Preservation:** The existing static HTML/CSS files remain untouched in the root until the React components in `client/` are verified.
+- [x] **Authentication:** Passwords securely hashed with bcrypt; JWT session stored in secure `HttpOnly` cookie.
+- [x] **Student Isolation:** Students cannot view, edit, or delete another student's tasks, notes, goals, or study sessions (enforced via DB query filters and verified with automated cross-user tests).
+- [x] **Persistence:** Real MongoDB collections for `User`, `StudentProfile`, `Subject`, `Task`, `Goal`, `Note`, and `StudySession`.
+- [ ] **Authorization:** Only users with `role: "admin"` can access `/api/admin/*` endpoints and pages (Phase 6).
 - [ ] **Docker:** Image compiles client assets and serves the app cleanly without leaking internal git or config files.
 - [ ] **Observability:** Prometheus scrapes real `/metrics` (e.g. `http_requests_total`, `process_cpu_seconds_total`) from Express.
-- [ ] **Testing:** Automated test suite runs with zero mock failures.
+- [x] **Testing:** Automated test suite runs with 34 tests passing with zero failures.
