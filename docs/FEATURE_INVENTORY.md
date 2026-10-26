@@ -220,9 +220,9 @@ erDiagram
         │
 [Phase 5: Student Academic Features]     <-- COMPLETED (feature/student-academic-modules)
         │
-[Phase 6: Admin Academic & Institutional Management] <-- READY FOR INITIATION
+[Phase 6: Admin Academic & Institutional Management] <-- COMPLETED (feature/admin-management-modules)
         │
-[Phase 7: Comprehensive Automated Testing]
+[Phase 7: Comprehensive Automated Testing]           <-- READY FOR INITIATION
         │
 [Phase 8: Docker Multi-Stage & Compose]
         │
@@ -243,8 +243,23 @@ erDiagram
 - [x] **Preservation:** The existing static HTML/CSS files remain untouched in the root until the React components in `client/` are verified.
 - [x] **Authentication:** Passwords securely hashed with bcrypt; JWT session stored in secure `HttpOnly` cookie.
 - [x] **Student Isolation:** Students cannot view, edit, or delete another student's tasks, notes, goals, or study sessions (enforced via DB query filters and verified with automated cross-user tests).
-- [x] **Persistence:** Real MongoDB collections for `User`, `StudentProfile`, `Subject`, `Task`, `Goal`, `Note`, and `StudySession`.
-- [ ] **Authorization:** Only users with `role: "admin"` can access `/api/admin/*` endpoints and pages (Phase 6).
+- [x] **Persistence:** Real MongoDB collections for `User`, `StudentProfile`, `Subject`, `Task`, `Goal`, `Note`, `StudySession`, `Announcement`, and `Resource`.
+- [x] **Authorization:** Only users with `role: "admin"` can access `/api/admin/*`, `POST/DELETE /api/announcements`, and `POST/DELETE /api/resources`.
 - [ ] **Docker:** Image compiles client assets and serves the app cleanly without leaking internal git or config files.
 - [ ] **Observability:** Prometheus scrapes real `/metrics` (e.g. `http_requests_total`, `process_cpu_seconds_total`) from Express.
-- [x] **Testing:** Automated test suite runs with 34 tests passing with zero failures.
+- [x] **Testing:** Automated test suite runs with 58 tests passing across 15 suites with zero failures.
+
+---
+
+## 6. Admin Subsystem Verification (10/10 Verified)
+
+- [x] **Student cannot access admin APIs:** `/api/admin/students`, `/api/admin/stats`, status patches, and admin mutations return HTTP 403 Forbidden.
+- [x] **Unauthenticated requests receive HTTP 401:** Missing or expired cookies reject with structured 401 error.
+- [x] **Admin can search and paginate student records:** Supports regex search by name, email, or rollNumber; pagination with `page`, `limit`, `totalPages`, and `total`.
+- [x] **Admin can update permitted student status fields:** Status transition between `'active'` and `'suspended'`; suspended accounts are blocked from login and active sessions; self-lockout prevention for requesting administrators.
+- [x] **Announcements persist and obey publication rules:** Draft announcements are strictly hidden from students; published announcements respect expiration dates and target audiences (`all`, `students`).
+- [x] **Resources persist and obey visibility rules:** Dangerous URL schemes (`javascript:`, `file:`, etc.) are strictly rejected; students see only published resources.
+- [x] **Dashboard KPIs reflect actual database records:** Aggregated via live count and distinct queries across `User`, `Resource`, `Announcement`, `StudentProfile`, and `Subject`.
+- [x] **Attendance-defaulter threshold is documented:** Documented configurable threshold (default `75%`); calculates unique affected students separately from total low-attendance course records.
+- [x] **Backend authorization tests pass:** 24 dedicated admin and RBAC tests passing in `server/src/admin-features.test.ts`.
+- [x] **React production build and hygiene checks pass:** TypeScript builds with 0 errors (`npm run build --prefix client`) and passes all repository test scripts.
