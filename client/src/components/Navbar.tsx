@@ -70,15 +70,6 @@ export function Navbar() {
             </>
           )}
 
-          <a
-            href="https://abhimanyu2211.github.io/student-hub/"
-            target="_blank"
-            rel="noreferrer"
-            className="nav-link"
-          >
-            Static Live Site ↗
-          </a>
-
           {user ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
               <span className={`badge ${user.role === 'admin' ? 'badge-gold' : 'badge-green'}`}>
