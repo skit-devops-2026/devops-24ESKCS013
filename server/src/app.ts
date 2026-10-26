@@ -4,6 +4,11 @@ import cookieParser from 'cookie-parser';
 import { env } from './config/env.js';
 import { healthRouter } from './routes/health.routes.js';
 import { authRouter } from './routes/auth.routes.js';
+import { subjectRouter } from './routes/subject.routes.js';
+import { taskRouter } from './routes/task.routes.js';
+import { goalRouter } from './routes/goal.routes.js';
+import { noteRouter } from './routes/note.routes.js';
+import { studyRouter } from './routes/study.routes.js';
 import { notFoundHandler, errorHandler } from './middleware/error-handler.js';
 
 export function createApp() {
@@ -29,6 +34,13 @@ export function createApp() {
 
   // Mount Authentication routes
   app.use('/api/auth', authRouter);
+
+  // Mount Student Academic Feature routes
+  app.use('/api/subjects', subjectRouter);
+  app.use('/api/tasks', taskRouter);
+  app.use('/api/goals', goalRouter);
+  app.use('/api/notes', noteRouter);
+  app.use('/api/study', studyRouter);
 
   // 404 Not Found handler for unknown routes
   app.use(notFoundHandler);
