@@ -11,6 +11,7 @@ export interface UserData {
   name: string;
   email: string;
   role: 'student' | 'admin';
+  status?: 'active' | 'suspended';
   profile: StudentProfileData | null;
 }
 

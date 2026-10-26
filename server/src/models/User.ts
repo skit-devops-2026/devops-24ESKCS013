@@ -2,12 +2,14 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
 export type UserRole = 'student' | 'admin';
+export type UserStatus = 'active' | 'suspended';
 
 export interface IUser extends Document {
   email: string;
   passwordHash: string;
   name: string;
   role: UserRole;
+  status: UserStatus;
   createdAt: Date;
   updatedAt: Date;
   comparePassword(candidate: string): Promise<boolean>;
@@ -47,6 +49,16 @@ const userSchema = new Schema<IUser, IUserModel>(
         message: '{VALUE} is not a valid user role',
       },
       default: 'student',
+      required: true,
+      index: true,
+    },
+    status: {
+      type: String,
+      enum: {
+        values: ['active', 'suspended'],
+        message: '{VALUE} is not a valid user status',
+      },
+      default: 'active',
       required: true,
       index: true,
     },

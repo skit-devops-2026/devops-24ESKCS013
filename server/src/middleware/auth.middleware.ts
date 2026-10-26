@@ -41,6 +41,15 @@ export async function requireAuth(
       return;
     }
 
+    if (user.status === 'suspended') {
+      res.status(403).json({
+        status: 'error',
+        statusCode: 403,
+        message: 'Your account has been suspended. Please contact the institutional administrator.',
+      });
+      return;
+    }
+
     req.user = user;
     next();
   } catch (error: unknown) {

@@ -132,6 +132,15 @@ authRouter.post('/login', authRateLimiter, async (req: Request, res: Response): 
     return;
   }
 
+  if (user.status === 'suspended') {
+    res.status(403).json({
+      status: 'error',
+      statusCode: 403,
+      message: 'Your account has been suspended. Please contact the institutional administrator.',
+    });
+    return;
+  }
+
   let profileData = null;
   if (user.role === 'student') {
     const profile = await StudentProfile.findOne({ userId: user._id });
@@ -162,6 +171,7 @@ authRouter.post('/login', authRateLimiter, async (req: Request, res: Response): 
       name: user.name,
       email: user.email,
       role: user.role,
+      status: user.status,
       profile: profileData,
     },
   });
@@ -201,6 +211,7 @@ authRouter.get('/me', requireAuth, async (req: AuthenticatedRequest, res: Respon
       name: user.name,
       email: user.email,
       role: user.role,
+      status: user.status,
       profile: profileData,
     },
   });

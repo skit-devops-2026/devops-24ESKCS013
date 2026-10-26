@@ -9,6 +9,9 @@ import { taskRouter } from './routes/task.routes.js';
 import { goalRouter } from './routes/goal.routes.js';
 import { noteRouter } from './routes/note.routes.js';
 import { studyRouter } from './routes/study.routes.js';
+import { adminRouter } from './routes/admin.routes.js';
+import { announcementRouter } from './routes/announcement.routes.js';
+import { resourceRouter } from './routes/resource.routes.js';
 import { notFoundHandler, errorHandler } from './middleware/error-handler.js';
 
 export function createApp() {
@@ -41,6 +44,11 @@ export function createApp() {
   app.use('/api/goals', goalRouter);
   app.use('/api/notes', noteRouter);
   app.use('/api/study', studyRouter);
+
+  // Mount Admin and Institutional Management routes
+  app.use('/api/admin', adminRouter);
+  app.use('/api/announcements', announcementRouter);
+  app.use('/api/resources', resourceRouter);
 
   // 404 Not Found handler for unknown routes
   app.use(notFoundHandler);
