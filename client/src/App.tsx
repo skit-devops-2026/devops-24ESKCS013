@@ -5,7 +5,6 @@ import { LandingPage } from './pages/LandingPage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { StudentDashboardPreview } from './pages/StudentDashboardPreview';
-import { AdminDashboardPreview } from './pages/AdminDashboardPreview';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { ApiHealthCheck } from './components/ApiHealthCheck';
@@ -15,6 +14,11 @@ import { SubjectsPage } from './pages/student/SubjectsPage';
 import { SubjectDetailPage } from './pages/student/SubjectDetailPage';
 import { NotesPage } from './pages/student/NotesPage';
 import { StudyTimerPage } from './pages/student/StudyTimerPage';
+import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
+import { AdminStudentsPage } from './pages/admin/AdminStudentsPage';
+import { AdminStudentDetailPage } from './pages/admin/AdminStudentDetailPage';
+import { AdminAnnouncementsPage } from './pages/admin/AdminAnnouncementsPage';
+import { AdminResourcesPage } from './pages/admin/AdminResourcesPage';
 
 export function App() {
   return (
@@ -100,7 +104,39 @@ export function App() {
             path="admin/dashboard"
             element={
               <ProtectedRoute allowedRole="admin">
-                <AdminDashboardPreview />
+                <AdminDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="admin/students"
+            element={
+              <ProtectedRoute allowedRole="admin">
+                <AdminStudentsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="admin/students/:id"
+            element={
+              <ProtectedRoute allowedRole="admin">
+                <AdminStudentDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="admin/announcements"
+            element={
+              <ProtectedRoute allowedRole="admin">
+                <AdminAnnouncementsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="admin/resources"
+            element={
+              <ProtectedRoute allowedRole="admin">
+                <AdminResourcesPage />
               </ProtectedRoute>
             }
           />

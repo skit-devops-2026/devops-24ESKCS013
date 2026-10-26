@@ -48,9 +48,20 @@ export function Navbar() {
           )}
 
           {user && user.role === 'admin' && (
-            <NavLink to="/admin/dashboard" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-              Admin Console
-            </NavLink>
+            <>
+              <NavLink to="/admin/dashboard" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                Dashboard
+              </NavLink>
+              <NavLink to="/admin/students" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                Students
+              </NavLink>
+              <NavLink to="/admin/announcements" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                Announcements
+              </NavLink>
+              <NavLink to="/admin/resources" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                Resources
+              </NavLink>
+            </>
           )}
 
           <a
