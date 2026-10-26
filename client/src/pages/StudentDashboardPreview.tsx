@@ -54,7 +54,7 @@ export function StudentDashboardPreview() {
   const avgAttendance =
     subjects.length > 0
       ? Math.round(subjects.reduce((acc, s) => acc + s.attendancePercentage, 0) / subjects.length)
-      : user?.profile?.attendancePercentage || 85;
+      : user?.profile?.attendancePercentage ?? 0;
 
   return (
     <div className="container" style={{ padding: '2.5rem 1rem' }}>

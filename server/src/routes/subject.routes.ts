@@ -18,6 +18,7 @@ const subjectSchema = z.object({
   semester: z.coerce.number().int().min(1).max(8).default(1),
   facultyName: z.string().trim().max(100).optional().default(''),
   attendancePercentage: z.coerce.number().min(0).max(100).optional().default(85),
+  syllabusProgress: z.coerce.number().min(0).max(100).optional().default(0),
   color: z.string().optional().default('#D69A2D'),
 });
 

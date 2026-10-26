@@ -76,6 +76,11 @@ export function GoalsPage() {
     if (!title.trim()) return;
     setSubmitting(true);
     try {
+      const parsedDate = targetDate ? new Date(targetDate) : new Date(Date.now() + 30 * 86400000);
+      const safeTargetDate = isNaN(parsedDate.getTime())
+        ? new Date(Date.now() + 30 * 86400000).toISOString()
+        : parsedDate.toISOString();
+
       await createGoal({
         title,
         description,
@@ -83,7 +88,7 @@ export function GoalsPage() {
         currentValue,
         unit,
         category,
-        targetDate: new Date(targetDate).toISOString(),
+        targetDate: safeTargetDate,
       });
       setShowModal(false);
       setTitle('');

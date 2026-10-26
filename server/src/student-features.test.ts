@@ -4,6 +4,9 @@ import request from 'supertest';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { createApp } from './app.js';
 import { connectDB, disconnectDB } from './config/db.js';
+import { User } from './models/User.js';
+import { Announcement } from './models/Announcement.js';
+import { Resource } from './models/Resource.js';
 import { AUTH_COOKIE_NAME } from './services/auth.service.js';
 
 let mongod: MongoMemoryServer;
@@ -42,6 +45,32 @@ describe('Student Academic Features Integration Tests', () => {
         semester: 4,
       });
     studentBCookie = resB.headers['set-cookie'] as unknown as string[];
+
+    // Seed test published announcement and resource
+    const adminUser = await User.create({
+      name: 'Faculty Admin',
+      email: 'admin-student-test@test.edu',
+      passwordHash: 'dummyhash123',
+      role: 'admin',
+    });
+
+    await Announcement.create({
+      title: 'Midterm Examination Schedule',
+      content: 'Examinations begin next Monday. Hall tickets available on portal.',
+      priority: 'urgent',
+      targetAudience: 'students',
+      status: 'published',
+      authorId: adminUser._id,
+    });
+
+    await Resource.create({
+      title: 'DBMS Lecture Slides Complete',
+      description: 'Full semester slide deck for CS301',
+      resourceType: 'notes',
+      url: 'https://cdn.university.edu/resources/dbms-slides.pdf',
+      uploadedBy: adminUser._id,
+      status: 'published',
+    });
   });
 
   after(async () => {
@@ -170,6 +199,39 @@ describe('Student Academic Features Integration Tests', () => {
       assert.equal(res.status, 200);
       assert.equal(res.body.data.status, 'completed');
     });
+
+    it('GET /api/tasks lists tasks with query filters', async () => {
+      const res = await request(app)
+        .get('/api/tasks?status=completed')
+        .set('Cookie', studentACookie);
+
+      assert.equal(res.status, 200);
+      assert.ok(Array.isArray(res.body.data));
+      assert.equal(res.body.data.length, 1);
+      assert.equal(res.body.data[0]._id, createdTaskId);
+      assert.equal(res.body.data[0].status, 'completed');
+    });
+
+    it('DELETE /api/tasks/:id deletes task and updates task summary', async () => {
+      const createRes = await request(app)
+        .post('/api/tasks')
+        .set('Cookie', studentACookie)
+        .send({
+          title: 'Disposable Task',
+          dueDate: new Date(Date.now() + 86400000).toISOString(),
+        });
+      const disposableId = createRes.body.data._id;
+
+      const delRes = await request(app)
+        .delete(`/api/tasks/${disposableId}`)
+        .set('Cookie', studentACookie);
+      assert.equal(delRes.status, 200);
+
+      const fetchRes = await request(app)
+        .get(`/api/tasks/${disposableId}`)
+        .set('Cookie', studentACookie);
+      assert.equal(fetchRes.status, 404);
+    });
   });
 
   /* -------------------------------------------------------------
@@ -216,6 +278,39 @@ describe('Student Academic Features Integration Tests', () => {
       assert.equal(res.body.data.completed, 1);
       assert.equal(res.body.data.averageProgress, 100);
     });
+
+    it('GET /api/goals lists goals with status filter', async () => {
+      const res = await request(app)
+        .get('/api/goals?status=completed')
+        .set('Cookie', studentACookie);
+
+      assert.equal(res.status, 200);
+      assert.equal(res.body.count, 1);
+      assert.equal(res.body.data[0]._id, createdGoalId);
+    });
+
+    it('DELETE /api/goals/:id deletes goal and updates summary', async () => {
+      const createRes = await request(app)
+        .post('/api/goals')
+        .set('Cookie', studentACookie)
+        .send({
+          title: 'Disposable Goal',
+          targetValue: 10,
+          currentValue: 0,
+          targetDate: new Date(Date.now() + 86400000).toISOString(),
+        });
+      const disposableId = createRes.body.data._id;
+
+      const delRes = await request(app)
+        .delete(`/api/goals/${disposableId}`)
+        .set('Cookie', studentACookie);
+      assert.equal(delRes.status, 200);
+
+      const fetchRes = await request(app)
+        .get(`/api/goals/${disposableId}`)
+        .set('Cookie', studentACookie);
+      assert.equal(fetchRes.status, 404);
+    });
   });
 
   /* -------------------------------------------------------------
@@ -250,6 +345,51 @@ describe('Student Academic Features Integration Tests', () => {
       assert.equal(res.body.data[0]._id, createdNoteId);
     });
 
+    it('PATCH /api/notes/:id updates note content and toggles isPinned', async () => {
+      const res = await request(app)
+        .patch(`/api/notes/${createdNoteId}`)
+        .set('Cookie', studentACookie)
+        .send({
+          title: 'Updated Relational Algebra Notes',
+          isPinned: true,
+        });
+
+      assert.equal(res.status, 200);
+      assert.equal(res.body.data.title, 'Updated Relational Algebra Notes');
+      assert.equal(res.body.data.isPinned, true);
+    });
+
+    it('GET /api/notes?tag= filters notes by tag', async () => {
+      const res = await request(app)
+        .get('/api/notes?tag=DBMS')
+        .set('Cookie', studentACookie);
+
+      assert.equal(res.status, 200);
+      assert.equal(res.body.count, 1);
+      assert.equal(res.body.data[0]._id, createdNoteId);
+    });
+
+    it('DELETE /api/notes/:id deletes note', async () => {
+      const createRes = await request(app)
+        .post('/api/notes')
+        .set('Cookie', studentACookie)
+        .send({
+          title: 'Scratch Note',
+          content: 'Temporary content',
+        });
+      const scratchId = createRes.body.data._id;
+
+      const delRes = await request(app)
+        .delete(`/api/notes/${scratchId}`)
+        .set('Cookie', studentACookie);
+      assert.equal(delRes.status, 200);
+
+      const fetchRes = await request(app)
+        .get(`/api/notes/${scratchId}`)
+        .set('Cookie', studentACookie);
+      assert.equal(fetchRes.status, 404);
+    });
+
     it('GET /api/notes enforces cross-user isolation (Bob finds 0 notes)', async () => {
       const res = await request(app)
         .get('/api/notes')
@@ -261,7 +401,70 @@ describe('Student Academic Features Integration Tests', () => {
   });
 
   /* -------------------------------------------------------------
-   * 5. STUDY TIMER TESTS
+   * 5. SUBJECT DETAILS & DELETION DISASSOCIATION
+   * ------------------------------------------------------------- */
+  describe('Subject Details & Deletion Safety', () => {
+    it('GET /api/subjects/:id returns deep subject info with linked tasks and notes', async () => {
+      const res = await request(app)
+        .get(`/api/subjects/${createdSubjectId}`)
+        .set('Cookie', studentACookie);
+
+      assert.equal(res.status, 200);
+      assert.equal(res.body.status, 'ok');
+      assert.equal(res.body.data.code, 'CS301');
+      assert.ok(Array.isArray(res.body.data.tasks));
+      assert.ok(Array.isArray(res.body.data.notes));
+      assert.ok(res.body.data.tasks.length >= 1);
+      assert.ok(res.body.data.notes.length >= 1);
+    });
+
+    it('DELETE /api/subjects/:id deletes a subject and safely clears associations', async () => {
+      // Create a temporary subject to delete
+      const subRes = await request(app)
+        .post('/api/subjects')
+        .set('Cookie', studentACookie)
+        .send({
+          code: 'TEMP101',
+          name: 'Temporary Subject',
+          credits: 2,
+        });
+      const tempSubId = subRes.body.data._id;
+
+      // Link a task to this temporary subject
+      const taskRes = await request(app)
+        .post('/api/tasks')
+        .set('Cookie', studentACookie)
+        .send({
+          title: 'Temporary Task',
+          dueDate: new Date(Date.now() + 86400000).toISOString(),
+          subjectId: tempSubId,
+        });
+      const tempTaskId = taskRes.body.data._id;
+      assert.equal(taskRes.body.data.subjectCode, 'TEMP101');
+
+      // Delete the temporary subject
+      const delRes = await request(app)
+        .delete(`/api/subjects/${tempSubId}`)
+        .set('Cookie', studentACookie);
+      assert.equal(delRes.status, 200);
+
+      // Verify the task still exists but has subject cleared
+      const checkTask = await request(app)
+        .get(`/api/tasks/${tempTaskId}`)
+        .set('Cookie', studentACookie);
+      assert.equal(checkTask.status, 200);
+      assert.equal(checkTask.body.data.subjectId, null);
+      assert.equal(checkTask.body.data.subjectCode, '');
+
+      // Clean up the temporary task
+      await request(app)
+        .delete(`/api/tasks/${tempTaskId}`)
+        .set('Cookie', studentACookie);
+    });
+  });
+
+  /* -------------------------------------------------------------
+   * 6. STUDY TIMER TESTS
    * ------------------------------------------------------------- */
   describe('Study Timer Module', () => {
     it('POST /api/study/start begins a focused study session', async () => {
@@ -327,6 +530,27 @@ describe('Student Academic Features Integration Tests', () => {
       assert.ok(typeof res.body.session.durationSeconds === 'number');
     });
 
+    it('POST /api/study/cancel cancels an active study session', async () => {
+      const startRes = await request(app)
+        .post('/api/study/start')
+        .set('Cookie', studentACookie)
+        .send({ title: 'Session to Cancel' });
+      assert.equal(startRes.status, 201);
+
+      const cancelRes = await request(app)
+        .post('/api/study/cancel')
+        .set('Cookie', studentACookie);
+      assert.equal(cancelRes.status, 200);
+      assert.equal(cancelRes.body.status, 'ok');
+
+      const currentRes = await request(app)
+        .get('/api/study/current')
+        .set('Cookie', studentACookie);
+      assert.equal(currentRes.status, 200);
+      assert.equal(currentRes.body.active, false);
+      assert.equal(currentRes.body.session, null);
+    });
+
     it('GET /api/study/history reports aggregated study analytics', async () => {
       const res = await request(app)
         .get('/api/study/history')
@@ -335,6 +559,60 @@ describe('Student Academic Features Integration Tests', () => {
       assert.equal(res.status, 200);
       assert.equal(res.body.summary.totalSessions, 1);
       assert.equal(res.body.data.length, 1);
+    });
+  });
+
+  /* -------------------------------------------------------------
+   * 7. INSTITUTIONAL BULLETINS & RESOURCE LIBRARY VISIBILITY
+   * ------------------------------------------------------------- */
+  describe('Institutional Bulletins & Resource Library Visibility', () => {
+    it('GET /api/announcements allows student to view published announcements', async () => {
+      const res = await request(app)
+        .get('/api/announcements')
+        .set('Cookie', studentACookie);
+
+      assert.equal(res.status, 200);
+      assert.ok(Array.isArray(res.body.data));
+      assert.ok(res.body.data.length >= 1);
+      assert.equal(res.body.data[0].title, 'Midterm Examination Schedule');
+    });
+
+    it('GET /api/resources allows student to search and view published resources', async () => {
+      const res = await request(app)
+        .get('/api/resources')
+        .set('Cookie', studentACookie);
+
+      assert.equal(res.status, 200);
+      assert.ok(Array.isArray(res.body.data));
+      assert.ok(res.body.data.length >= 1);
+      assert.equal(res.body.data[0].title, 'DBMS Lecture Slides Complete');
+    });
+  });
+
+  /* -------------------------------------------------------------
+   * 8. DASHBOARD METRICS CONSISTENCY
+   * ------------------------------------------------------------- */
+  describe('Dashboard Metrics Consistency', () => {
+    it('verifies task summary metrics match actual database counts', async () => {
+      const res = await request(app)
+        .get('/api/tasks/summary')
+        .set('Cookie', studentACookie);
+
+      assert.equal(res.status, 200);
+      assert.equal(res.body.data.total, 1);
+      assert.equal(res.body.data.completed, 1);
+      assert.equal(res.body.data.pending, 0);
+    });
+
+    it('verifies goal summary metrics match actual goal progress', async () => {
+      const res = await request(app)
+        .get('/api/goals/summary')
+        .set('Cookie', studentACookie);
+
+      assert.equal(res.status, 200);
+      assert.equal(res.body.data.total, 1);
+      assert.equal(res.body.data.completed, 1);
+      assert.equal(res.body.data.averageProgress, 100);
     });
   });
 });

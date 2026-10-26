@@ -8,6 +8,7 @@ export interface ISubject extends Document {
   semester: number;
   facultyName: string;
   attendancePercentage: number;
+  syllabusProgress: number;
   color: string;
   createdAt: Date;
   updatedAt: Date;
@@ -56,6 +57,12 @@ const subjectSchema = new Schema<ISubject>(
       default: 85,
       min: [0, 'Attendance cannot be negative'],
       max: [100, 'Attendance cannot exceed 100%'],
+    },
+    syllabusProgress: {
+      type: Number,
+      default: 0,
+      min: [0, 'Syllabus progress cannot be negative'],
+      max: [100, 'Syllabus progress cannot exceed 100%'],
     },
     color: {
       type: String,

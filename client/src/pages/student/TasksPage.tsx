@@ -86,11 +86,16 @@ export function TasksPage() {
     if (!newTitle.trim()) return;
     setSubmitting(true);
     try {
+      const parsedDate = newDueDate ? new Date(newDueDate) : new Date(Date.now() + 86400000);
+      const safeDueDate = isNaN(parsedDate.getTime())
+        ? new Date(Date.now() + 86400000).toISOString()
+        : parsedDate.toISOString();
+
       await createTask({
         title: newTitle,
         description: newDescription,
         priority: newPriority,
-        dueDate: new Date(newDueDate).toISOString(),
+        dueDate: safeDueDate,
         subjectId: newSubjectId || null,
       });
       setShowModal(false);

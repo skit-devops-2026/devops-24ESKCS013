@@ -170,6 +170,39 @@ describe('Authentication & MongoDB Integration Tests', () => {
     assert.equal(meRes.body.status, 'ok');
     assert.equal(meRes.body.user.email, 'jane.doe@university.edu');
     assert.equal(meRes.body.user.profile.rollNumber, '24CS001');
+    assert.equal(meRes.body.user.passwordHash, undefined);
+  });
+
+  it('session persists across multiple requests and reloads using session cookie', async () => {
+    // Re-login to get active session cookie
+    const loginRes = await request(app)
+      .post('/api/auth/login')
+      .send({
+        email: 'jane.doe@university.edu',
+        password: 'SecurePassword123!',
+      });
+    const cookie = loginRes.headers['set-cookie'];
+
+    // Simulate 3 consecutive page views / refreshes
+    for (let i = 0; i < 3; i++) {
+      const res = await request(app)
+        .get('/api/auth/me')
+        .set('Cookie', cookie);
+      assert.equal(res.status, 200);
+      assert.equal(res.body.user.email, 'jane.doe@university.edu');
+    }
+  });
+
+  it('never exposes password hashes in any authentication responses', async () => {
+    const loginRes = await request(app)
+      .post('/api/auth/login')
+      .send({
+        email: 'jane.doe@university.edu',
+        password: 'SecurePassword123!',
+      });
+    assert.equal(loginRes.status, 200);
+    assert.equal(loginRes.body.user.passwordHash, undefined);
+    assert.equal(loginRes.body.user.password, undefined);
   });
 
   it('GET /api/auth/me rejects unauthenticated requests with 401', async () => {
