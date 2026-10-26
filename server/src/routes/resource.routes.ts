@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import { z } from 'zod';
 import { requireAuth, requireRole, AuthenticatedRequest } from '../middleware/auth.middleware.js';
 import { Resource } from '../models/Resource.js';
+import { escapeRegExp } from '../utils/security.js';
 
 export const resourceRouter = Router();
 
@@ -112,7 +113,7 @@ resourceRouter.get('/', async (req: AuthenticatedRequest, res: Response): Promis
 
     const department = req.query.department as string;
     if (department) {
-      filter.department = new RegExp(department.trim(), 'i');
+      filter.department = new RegExp(escapeRegExp(department.trim()), 'i');
     }
 
     const semester = parseInt(req.query.semester as string, 10);
@@ -122,7 +123,7 @@ resourceRouter.get('/', async (req: AuthenticatedRequest, res: Response): Promis
 
     const search = typeof req.query.search === 'string' ? req.query.search.trim() : '';
     if (search) {
-      const searchRegex = new RegExp(search, 'i');
+      const searchRegex = new RegExp(escapeRegExp(search), 'i');
       filter.$or = [
         { title: searchRegex },
         { description: searchRegex },

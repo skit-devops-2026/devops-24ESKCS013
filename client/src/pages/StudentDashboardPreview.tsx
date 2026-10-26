@@ -186,6 +186,26 @@ export function StudentDashboardPreview() {
               Server-authoritative Pomodoro focus sessions resilient to page reloads.
             </p>
           </Link>
+
+          <Link to="/student/announcements" className="card" style={{ textDecoration: 'none' }}>
+            <span style={{ fontSize: '1.5rem', display: 'block', marginBottom: '0.5rem' }}>📢</span>
+            <strong style={{ fontSize: '1.1rem', color: 'var(--ink)', display: 'block', marginBottom: '0.25rem' }}>
+              Notice Board
+            </strong>
+            <p style={{ fontSize: '0.85rem', color: 'var(--ink-soft)' }}>
+              Campus notices, urgent examination circulars, and departmental updates.
+            </p>
+          </Link>
+
+          <Link to="/student/resources" className="card" style={{ textDecoration: 'none' }}>
+            <span style={{ fontSize: '1.5rem', display: 'block', marginBottom: '0.5rem' }}>📂</span>
+            <strong style={{ fontSize: '1.1rem', color: 'var(--ink)', display: 'block', marginBottom: '0.25rem' }}>
+              Resource Library
+            </strong>
+            <p style={{ fontSize: '0.85rem', color: 'var(--ink-soft)' }}>
+              Official curriculum syllabi, lab manuals, and previous year exam papers.
+            </p>
+          </Link>
         </div>
       </div>
     </div>

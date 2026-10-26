@@ -8,6 +8,7 @@ import { Subject } from '../models/Subject.js';
 import { Task } from '../models/Task.js';
 import { Resource } from '../models/Resource.js';
 import { Announcement } from '../models/Announcement.js';
+import { escapeRegExp } from '../utils/security.js';
 
 export const adminRouter = Router();
 
@@ -42,7 +43,7 @@ adminRouter.get('/students', async (req: AuthenticatedRequest, res: Response): P
     }
 
     if (search) {
-      const searchRegex = new RegExp(search, 'i');
+      const searchRegex = new RegExp(escapeRegExp(search), 'i');
       // Check if search matches roll numbers
       const matchingProfiles = await StudentProfile.find({ rollNumber: searchRegex }, { userId: 1 });
       const matchingUserIds = matchingProfiles.map((p) => p.userId);
@@ -57,7 +58,7 @@ adminRouter.get('/students', async (req: AuthenticatedRequest, res: Response): P
     // Filter by department or semester if specified
     if (department || !isNaN(semester)) {
       const profileFilter: Record<string, unknown> = {};
-      if (department) profileFilter.department = new RegExp(department, 'i');
+      if (department) profileFilter.department = new RegExp(escapeRegExp(department), 'i');
       if (!isNaN(semester)) profileFilter.semester = semester;
 
       const profileMatches = await StudentProfile.find(profileFilter, { userId: 1 });

@@ -14,6 +14,8 @@ import { SubjectsPage } from './pages/student/SubjectsPage';
 import { SubjectDetailPage } from './pages/student/SubjectDetailPage';
 import { NotesPage } from './pages/student/NotesPage';
 import { StudyTimerPage } from './pages/student/StudyTimerPage';
+import { StudentAnnouncementsPage } from './pages/student/StudentAnnouncementsPage';
+import { StudentResourcesPage } from './pages/student/StudentResourcesPage';
 import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
 import { AdminStudentsPage } from './pages/admin/AdminStudentsPage';
 import { AdminStudentDetailPage } from './pages/admin/AdminStudentDetailPage';
@@ -95,6 +97,22 @@ export function App() {
             element={
               <ProtectedRoute allowedRole="student">
                 <StudyTimerPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="student/announcements"
+            element={
+              <ProtectedRoute allowedRole="student">
+                <StudentAnnouncementsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="student/resources"
+            element={
+              <ProtectedRoute allowedRole="student">
+                <StudentResourcesPage />
               </ProtectedRoute>
             }
           />

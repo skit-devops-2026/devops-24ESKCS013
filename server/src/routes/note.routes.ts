@@ -4,6 +4,7 @@ import { Types } from 'mongoose';
 import { Note } from '../models/Note.js';
 import { Subject } from '../models/Subject.js';
 import { requireAuth, AuthenticatedRequest } from '../middleware/auth.middleware.js';
+import { escapeRegExp } from '../utils/security.js';
 
 export const noteRouter = Router();
 
@@ -26,12 +27,15 @@ noteRouter.get('/', async (req: AuthenticatedRequest, res: Response): Promise<vo
   const query: any = { userId };
 
   if (req.query.q) {
-    const searchTerm = String(req.query.q).trim();
-    query.$or = [
-      { title: { $regex: searchTerm, $options: 'i' } },
-      { content: { $regex: searchTerm, $options: 'i' } },
-      { tags: { $in: [new RegExp(searchTerm, 'i')] } },
-    ];
+    const rawTerm = String(req.query.q).trim();
+    if (rawTerm) {
+      const safeTerm = escapeRegExp(rawTerm);
+      query.$or = [
+        { title: { $regex: safeTerm, $options: 'i' } },
+        { content: { $regex: safeTerm, $options: 'i' } },
+        { tags: { $in: [new RegExp(safeTerm, 'i')] } },
+      ];
+    }
   }
 
   if (req.query.tag) {

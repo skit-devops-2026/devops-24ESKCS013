@@ -292,3 +292,50 @@ export async function cancelStudySession(): Promise<{ status: string; message: s
 export async function getStudyHistory(): Promise<StudyHistoryResponse> {
   return requestJson<StudyHistoryResponse>(getApiUrl('/study/history'));
 }
+
+/* -------------------------------------------------------------
+ * STUDENT INSTITUTIONAL BULLETINS & RESOURCES
+ * ------------------------------------------------------------- */
+export interface StudentAnnouncement {
+  _id: string;
+  title: string;
+  content: string;
+  priority: 'normal' | 'urgent';
+  targetAudience: 'all' | 'students' | 'faculty';
+  status: 'published';
+  authorId?: {
+    name: string;
+    email: string;
+  };
+  publishedAt?: string;
+  createdAt: string;
+}
+
+export interface StudentResource {
+  _id: string;
+  title: string;
+  description: string;
+  resourceType: 'notes' | 'syllabus' | 'question_paper' | 'lab_manual' | 'reference';
+  url: string;
+  department?: string | null;
+  semester?: number | null;
+  subjectId?: {
+    code: string;
+    name: string;
+  } | null;
+  createdAt: string;
+}
+
+export async function getStudentAnnouncements(): Promise<StudentAnnouncement[]> {
+  const res = await requestJson<{ data: StudentAnnouncement[] }>(getApiUrl('/announcements'));
+  return res.data;
+}
+
+export async function getStudentResources(search?: string, type?: string): Promise<StudentResource[]> {
+  const params = new URLSearchParams();
+  if (search) params.append('search', search);
+  if (type && type !== 'all') params.append('resourceType', type);
+  const queryStr = params.toString() ? `?${params.toString()}` : '';
+  const res = await requestJson<{ data: StudentResource[] }>(getApiUrl(`/resources${queryStr}`));
+  return res.data;
+}

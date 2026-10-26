@@ -44,6 +44,12 @@ export function Navbar() {
               <NavLink to="/student/study" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
                 Study Timer
               </NavLink>
+              <NavLink to="/student/announcements" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                Notices
+              </NavLink>
+              <NavLink to="/student/resources" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                Resources
+              </NavLink>
             </>
           )}
 
