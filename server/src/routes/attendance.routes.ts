@@ -4,6 +4,7 @@ import { Types } from 'mongoose';
 import { AttendanceRecord } from '../models/AttendanceRecord.js';
 import { AttendanceOverview } from '../models/AttendanceOverview.js';
 import { Subject } from '../models/Subject.js';
+import { StudentProfile } from '../models/StudentProfile.js';
 import { requireAuth, AuthenticatedRequest } from '../middleware/auth.middleware.js';
 import {
   AttendancePolicy,
@@ -180,6 +181,10 @@ attendanceRouter.post('/import', async (req: AuthenticatedRequest, res: Response
   const { policy, records, erpAggregatePercentage, overallOdCount, eventAttendance } = parseResult.data;
   const userId = req.user!._id;
 
+  // Retrieve student profile for default semester
+  const studentProfile = await StudentProfile.findOne({ userId });
+  const defaultSemester = studentProfile?.semester || 1;
+
   // Retrieve student's existing subjects for linking
   const studentSubjects = await Subject.find({ userId });
   const subjectMap = new Map(studentSubjects.map((s) => [s.code.toUpperCase(), s]));
@@ -199,10 +204,40 @@ attendanceRouter.post('/import', async (req: AuthenticatedRequest, res: Response
       item.erpPercentage
     );
 
-    const matchedSubject = subjectMap.get(item.subjectCode);
-    const subjectId = matchedSubject ? matchedSubject._id : null;
+    // Auto-upsert Subject so Attendance and Subject always share a single source of truth
+    let subject = subjectMap.get(item.subjectCode);
+    const isLab = item.subjectType?.toLowerCase().includes('lab') || item.subjectName.toLowerCase().includes('lab');
 
-    // Upsert record
+    if (!subject) {
+      subject = await Subject.findOneAndUpdate(
+        { userId, code: item.subjectCode },
+        {
+          $setOnInsert: {
+            credits: isLab ? 2 : 3,
+            semester: defaultSemester,
+            facultyName: '',
+            syllabusProgress: 0,
+            color: '#D69A2D',
+          },
+          $set: {
+            name: item.subjectName,
+            attendancePercentage: calc.percentage,
+          },
+        },
+        { upsert: true, returnDocument: 'after', runValidators: true }
+      );
+      if (subject) {
+        subjectMap.set(item.subjectCode, subject);
+      }
+    } else {
+      subject.name = item.subjectName;
+      subject.attendancePercentage = calc.percentage;
+      await subject.save();
+    }
+
+    const subjectId = subject ? subject._id : null;
+
+    // Upsert attendance record
     const record = await AttendanceRecord.findOneAndUpdate(
       { userId, subjectCode: item.subjectCode },
       {
@@ -226,12 +261,6 @@ attendanceRouter.post('/import', async (req: AuthenticatedRequest, res: Response
       },
       { upsert: true, returnDocument: 'after', runValidators: true }
     );
-
-    // Synchronize subject attendance if matched
-    if (matchedSubject) {
-      matchedSubject.attendancePercentage = calc.percentage;
-      await matchedSubject.save();
-    }
 
     savedRecords.push(record);
   }

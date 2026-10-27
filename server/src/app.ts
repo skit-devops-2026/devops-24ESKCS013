@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import helmet from 'helmet';
 import { env } from './config/env.js';
 import { healthRouter } from './routes/health.routes.js';
 import { authRouter } from './routes/auth.routes.js';
@@ -14,9 +15,27 @@ import { announcementRouter } from './routes/announcement.routes.js';
 import { resourceRouter } from './routes/resource.routes.js';
 import { attendanceRouter } from './routes/attendance.routes.js';
 import { notFoundHandler, errorHandler } from './middleware/error-handler.js';
+import { generalRateLimiter } from './middleware/rate-limiter.js';
 
 export function createApp() {
   const app = express();
+
+  // Security headers (CSP, X-Frame-Options, HSTS, X-Content-Type-Options, etc.)
+  app.use(
+    helmet({
+      crossOriginEmbedderPolicy: false, // Allow embedding from same origin during dev
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          scriptSrc: ["'self'"],
+          styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+          fontSrc: ["'self'", 'https://fonts.gstatic.com'],
+          imgSrc: ["'self'", 'data:', 'blob:'],
+          connectSrc: ["'self'"],
+        },
+      },
+    })
+  );
 
   // Basic security and parsing middlewares
   app.use(express.json());
@@ -35,6 +54,9 @@ export function createApp() {
 
   // Mount API health routes
   app.use('/api', healthRouter);
+
+  // General rate limiter — applies to all API routes below this line
+  app.use('/api', generalRateLimiter);
 
   // Mount Authentication routes
   app.use('/api/auth', authRouter);

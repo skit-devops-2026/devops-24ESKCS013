@@ -20,9 +20,6 @@ export function Navbar() {
           <NavLink to="/" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
             Home
           </NavLink>
-          <NavLink to="/health" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-            System Health
-          </NavLink>
 
           {user && user.role === 'student' && (
             <>

@@ -12,3 +12,19 @@ export const authRateLimiter = rateLimit({
     message: 'Too many authentication attempts. Please try again after 15 minutes.',
   },
 });
+
+/**
+ * General API rate limiter — applied to all non-auth routes.
+ * Protects CPU-heavy endpoints like attendance parse-preview.
+ */
+export const generalRateLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute window
+  max: env.NODE_ENV === 'test' ? 10000 : 120, // 120 requests per minute per IP
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    status: 'error',
+    statusCode: 429,
+    message: 'Too many requests. Please slow down and try again in a moment.',
+  },
+});

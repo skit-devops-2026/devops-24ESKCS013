@@ -31,18 +31,6 @@ export function App() {
           <Route index element={<LandingPage />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />
-          <Route
-            path="health"
-            element={
-              <div className="container" style={{ padding: '3rem 1rem' }}>
-                <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-                  <h1 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>System Diagnostics</h1>
-                  <p style={{ color: 'var(--ink-soft)' }}>Real-time connectivity between React client, Express API, and MongoDB.</p>
-                </div>
-                <ApiHealthCheck />
-              </div>
-            }
-          />
 
           {/* Protected Student Routes */}
           <Route
@@ -164,6 +152,20 @@ export function App() {
             element={
               <ProtectedRoute allowedRole="admin">
                 <AdminResourcesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="admin/health"
+            element={
+              <ProtectedRoute allowedRole="admin">
+                <div className="container" style={{ padding: '3rem 1rem' }}>
+                  <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                    <h1 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>System Diagnostics</h1>
+                    <p style={{ color: 'var(--ink-soft)' }}>Infrastructure health and database connectivity.</p>
+                  </div>
+                  <ApiHealthCheck />
+                </div>
               </ProtectedRoute>
             }
           />

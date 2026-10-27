@@ -67,8 +67,8 @@ export function ApiHealthCheck() {
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--rule)', paddingBottom: '0.5rem' }}>
             <span style={{ color: 'var(--ink-soft)' }}>Database Layer:</span>
-            <span className="badge badge-gold">
-              {dbHealth?.database.driver.toUpperCase()} (Phase 4 Ready)
+            <span className="badge badge-green">
+              {dbHealth?.database.driver.toUpperCase()} (Connected)
             </span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
   getTaskSummary,
@@ -18,8 +18,7 @@ import {
 } from '../services/attendance.service';
 
 export function StudentDashboardPreview() {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [taskSummary, setTaskSummary] = useState<TaskSummary | null>(null);
   const [goalSummary, setGoalSummary] = useState<GoalSummary | null>(null);
@@ -57,11 +56,6 @@ export function StudentDashboardPreview() {
     loadDashboardMetrics();
   }, []);
 
-  async function handleLogout() {
-    await logout();
-    navigate('/', { replace: true });
-  }
-
   // Calculate actual attendance average across enrolled subjects
   const avgAttendance =
     subjects.length > 0
@@ -73,22 +67,22 @@ export function StudentDashboardPreview() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <span className="badge badge-green" style={{ marginBottom: '0.5rem' }}>
-            Verified Student Session (MongoDB Persisted)
+            Student Portal
           </span>
           <h1 style={{ fontSize: '2.25rem', color: 'var(--ink)' }}>
             Welcome back, {user?.name}
           </h1>
           <p style={{ color: 'var(--ink-soft)' }}>
-            Roll Number: <strong>{user?.profile?.rollNumber || '24ESKCS013'}</strong> &bull; {user?.profile?.department || 'Computer Science'} (Sem {user?.profile?.semester || 1})
+            {user?.profile?.rollNumber && (
+              <>Roll Number: <strong>{user.profile.rollNumber}</strong> &bull; </>
+            )}
+            {user?.profile?.department || 'Academics'} (Sem {user?.profile?.semester || 1})
           </p>
         </div>
         <div style={{ display: 'flex', gap: '0.75rem' }}>
           <Link to="/student/study" className="btn btn-primary">
             ⏱ Start Focus Session
           </Link>
-          <button onClick={handleLogout} className="btn btn-secondary">
-            Sign Out
-          </button>
         </div>
       </div>
 
