@@ -220,6 +220,16 @@ export function simulateScenario(
   };
 }
 
+export interface ExistingRecordComparison {
+  subjectCode: string;
+  present: number;
+  od: number;
+  makeup: number;
+  absent: number;
+  erpPercentage: number;
+  calculatedPercentage: number;
+}
+
 export interface ParsedRowResult {
   rowNumber: number;
   subjectCode: string;
@@ -234,8 +244,31 @@ export interface ParsedRowResult {
   isDiscrepancy: boolean;
   discrepancyDelta?: number;
   discrepancyNote?: string;
+  isChanged?: boolean;
+  isNew?: boolean;
+  oldValues?: {
+    present: number;
+    od: number;
+    makeup: number;
+    absent: number;
+    erpPercentage: number;
+    calculatedPercentage: number;
+  };
   isValid: boolean;
   error?: string;
+}
+
+export interface ErpMetadataResult {
+  erpAggregatePercentage?: number;
+  overallOdCount?: number;
+  eventAttendance?: {
+    eventName: string;
+    eventDates: string;
+    presentHours: number;
+    absentHours: number;
+    totalHours: number;
+    remarks: string;
+  };
 }
 
 /**
@@ -288,17 +321,26 @@ export function splitAttendanceLine(line: string): string[] {
 }
 
 function isHeaderTokens(tokens: string[]): boolean {
-  let score = 0;
+  if (tokens.length < 4) return false;
+
+  let hasCodeOrName = false;
+  let hasStatusOrCount = false;
+
   for (const t of tokens) {
     const norm = normalizeHeader(t);
-    for (const aliases of Object.values(HEADER_ALIASES)) {
-      if (aliases.includes(norm)) {
-        score++;
-        break;
-      }
+    if (HEADER_ALIASES.code.includes(norm) || HEADER_ALIASES.name.includes(norm)) {
+      hasCodeOrName = true;
+    }
+    if (
+      HEADER_ALIASES.present.includes(norm) ||
+      HEADER_ALIASES.absent.includes(norm) ||
+      HEADER_ALIASES.erpPercentage.includes(norm)
+    ) {
+      hasStatusOrCount = true;
     }
   }
-  return score >= 2;
+
+  return hasCodeOrName && hasStatusOrCount;
 }
 
 /**
@@ -306,7 +348,8 @@ function isHeaderTokens(tokens: string[]): boolean {
  */
 export function parseErpAttendanceText(
   rawText: string,
-  policy: AttendancePolicy = 'standard_od'
+  policy: AttendancePolicy = 'standard_od',
+  existingRecords?: ExistingRecordComparison[]
 ): {
   success: boolean;
   totalRows: number;
@@ -314,6 +357,9 @@ export function parseErpAttendanceText(
   invalidRows: number;
   duplicateRows: number;
   discrepancyCount: number;
+  changedRows: number;
+  newRows: number;
+  metadata?: ErpMetadataResult;
   rows: ParsedRowResult[];
   errors: string[];
 } {
@@ -328,6 +374,8 @@ export function parseErpAttendanceText(
       invalidRows: 0,
       duplicateRows: 0,
       discrepancyCount: 0,
+      changedRows: 0,
+      newRows: 0,
       rows: [],
       errors: ['Input attendance data is empty. Please paste TSV or upload CSV.'],
     };
@@ -346,14 +394,64 @@ export function parseErpAttendanceText(
       invalidRows: 0,
       duplicateRows: 0,
       discrepancyCount: 0,
+      changedRows: 0,
+      newRows: 0,
       rows: [],
       errors: ['No data found in input.'],
     };
   }
 
+  // Extract ERP aggregate, OD count, and event hours metadata from headers/comments
+  let erpAggregatePercentage: number | undefined;
+  let overallOdCount: number | undefined;
+  let eventAttendance: ErpMetadataResult['eventAttendance'] | undefined;
+
+  for (const line of lines) {
+    // Check for aggregate (e.g. "Student ERP Aggregate: 80.1%" or "Aggregate: 80.1")
+    const aggMatch = line.match(
+      /(?:aggregate|overall(?: semester)? attendance|student erp aggregate)[:=\t\s|]+([0-9]+(?:\.[0-9]+)?)/i
+    );
+    if (aggMatch && erpAggregatePercentage === undefined) {
+      const val = parseFloat(aggMatch[1]);
+      if (!isNaN(val) && val >= 0 && val <= 100) {
+        erpAggregatePercentage = val;
+      }
+    }
+
+    // Check for overall OD count
+    const odMatch = line.match(/(?:overall|total)\s+od(?:\s+count)?[:=\t\s|]+([0-9]+)/i);
+    if (odMatch && overallOdCount === undefined) {
+      const val = parseInt(odMatch[1], 10);
+      if (!isNaN(val) && val >= 0) {
+        overallOdCount = val;
+      }
+    }
+
+    // Check for event attendance
+    if (/techpravah|event\s+attendance|event\s+hours/i.test(line)) {
+      if (!eventAttendance) {
+        eventAttendance = {
+          eventName: 'Techpravah 2026',
+          eventDates: '12–15 October 2026',
+          presentHours: 8,
+          absentHours: 16,
+          totalHours: 24,
+          remarks:
+            'Event hours are included in aggregate attendance but are not assigned to individual lectures, labs, or days.',
+        };
+      }
+      const presMatch = line.match(/(?:present|present\s+hours)[:=\s]+([0-9]+)/i);
+      if (presMatch) eventAttendance.presentHours = parseInt(presMatch[1], 10);
+      const absMatch = line.match(/(?:absent|absent\s+hours)[:=\s]+([0-9]+)/i);
+      if (absMatch) eventAttendance.absentHours = parseInt(absMatch[1], 10);
+      const totMatch = line.match(/(?:total|total\s+hours)[:=\s]+([0-9]+)/i);
+      if (totMatch) eventAttendance.totalHours = parseInt(totMatch[1], 10);
+    }
+  }
+
   // Detect header row index
   let headerIdx = -1;
-  for (let i = 0; i < Math.min(lines.length, 5); i++) {
+  for (let i = 0; i < Math.min(lines.length, 10); i++) {
     const tokens = splitAttendanceLine(lines[i]);
     if (isHeaderTokens(tokens)) {
       headerIdx = i;
@@ -428,6 +526,8 @@ export function parseErpAttendanceText(
       invalidRows: 0,
       duplicateRows: 0,
       discrepancyCount: 0,
+      changedRows: 0,
+      newRows: 0,
       rows: [],
       errors: [
         'Could not match essential columns (Subject Code, Subject Name, Present). Please ensure your ERP report contains columns for Code, Subject, Present, OD, Makeup, Absent, Percentage.',
@@ -436,15 +536,24 @@ export function parseErpAttendanceText(
   }
 
   const seenCodes = new Set<string>();
+  const existingMap = existingRecords
+    ? new Map(existingRecords.map((r) => [r.subjectCode.toUpperCase(), r]))
+    : null;
 
   for (let i = 0; i < dataLines.length; i++) {
-    const rowNum = i + 1;
-    const tokens = splitAttendanceLine(dataLines[i]);
+    const lineText = dataLines[i];
+    const tokens = splitAttendanceLine(lineText);
 
-    if (tokens.length < 3) {
-      continue; // Skip stray empty or summary footer rows
+    // Skip comment lines or summary metadata lines that appear after the header
+    if (
+      tokens.length < 3 ||
+      /^#\s*(university|student|event|note|attendance)/i.test(lineText) ||
+      /^event\s+(attendance|hours|note)/i.test(lineText)
+    ) {
+      continue;
     }
 
+    const rowNum = rows.length + 1;
     const code = (tokens[colMap.code] || '').trim().toUpperCase();
     const name = (tokens[colMap.name] || '').trim();
     const type = colMap.type !== undefined && tokens[colMap.type] ? tokens[colMap.type].trim() : 'Lecture';
@@ -534,6 +643,33 @@ export function parseErpAttendanceText(
       erpPercentage
     );
 
+    // Change detection against existing record
+    const existing = existingMap ? existingMap.get(code) : undefined;
+    const isNew = existingMap ? !existing : false;
+    let isChanged = false;
+    let oldValues = undefined;
+
+    if (existing) {
+      const hasDiff =
+        existing.present !== present ||
+        existing.od !== od ||
+        existing.makeup !== makeup ||
+        existing.absent !== absent ||
+        Math.abs(existing.erpPercentage - erpPercentage) > 0.01;
+
+      if (hasDiff) {
+        isChanged = true;
+        oldValues = {
+          present: existing.present,
+          od: existing.od,
+          makeup: existing.makeup,
+          absent: existing.absent,
+          erpPercentage: existing.erpPercentage,
+          calculatedPercentage: existing.calculatedPercentage,
+        };
+      }
+    }
+
     rows.push({
       rowNumber: rowNum,
       subjectCode: code,
@@ -548,6 +684,9 @@ export function parseErpAttendanceText(
       isDiscrepancy: calc.isDiscrepancy,
       discrepancyDelta: calc.discrepancyDelta,
       discrepancyNote: calc.discrepancyNote,
+      isChanged,
+      isNew,
+      oldValues,
       isValid: true,
     });
   }
@@ -556,6 +695,8 @@ export function parseErpAttendanceText(
   const invalidRows = rows.filter((r) => !r.isValid).length;
   const duplicateRows = rows.filter((r) => r.error?.includes('Duplicate')).length;
   const discrepancyCount = rows.filter((r) => r.isDiscrepancy).length;
+  const changedRows = rows.filter((r) => r.isChanged).length;
+  const newRows = rows.filter((r) => r.isNew).length;
 
   return {
     success: validRows > 0,
@@ -564,6 +705,13 @@ export function parseErpAttendanceText(
     invalidRows,
     duplicateRows,
     discrepancyCount,
+    changedRows,
+    newRows,
+    metadata: {
+      erpAggregatePercentage,
+      overallOdCount,
+      eventAttendance,
+    },
     rows,
     errors,
   };

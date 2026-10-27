@@ -61,6 +61,15 @@ export const CLIENT_POLICY_METADATA: Record<AttendancePolicy, PolicyMetadata> = 
   },
 };
 
+export interface EventAttendance {
+  eventName: string;
+  eventDates: string;
+  presentHours: number;
+  absentHours: number;
+  totalHours: number;
+  remarks: string;
+}
+
 export interface AttendanceRecordItem {
   _id: string;
   userId: string;
@@ -94,6 +103,10 @@ export interface AttendanceSummary {
   totalAttended: number;
   totalConducted: number;
   overallPercentage: number;
+  erpAggregatePercentage?: number;
+  overallOdCount?: number;
+  eventAttendance?: EventAttendance;
+  erpAggregateExplanation?: string;
   shortageCount: number;
   safeCount: number;
   hasShortage: boolean;
@@ -123,6 +136,16 @@ export interface ParsedRowPreview {
   isDiscrepancy: boolean;
   discrepancyDelta?: number;
   discrepancyNote?: string;
+  isChanged?: boolean;
+  isNew?: boolean;
+  oldValues?: {
+    present: number;
+    od: number;
+    makeup: number;
+    absent: number;
+    erpPercentage: number;
+    calculatedPercentage: number;
+  };
   matchedSubjectId?: string | null;
   matchedSubjectName?: string | null;
   isValid: boolean;
@@ -138,6 +161,13 @@ export interface ParsePreviewResponse {
   invalidRows: number;
   duplicateRows: number;
   discrepancyCount: number;
+  changedRows?: number;
+  newRows?: number;
+  metadata?: {
+    erpAggregatePercentage?: number;
+    overallOdCount?: number;
+    eventAttendance?: EventAttendance;
+  };
   rows: ParsedRowPreview[];
   errors: string[];
 }
@@ -189,12 +219,30 @@ export async function importAttendance(
     absent: number;
     erpPercentage?: number;
     threshold?: number;
+    discrepancyNote?: string | null;
   }>,
-  policy: AttendancePolicy = 'standard_od'
+  policy: AttendancePolicy = 'standard_od',
+  metadata?: {
+    erpAggregatePercentage?: number;
+    overallOdCount?: number;
+    eventAttendance?: EventAttendance;
+  }
 ): Promise<{ status: string; count: number; data: AttendanceRecordItem[] }> {
   return requestJson(getApiUrl('/attendance/import'), {
     method: 'POST',
-    body: JSON.stringify({ policy, records }),
+    body: JSON.stringify({
+      policy,
+      records,
+      ...(metadata?.erpAggregatePercentage !== undefined && {
+        erpAggregatePercentage: metadata.erpAggregatePercentage,
+      }),
+      ...(metadata?.overallOdCount !== undefined && {
+        overallOdCount: metadata.overallOdCount,
+      }),
+      ...(metadata?.eventAttendance && {
+        eventAttendance: metadata.eventAttendance,
+      }),
+    }),
   });
 }
 

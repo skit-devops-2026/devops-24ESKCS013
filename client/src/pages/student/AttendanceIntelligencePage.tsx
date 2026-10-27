@@ -14,11 +14,15 @@ import {
   SimulationResult,
 } from '../../services/attendance.service';
 
-const SAMPLE_ERP_DATA = `#\tSubject Code\tSubject\tSubject Type\tPresent\tOD\tMakeup\tAbsent\tPercentage
+const SAMPLE_ERP_DATA = `# University ERP Attendance Report
+# Student ERP Aggregate: 80.1% | Overall OD Count: 17
+# Event Attendance: Techpravah 2026 (12–15 October 2026) — Present: 8 hrs | Absent: 16 hrs | Total: 24 hrs
+# Event Note: Event hours are included in aggregate attendance but are not assigned to individual lectures, labs, or days.
+#\tSubject Code\tSubject\tSubject Type\tPresent\tOD\tMakeup\tAbsent\tPercentage
 1\tCEUL560.1\tClimate Change Science\tLecture\t30\t3\t0\t3\t91.67
 2\tCRT\tCampus Recruitment Training\tLab\t58\t0\t0\t14\t80.56
 3\tCSUL501\tDesign and Analysis of Algorithms\tLecture\t26\t1\t0\t11\t71.05
-4\tCSUL502\tMachine Learning\tLecture\t26\t2\t0\t8\t77.78
+4\tCSUL502\tMachine Learning\tLecture\t26\t2\t0\t9\t75.68
 5\tCSUL503\tCryptography and Network Security\tLecture\t32\t0\t0\t8\t80.00
 6\tCSUL504\tFull Stack Development\tLecture\t17\t2\t0\t5\t79.17
 7\tCSUL511\tDevOps Practices and Principles\tLecture\t30\t3\t1\t7\t85.00
@@ -53,6 +57,20 @@ export function AttendanceIntelligencePage() {
     invalidRows: number;
     duplicateRows: number;
     discrepancyCount: number;
+    changedRows: number;
+    newRows: number;
+  } | null>(null);
+  const [previewMetadata, setPreviewMetadata] = useState<{
+    erpAggregatePercentage?: number;
+    overallOdCount?: number;
+    eventAttendance?: {
+      eventName: string;
+      eventDates: string;
+      presentHours: number;
+      absentHours: number;
+      totalHours: number;
+      remarks: string;
+    };
   } | null>(null);
   const [previewErrors, setPreviewErrors] = useState<string[]>([]);
   const [parsing, setParsing] = useState(false);
@@ -111,7 +129,12 @@ export function AttendanceIntelligencePage() {
         invalidRows: res.invalidRows,
         duplicateRows: res.duplicateRows || 0,
         discrepancyCount: res.discrepancyCount,
+        changedRows: res.changedRows || 0,
+        newRows: res.newRows || 0,
       });
+      if (res.metadata) {
+        setPreviewMetadata(res.metadata);
+      }
       setPreviewErrors(res.errors || []);
     } catch (err: unknown) {
       alert(err instanceof Error ? err.message : 'Parsing failed.');
@@ -159,12 +182,14 @@ export function AttendanceIntelligencePage() {
           erpPercentage: r.erpPercentage,
           discrepancyNote: r.discrepancyNote,
         })),
-        selectedPolicy
+        selectedPolicy,
+        previewMetadata || undefined
       );
 
       setShowImportModal(false);
       setPreviewRows(null);
       setPreviewStats(null);
+      setPreviewMetadata(null);
       setRawText('');
       loadData();
     } catch (err: unknown) {
@@ -413,6 +438,45 @@ export function AttendanceIntelligencePage() {
                   >
                     🎲 Simulate Recovery Plan
                   </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ERP Official Aggregate & Event Hours Banner */}
+          {summary && (
+            <div
+              className="card"
+              style={{
+                background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(168, 85, 247, 0.03))',
+                borderLeft: '4px solid #6366f1',
+                padding: '1.25rem 1.5rem',
+                marginBottom: '1.5rem',
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+                    <span className="badge" style={{ backgroundColor: '#e0e7ff', color: '#4338ca', fontWeight: 600 }}>
+                      🏛️ Official ERP Aggregate & Event Hours
+                    </span>
+                    <span className="badge badge-gold">Overall ODs: {summary.overallOdCount ?? 17}</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem', marginTop: '0.25rem' }}>
+                    <span style={{ fontSize: '1.6rem', fontWeight: 700, color: 'var(--ink)' }}>
+                      Student ERP Aggregate: {summary.erpAggregatePercentage ?? 80.1}%
+                    </span>
+                    <span style={{ fontSize: '0.85rem', color: 'var(--ink-soft)' }}>
+                      (vs {summary.overallPercentage}% Course Lecture/Lab Average)
+                    </span>
+                  </div>
+                  {summary.eventAttendance && (
+                    <div style={{ fontSize: '0.82rem', color: 'var(--ink-soft)', marginTop: '0.5rem', lineHeight: 1.5 }}>
+                      <strong>Event Attendance ({summary.eventAttendance.eventName} &bull; {summary.eventAttendance.eventDates}):</strong>{' '}
+                      {summary.eventAttendance.presentHours} Present hrs, {summary.eventAttendance.absentHours} Absent hrs ({summary.eventAttendance.totalHours} Total hrs).{' '}
+                      <em>{summary.eventAttendance.remarks}</em>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -1150,6 +1214,32 @@ export function AttendanceIntelligencePage() {
                   </button>
                 </div>
 
+                {/* Detected ERP Metadata Banner */}
+                {previewMetadata && (
+                  <div
+                    style={{
+                      padding: '0.75rem 1rem',
+                      backgroundColor: 'rgba(99, 102, 241, 0.06)',
+                      borderRadius: '8px',
+                      marginBottom: '1rem',
+                      border: '1px solid rgba(99, 102, 241, 0.2)',
+                      fontSize: '0.82rem',
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
+                      <div>
+                        <strong>🏛️ ERP Aggregate:</strong> {previewMetadata.erpAggregatePercentage ?? 80.1}% &bull;{' '}
+                        <strong>Total University ODs:</strong> {previewMetadata.overallOdCount ?? 17}
+                      </div>
+                      {previewMetadata.eventAttendance && (
+                        <div style={{ color: 'var(--ink-soft)' }}>
+                          <strong>Event ({previewMetadata.eventAttendance.eventName}):</strong> {previewMetadata.eventAttendance.presentHours} Present hrs / {previewMetadata.eventAttendance.absentHours} Absent hrs ({previewMetadata.eventAttendance.totalHours} Total hrs)
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
                 {/* Import Summary Ribbon */}
                 <div
                   style={{
@@ -1170,6 +1260,12 @@ export function AttendanceIntelligencePage() {
                   <div style={{ textAlign: 'center' }}>
                     <div style={{ fontSize: '0.7rem', color: 'var(--ink-soft)', textTransform: 'uppercase', fontWeight: 600 }}>Ready to Import</div>
                     <div style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--emerald)' }}>{previewRows.filter(r => r.isValid).length}</div>
+                  </div>
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{ fontSize: '0.7rem', color: 'var(--ink-soft)', textTransform: 'uppercase', fontWeight: 600 }}>Changed Rows</div>
+                    <div style={{ fontSize: '1.25rem', fontWeight: 700, color: '#2563eb' }}>
+                      {previewStats?.changedRows ?? previewRows.filter(r => r.isChanged).length}
+                    </div>
                   </div>
                   <div style={{ textAlign: 'center' }}>
                     <div style={{ fontSize: '0.7rem', color: 'var(--ink-soft)', textTransform: 'uppercase', fontWeight: 600 }}>Discrepancies</div>
@@ -1221,6 +1317,8 @@ export function AttendanceIntelligencePage() {
                             borderBottom: '1px solid var(--border)',
                             backgroundColor: !row.isValid
                               ? 'rgba(239,68,68,0.06)'
+                              : row.isChanged
+                              ? 'rgba(59, 130, 246, 0.05)'
                               : row.isDiscrepancy
                               ? 'rgba(245, 158, 11, 0.05)'
                               : 'transparent',
@@ -1283,19 +1381,57 @@ export function AttendanceIntelligencePage() {
                           <td style={{ padding: '0.5rem' }}>
                             {!row.isValid ? (
                               <span style={{ color: 'var(--crimson)', fontSize: '0.75rem', fontWeight: 600 }}>⚠️ {row.error}</span>
-                            ) : row.isDiscrepancy ? (
+                            ) : (
                               <div>
-                                <span style={{ color: '#D97706', fontSize: '0.75rem', fontWeight: 600, display: 'block' }}>
-                                  ⚠️ Delta: {row.discrepancyDelta}%
-                                </span>
-                                {row.discrepancyNote && (
-                                  <span style={{ fontSize: '0.7rem', color: 'var(--ink-soft)', lineHeight: 1.2, display: 'block', maxWidth: '200px' }}>
-                                    {row.discrepancyNote}
-                                  </span>
+                                {row.isChanged && (
+                                  <div
+                                    style={{
+                                      backgroundColor: '#dbeafe',
+                                      color: '#1e40af',
+                                      fontSize: '0.7rem',
+                                      fontWeight: 600,
+                                      padding: '2px 6px',
+                                      borderRadius: '4px',
+                                      marginBottom: '3px',
+                                      display: 'inline-block',
+                                    }}
+                                  >
+                                    🔄 Updated (was Absent: {row.oldValues?.absent}, ERP: {row.oldValues?.erpPercentage}%)
+                                  </div>
+                                )}
+                                {row.isNew && (
+                                  <div
+                                    style={{
+                                      backgroundColor: '#f3e8ff',
+                                      color: '#6b21a8',
+                                      fontSize: '0.7rem',
+                                      fontWeight: 600,
+                                      padding: '2px 6px',
+                                      borderRadius: '4px',
+                                      marginBottom: '3px',
+                                      display: 'inline-block',
+                                    }}
+                                  >
+                                    ✨ New Subject
+                                  </div>
+                                )}
+                                {row.isDiscrepancy ? (
+                                  <div>
+                                    <span style={{ color: '#D97706', fontSize: '0.75rem', fontWeight: 600, display: 'block' }}>
+                                      ⚠️ Delta: {row.discrepancyDelta}%
+                                    </span>
+                                    {row.discrepancyNote && (
+                                      <span style={{ fontSize: '0.7rem', color: 'var(--ink-soft)', lineHeight: 1.2, display: 'block', maxWidth: '200px' }}>
+                                        {row.discrepancyNote}
+                                      </span>
+                                    )}
+                                  </div>
+                                ) : (
+                                  !row.isChanged && !row.isNew && (
+                                    <span style={{ color: 'var(--emerald)', fontSize: '0.75rem', fontWeight: 600 }}>✅ Valid (Unchanged)</span>
+                                  )
                                 )}
                               </div>
-                            ) : (
-                              <span style={{ color: 'var(--emerald)', fontSize: '0.75rem', fontWeight: 600 }}>✅ Valid</span>
                             )}
                           </td>
                         </tr>

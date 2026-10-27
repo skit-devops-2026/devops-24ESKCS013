@@ -23,17 +23,21 @@ let studentBCookie: string[];
 const REAL_ERP_TSV = `
 #\tSubject Code\tSubject\tSubject Type\tPresent\tOD\tMakeup\tAbsent\tPercentage
 1\tCSUL501\tDesign and Analysis of Algorithms\tLecture\t26\t1\t0\t11\t71.05
-2\tCSUL502\tMachine Learning\tLecture\t26\t2\t0\t8\t77.78
+2\tCSUL502\tMachine Learning\tLecture\t26\t2\t0\t9\t75.68
 3\tCSUL504\tFull Stack Development\tLecture\t17\t2\t0\t5\t79.17
 4\tCSUT530\tIndustrial Training\tTraining\t14\t0\t2\t1\t100.00
 `.trim();
 
 const FULL_11_ERP_TSV = `
+# University ERP Attendance Report
+# Student ERP Aggregate: 80.1% | Overall OD Count: 17
+# Event Attendance: Techpravah 2026 (12–15 October 2026) — Present: 8 hrs | Absent: 16 hrs | Total: 24 hrs
+# Event Note: Event hours are included in aggregate attendance but are not assigned to individual lectures, labs, or days.
 #\tSubject Code\tSubject\tSubject Type\tPresent\tOD\tMakeup\tAbsent\tPercentage
 1\tCEUL560.1\tClimate Change Science\tLecture\t30\t3\t0\t3\t91.67
 2\tCRT\tCampus Recruitment Training\tLab\t58\t0\t0\t14\t80.56
 3\tCSUL501\tDesign and Analysis of Algorithms\tLecture\t26\t1\t0\t11\t71.05
-4\tCSUL502\tMachine Learning\tLecture\t26\t2\t0\t8\t77.78
+4\tCSUL502\tMachine Learning\tLecture\t26\t2\t0\t9\t75.68
 5\tCSUL503\tCryptography and Network Security\tLecture\t32\t0\t0\t8\t80.00
 6\tCSUL504\tFull Stack Development\tLecture\t17\t2\t0\t5\t79.17
 7\tCSUL511\tDevOps Practices and Principles\tLecture\t30\t3\t1\t7\t85.00
@@ -44,11 +48,15 @@ const FULL_11_ERP_TSV = `
 `.trim();
 
 const FULL_11_ERP_PIPE = `
+# University ERP Attendance Report
+# Student ERP Aggregate: 80.1% | Overall OD Count: 17
+# Event Attendance: Techpravah 2026 (12–15 October 2026) — Present: 8 hrs | Absent: 16 hrs | Total: 24 hrs
+# Event Note: Event hours are included in aggregate attendance but are not assigned to individual lectures, labs, or days.
 # | Subject Code | Subject | Subject Type | Present | OD | Makeup | Absent | Percentage
 1 | CEUL560.1 | Climate Change Science | Lecture | 30 | 3 | 0 | 3 | 91.67
 2 | CRT | Campus Recruitment Training | Lab | 58 | 0 | 0 | 14 | 80.56
 3 | CSUL501 | Design and Analysis of Algorithms | Lecture | 26 | 1 | 0 | 11 | 71.05
-4 | CSUL502 | Machine Learning | Lecture | 26 | 2 | 0 | 8 | 77.78
+4 | CSUL502 | Machine Learning | Lecture | 26 | 2 | 0 | 9 | 75.68
 5 | CSUL503 | Cryptography and Network Security | Lecture | 32 | 0 | 0 | 8 | 80.00
 6 | CSUL504 | Full Stack Development | Lecture | 17 | 2 | 0 | 5 | 79.17
 7 | CSUL511 | DevOps Practices and Principles | Lecture | 30 | 3 | 1 | 7 | 85.00
@@ -62,7 +70,7 @@ const FULL_11_ERP_NO_HEADER = `
 1\tCEUL560.1\tClimate Change Science\tLecture\t30\t3\t0\t3\t91.67
 2\tCRT\tCampus Recruitment Training\tLab\t58\t0\t0\t14\t80.56
 3\tCSUL501\tDesign and Analysis of Algorithms\tLecture\t26\t1\t0\t11\t71.05
-4\tCSUL502\tMachine Learning\tLecture\t26\t2\t0\t8\t77.78
+4\tCSUL502\tMachine Learning\tLecture\t26\t2\t0\t9\t75.68
 5\tCSUL503\tCryptography and Network Security\tLecture\t32\t0\t0\t8\t80.00
 6\tCSUL504\tFull Stack Development\tLecture\t17\t2\t0\t5\t79.17
 7\tCSUL511\tDevOps Practices and Principles\tLecture\t30\t3\t1\t7\t85.00
@@ -155,31 +163,33 @@ describe('Attendance Intelligence Unit & Integration Tests', () => {
       assert.equal(sim5.status, 'shortage');
     });
 
-    it('CSUL502: calculates 28/36 = 77.78% and proves 1 class can be safely missed', () => {
+    it('CSUL502: calculates 28/37 = 75.68% from latest ERP counts and proves 0 classes can be safely missed', () => {
       const calc = calculateAttendance(
-        { present: 26, od: 2, makeup: 0, absent: 8 },
+        { present: 26, od: 2, makeup: 0, absent: 9 },
         'standard_od',
-        77.78
+        75.68
       );
       assert.equal(calc.attended, 28);
-      assert.equal(calc.conducted, 36);
-      assert.equal(calc.percentage, 77.78);
+      assert.equal(calc.conducted, 37);
+      assert.equal(calc.percentage, 75.68);
       assert.equal(calc.isDiscrepancy, false);
 
       const skippable = calculateSkippableClasses(calc.attended, calc.conducted, 75);
-      assert.equal(skippable, 1);
+      assert.equal(skippable, 0); // At 75.68%, even 1 missed class drops to 73.68%
 
-      // Missing 1 class results in 28/37 (75.68% - Safe)
+      // Missing 1 class drops below 75% (28/38 = 73.68% - Shortage)
       const sim1 = simulateScenario(calc.attended, calc.conducted, 0, 1, 75);
       assert.equal(sim1.projectedAttended, 28);
-      assert.equal(sim1.projectedConducted, 37);
-      assert.equal(sim1.projectedPercentage, 75.68);
-      assert.equal(sim1.status, 'safe');
+      assert.equal(sim1.projectedConducted, 38);
+      assert.equal(sim1.projectedPercentage, 73.68);
+      assert.equal(sim1.status, 'shortage');
 
-      // Missing 2 classes drops below 75% (28/38 = 73.68%)
-      const sim2 = simulateScenario(calc.attended, calc.conducted, 0, 2, 75);
-      assert.equal(sim2.projectedPercentage, 73.68);
-      assert.equal(sim2.status, 'shortage');
+      // Attending 1 class improves to 29/38 = 76.32% (Safe)
+      const simAttend1 = simulateScenario(calc.attended, calc.conducted, 1, 0, 75);
+      assert.equal(simAttend1.projectedAttended, 29);
+      assert.equal(simAttend1.projectedConducted, 38);
+      assert.equal(simAttend1.projectedPercentage, 76.32);
+      assert.equal(simAttend1.status, 'safe');
     });
 
     it('CSUL504: calculates 19/24 = 79.17% and proves 1 class can be safely missed', () => {
@@ -465,8 +475,8 @@ CS101,Duplicate,-5,2
               present: 26,
               od: 2,
               makeup: 0,
-              absent: 8,
-              erpPercentage: 77.78,
+              absent: 9,
+              erpPercentage: 75.68,
               threshold: 75,
             },
             {
@@ -621,11 +631,27 @@ CS101,Duplicate,-5,2
       assert.equal(listRes.status, 200);
       assert.equal(listRes.body.summary.totalSubjects, 11);
       assert.equal(listRes.body.summary.totalAttended, 312);
-      assert.equal(listRes.body.summary.totalConducted, 380);
-      assert.equal(listRes.body.summary.overallPercentage, 82.11);
+      assert.equal(listRes.body.summary.totalConducted, 381);
+      assert.equal(listRes.body.summary.overallPercentage, 81.89);
+      assert.equal(listRes.body.summary.erpAggregatePercentage, 80.1);
+      assert.equal(listRes.body.summary.overallOdCount, 17);
+      assert.ok(listRes.body.summary.eventAttendance);
+      assert.equal(listRes.body.summary.eventAttendance.eventName, 'Techpravah 2026');
+      assert.equal(listRes.body.summary.eventAttendance.presentHours, 8);
+      assert.equal(listRes.body.summary.eventAttendance.absentHours, 16);
+      assert.equal(listRes.body.summary.eventAttendance.totalHours, 24);
+      assert.ok(listRes.body.summary.erpAggregateExplanation.includes('Techpravah 2026'));
       assert.equal(listRes.body.summary.shortageCount, 1);
       assert.equal(listRes.body.summary.safeCount, 10);
       assert.equal(listRes.body.shortages[0].subjectCode, 'CSUL501');
+
+      // Verify CSUL502 updated counts and zero discrepancy
+      const csul502 = listRes.body.records.find((r: { subjectCode: string }) => r.subjectCode === 'CSUL502');
+      assert.ok(csul502);
+      assert.equal(csul502.absent, 9);
+      assert.equal(csul502.erpPercentage, 75.68);
+      assert.equal(csul502.calculatedPercentage, 75.68);
+      assert.equal(csul502.isDiscrepancy, false);
 
       // Verify CSUT530 and CSUL511 discrepancies
       const csut530 = listRes.body.records.find((r: { subjectCode: string }) => r.subjectCode === 'CSUT530');
@@ -639,6 +665,63 @@ CS101,Duplicate,-5,2
       assert.equal(csul511.isDiscrepancy, true);
       assert.equal(csul511.erpPercentage, 85.0);
       assert.equal(csul511.calculatedPercentage, 80.49);
+    });
+
+    it('detects changed records and old vs new values when parsing a newer ERP report', async () => {
+      // Simulate newer report where CSUL504 has 1 more absent class (absent: 6 instead of 5)
+      const UPDATED_REPORT = `
+# University ERP Attendance Report
+# Student ERP Aggregate: 80.1% | Overall OD Count: 17
+# Event Attendance: Techpravah 2026 (12–15 October 2026) — Present: 8 hrs | Absent: 16 hrs | Total: 24 hrs
+# | Subject Code | Subject | Subject Type | Present | OD | Makeup | Absent | Percentage
+1 | CSUL504 | Full Stack Development | Lecture | 17 | 2 | 0 | 6 | 76.00
+      `.trim();
+
+      const previewRes = await request(app)
+        .post('/api/attendance/parse-preview')
+        .set('Cookie', studentACookie)
+        .send({ rawData: UPDATED_REPORT, policy: 'standard_od' });
+
+      assert.equal(previewRes.status, 200);
+      assert.equal(previewRes.body.totalRows, 1);
+      assert.equal(previewRes.body.changedRows, 1);
+      const row = previewRes.body.rows[0];
+      assert.equal(row.isChanged, true);
+      assert.equal(row.absent, 6);
+      assert.ok(row.oldValues);
+      assert.equal(row.oldValues.absent, 5);
+      assert.equal(row.oldValues.erpPercentage, 79.17);
+    });
+
+    it('PUT /api/attendance/overview updates ERP aggregate and event hours metadata', async () => {
+      const res = await request(app)
+        .put('/api/attendance/overview')
+        .set('Cookie', studentACookie)
+        .send({
+          erpAggregatePercentage: 80.5,
+          overallOdCount: 18,
+          eventAttendance: {
+            eventName: 'Techpravah 2026',
+            eventDates: '12–15 October 2026',
+            presentHours: 10,
+            absentHours: 14,
+            totalHours: 24,
+            remarks: 'Event hours included in university aggregate attendance.',
+          },
+        });
+
+      assert.equal(res.status, 200);
+      assert.equal(res.body.data.erpAggregatePercentage, 80.5);
+      assert.equal(res.body.data.overallOdCount, 18);
+      assert.equal(res.body.data.eventAttendance.presentHours, 10);
+
+      // Verify Bob cannot see Alice's overview
+      const bobRes = await request(app)
+        .get('/api/attendance')
+        .set('Cookie', studentBCookie);
+      assert.equal(bobRes.status, 200);
+      // Bob gets defaults, not Alice's updated 80.5% or 10 present hours
+      assert.notEqual(bobRes.body.summary.erpAggregatePercentage, 80.5);
     });
 
     it('POST /api/attendance/simulate calculates hypothetical projections', async () => {

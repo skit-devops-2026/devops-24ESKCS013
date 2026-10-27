@@ -23,7 +23,7 @@ We analyzed the four representative ERP sample rows provided:
 | # | Subject Code | Subject Name | Type | Present ($P$) | OD | Makeup ($M$) | Absent ($A$) | ERP % |
 |---|---|---|---|---|---|---|---|---|
 | 1 | `CSUL501` | Design and Analysis of Algorithms | Lecture | 26 | 1 | 0 | 11 | **71.05%** |
-| 2 | `CSUL502` | Machine Learning | Lecture | 26 | 2 | 0 | 8 | **77.78%** |
+| 2 | `CSUL502` | Machine Learning | Lecture | 26 | 2 | 0 | 9 | **75.68%** |
 | 3 | `CSUL504` | Full Stack Development | Lecture | 17 | 2 | 0 | 5 | **79.17%** |
 | 4 | `CSUT530` | Industrial Training | Training | 14 | 0 | 2 | 1 | **100.00%** |
 
@@ -35,10 +35,20 @@ We analyzed the four representative ERP sample rows provided:
   $$\frac{27}{38} \times 100 = 71.0526\% \longrightarrow \mathbf{71.05\%} \quad (\text{Exact Match})$$
 - Note: If OD was ignored ($26/37 = 70.27\%$), the calculation would fail.
 
-#### Row 2: CSUL502 (Machine Learning)
-- Total Conducted $C = 26 + 2 + 0 + 8 = 36$
+#### Row 2: CSUL502 (Machine Learning — Latest Confirmed Report)
+- Total Conducted $C = 26 + 2 + 0 + 9 = 37$
 - Attended $A_{\text{att}} = P + \text{OD} = 26 + 2 = 28$:
-  $$\frac{28}{36} \times 100 = \frac{7}{9} \times 100 = 77.777\dots\% \longrightarrow \mathbf{77.78\%} \quad (\text{Exact Match})$$
+  $$\frac{28}{37} \times 100 = 75.6756\dots\% \longrightarrow \mathbf{75.68\%} \quad (\text{Exact Match})$$
+- **Safety Margin:** At $75.68\%$, skippable classes = $\lfloor (100 \times 28 - 75 \times 37) / 75 \rfloor = \lfloor 25 / 75 \rfloor = \mathbf{0 \text{ classes}}$. Missing even 1 class drops attendance to $\frac{28}{38} = 73.68\%$ (shortage).
+
+#### University ERP Aggregate & Event Hours Architecture
+- **Student ERP Aggregate:** **80.1%** (Reported directly in portal header)
+- **Overall OD Count:** **17**
+- **Techpravah 2026 Event Attendance:** 12–15 October 2026
+  - Present Hours: 8 hrs | Absent Hours: 16 hrs | Total Hours: 24 hrs
+  - ERP Policy Rule: *"Event hours are included in aggregate attendance but are not assigned to individual lectures, labs, or days."*
+- Course-level calculations: 312 attended of 381 conducted across 11 courses = **81.89%** course slot average.
+- The platform preserves the official 80.1% aggregate separately without fabricating synthetic event sessions into individual academic course records.
 
 #### Row 3: CSUL504 (Full Stack Development)
 - Total Conducted $C = 17 + 2 + 0 + 5 = 24$
