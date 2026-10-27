@@ -19,6 +19,10 @@
   /* Legacy aliases for backward compatibility */
   --paper: var(--bg-base);
   --paper-raised: var(--bg-surface);
+  --surface-muted: var(--bg-muted);
+  --border: var(--border-subtle);
+  --crimson: var(--red);
+  --emerald: var(--green);
 
   /* Borders & Rules */
   --border-subtle: #E2E8F0;
@@ -93,6 +97,18 @@
   --bg-surface-hover: #1E293B;
   --bg-surface-active: #334155;
   --bg-muted: #1E293B;
+
+  --paper: var(--bg-base);
+  --paper-raised: var(--bg-surface);
+  --surface-muted: var(--bg-muted);
+  --border: var(--border-subtle);
+  --rule: var(--border-subtle);
+  --rule-strong: var(--border-strong);
+  --ink: var(--text-primary);
+  --ink-soft: var(--text-secondary);
+  --ink-faint: var(--text-muted);
+  --crimson: var(--red);
+  --emerald: var(--green);
 
   --border-subtle: #1E293B;
   --border-strong: #334155;
