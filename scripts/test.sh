@@ -15,7 +15,7 @@ echo "=== Student Hub — Test Suite ==="
 echo ""
 echo "-- Required files --"
 
-for f in index.html css js auth admin student; do
+for f in index.html legacy-archive/css legacy-archive/js legacy-archive/auth legacy-archive/admin legacy-archive/student; do
   if [ -e "$f" ]; then
     ok "$f exists"
   else
@@ -65,7 +65,7 @@ fi
 echo ""
 echo "-- Auth pages --"
 
-for page in auth/login.html auth/student-login.html auth/admin-login.html auth/student-register.html; do
+for page in legacy-archive/auth/login.html legacy-archive/auth/student-login.html legacy-archive/auth/admin-login.html legacy-archive/auth/student-register.html; do
   if [ -f "$page" ]; then
     ok "$page exists"
   else
@@ -91,7 +91,7 @@ fi
 echo ""
 echo "-- JS files non-empty --"
 
-for jsfile in js/main.js js/auth.js js/admin.js; do
+for jsfile in legacy-archive/js/main.js legacy-archive/js/auth.js legacy-archive/js/admin.js; do
   if [ -s "$jsfile" ]; then
     ok "$jsfile is non-empty"
   else
