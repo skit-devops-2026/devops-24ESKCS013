@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { Plus } from 'lucide-react';
+import { useToast } from '../../context/ToastContext';
+import { PageHeader } from '../../components/PageHeader';
 import {
   getGoals,
   getGoalSummary,
@@ -10,6 +13,7 @@ import {
 } from '../../services/student.service';
 
 export function GoalsPage() {
+  const { toast, confirmModal } = useToast();
   const [goals, setGoals] = useState<GoalItem[]>([]);
   const [summary, setSummary] = useState<GoalSummary | null>(null);
   const [loading, setLoading] = useState(true);
@@ -54,20 +58,29 @@ export function GoalsPage() {
       setGoals((prev) => prev.map((g) => (g._id === updated._id ? updated : g)));
       const newSummary = await getGoalSummary();
       setSummary(newSummary);
+      toast.success(`Progress updated (+${amount} ${goal.unit})`);
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : 'Progress update failed');
+      toast.error(err instanceof Error ? err.message : 'Progress update failed');
     }
   }
 
   async function handleDelete(id: string) {
-    if (!confirm('Are you sure you want to delete this goal?')) return;
+    const confirmed = await confirmModal({
+      title: 'Delete Goal',
+      message: 'Are you sure you want to delete this goal? This action cannot be undone.',
+      confirmText: 'Delete Goal',
+      isDestructive: true,
+    });
+    if (!confirmed) return;
+
     try {
       await deleteGoal(id);
       setGoals((prev) => prev.filter((g) => g._id !== id));
       const newSummary = await getGoalSummary();
       setSummary(newSummary);
+      toast.success('Goal deleted');
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : 'Delete failed');
+      toast.error(err instanceof Error ? err.message : 'Delete failed');
     }
   }
 
@@ -93,26 +106,31 @@ export function GoalsPage() {
       setShowModal(false);
       setTitle('');
       setDescription('');
+      toast.success('Goal created successfully');
       loadData();
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : 'Goal creation failed');
+      toast.error(err instanceof Error ? err.message : 'Goal creation failed');
     } finally {
       setSubmitting(false);
     }
   }
 
   return (
-    <div className="container" style={{ padding: '2.5rem 1rem' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
-        <div>
-          <span className="badge badge-gold" style={{ marginBottom: '0.5rem' }}>Semester Milestones</span>
-          <h1 style={{ fontSize: '2.25rem', color: 'var(--ink)' }}>Academic Goals</h1>
-          <p style={{ color: 'var(--ink-soft)' }}>Set quantitative benchmarks, track progress, and celebrate achievements.</p>
-        </div>
-        <button onClick={() => setShowModal(true)} className="btn btn-primary">
-          + Set New Goal
-        </button>
-      </div>
+    <div className="container" style={{ padding: '1rem' }}>
+      <PageHeader
+        badge="Semester Milestones"
+        badgeType="gold"
+        title="Academic Goals"
+        description="Set quantitative benchmarks, track progress, and celebrate achievements."
+        backTo="/student/dashboard"
+        backLabel="Back to Dashboard"
+        actions={
+          <button onClick={() => setShowModal(true)} className="btn btn-primary" style={{ gap: '0.4rem' }}>
+            <Plus size={16} />
+            <span>Set New Goal</span>
+          </button>
+        }
+      />
 
       {summary && (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', marginBottom: '2.5rem' }}>

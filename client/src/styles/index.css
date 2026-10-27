@@ -653,3 +653,26 @@ input:focus, select:focus, textarea:focus {
     display: none;
   }
 }
+
+/* ==========================================================================
+   ANIMATIONS
+   ========================================================================== */
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}

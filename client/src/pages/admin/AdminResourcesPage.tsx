@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getResources, createResource, deleteResource, ResourceItem } from '../../services/admin.service';
+import { useToast } from '../../context/ToastContext';
 
 export function AdminResourcesPage() {
+  const { toast, confirmModal } = useToast();
   const [resources, setResources] = useState<ResourceItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -49,7 +51,7 @@ export function AdminResourcesPage() {
     if (!title.trim() || !url.trim()) return;
 
     if (!/^https?:\/\/.+/i.test(url.trim())) {
-      alert('Resource URL must begin with http:// or https://');
+      toast.error('Resource URL must begin with http:// or https://');
       return;
     }
 
@@ -70,21 +72,29 @@ export function AdminResourcesPage() {
       setUrl('');
       setDepartment('');
       setSemester('');
+      toast.success('Curriculum resource published');
       loadData();
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : 'Failed to publish resource');
+      toast.error(err instanceof Error ? err.message : 'Failed to publish resource');
     } finally {
       setSubmitting(false);
     }
   }
 
   async function handleDelete(id: string) {
-    if (!confirm('Are you sure you want to delete this resource?')) return;
+    const ok = await confirmModal({
+      title: 'Delete Resource',
+      message: 'Are you sure you want to permanently delete this curriculum resource?',
+      confirmText: 'Delete Resource',
+      isDestructive: true,
+    });
+    if (!ok) return;
     try {
       await deleteResource(id);
       setResources((prev) => prev.filter((r) => r._id !== id));
+      toast.success('Resource deleted');
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : 'Failed to delete resource');
+      toast.error(err instanceof Error ? err.message : 'Failed to delete resource');
     }
   }
 

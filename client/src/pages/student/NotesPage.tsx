@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { Plus } from 'lucide-react';
+import { useToast } from '../../context/ToastContext';
+import { PageHeader } from '../../components/PageHeader';
 import {
   getNotes,
   createNote,
@@ -10,6 +13,7 @@ import {
 } from '../../services/student.service';
 
 export function NotesPage() {
+  const { toast, confirmModal } = useToast();
   const [notes, setNotes] = useState<NoteItem[]>([]);
   const [subjects, setSubjects] = useState<SubjectItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -99,21 +103,30 @@ export function NotesPage() {
         });
       }
       setShowModal(false);
+      toast.success(editingNoteId ? 'Note updated successfully' : 'Note created successfully');
       loadData();
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : 'Failed to save note');
+      toast.error(err instanceof Error ? err.message : 'Failed to save note');
     } finally {
       setSubmitting(false);
     }
   }
 
   async function handleDelete(id: string) {
-    if (!confirm('Are you sure you want to delete this note?')) return;
+    const confirmed = await confirmModal({
+      title: 'Delete Lecture Note',
+      message: 'Are you sure you want to delete this note? This action cannot be undone.',
+      confirmText: 'Delete Note',
+      isDestructive: true,
+    });
+    if (!confirmed) return;
+
     try {
       await deleteNote(id);
       setNotes((prev) => prev.filter((n) => n._id !== id));
+      toast.success('Note deleted');
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : 'Delete failed');
+      toast.error(err instanceof Error ? err.message : 'Delete failed');
     }
   }
 
@@ -121,17 +134,21 @@ export function NotesPage() {
   const allTags = Array.from(new Set(notes.flatMap((n) => n.tags)));
 
   return (
-    <div className="container" style={{ padding: '2.5rem 1rem' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
-        <div>
-          <span className="badge badge-gold" style={{ marginBottom: '0.5rem' }}>Personal Notebook</span>
-          <h1 style={{ fontSize: '2.25rem', color: 'var(--ink)' }}>Lecture Notes &amp; Summaries</h1>
-          <p style={{ color: 'var(--ink-soft)' }}>Markdown-ready study notes with subject tagging, search, and persistent storage.</p>
-        </div>
-        <button onClick={handleOpenCreate} className="btn btn-primary">
-          + New Lecture Note
-        </button>
-      </div>
+    <div className="container" style={{ padding: '1rem' }}>
+      <PageHeader
+        badge="Personal Notebook"
+        badgeType="gold"
+        title="Lecture Notes & Summaries"
+        description="Markdown-ready study notes with subject tagging, search, and revision summaries."
+        backTo="/student/dashboard"
+        backLabel="Back to Dashboard"
+        actions={
+          <button onClick={handleOpenCreate} className="btn btn-primary" style={{ gap: '0.4rem' }}>
+            <Plus size={16} />
+            <span>New Lecture Note</span>
+          </button>
+        }
+      />
 
       {/* Search and Tag filter toolbar */}
       <div className="card" style={{ padding: '1.25rem 1.5rem', marginBottom: '2rem' }}>

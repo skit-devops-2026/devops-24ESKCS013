@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getAdminStudentDetails, updateStudentStatus, StudentDetailData } from '../../services/admin.service';
+import { useToast } from '../../context/ToastContext';
 
 export function AdminStudentDetailPage() {
+  const { toast, confirmModal } = useToast();
   const { id } = useParams<{ id: string }>();
   const [data, setData] = useState<StudentDetailData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -30,14 +32,21 @@ export function AdminStudentDetailPage() {
   async function handleToggleStatus() {
     if (!data || !id) return;
     const nextStatus = data.student.status === 'active' ? 'suspended' : 'active';
-    if (!confirm(`Are you sure you want to mark this account as ${nextStatus.toUpperCase()}?`)) return;
+    const ok = await confirmModal({
+      title: 'Update Student Status',
+      message: `Are you sure you want to mark this account as ${nextStatus.toUpperCase()}?`,
+      confirmText: `Set to ${nextStatus}`,
+      isDestructive: nextStatus === 'suspended',
+    });
+    if (!ok) return;
 
     setUpdating(true);
     try {
       await updateStudentStatus(id, nextStatus);
+      toast.success(`Account marked as ${nextStatus}`);
       loadStudent();
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : 'Status update failed');
+      toast.error(err instanceof Error ? err.message : 'Status update failed');
     } finally {
       setUpdating(false);
     }

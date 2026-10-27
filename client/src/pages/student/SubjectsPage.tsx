@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { Plus } from 'lucide-react';
+import { useToast } from '../../context/ToastContext';
+import { PageHeader } from '../../components/PageHeader';
 import { getSubjects, createSubject, deleteSubject, SubjectItem } from '../../services/student.service';
 
 export function SubjectsPage() {
+  const { toast, confirmModal } = useToast();
   const [subjects, setSubjects] = useState<SubjectItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -35,12 +39,20 @@ export function SubjectsPage() {
   }, []);
 
   async function handleDelete(id: string, code: string) {
-    if (!confirm(`Are you sure you want to delete ${code}? Any associated tasks and notes will remain intact with unlinked course codes.`)) return;
+    const confirmed = await confirmModal({
+      title: `Delete Course (${code})`,
+      message: `Are you sure you want to delete ${code}? Any associated tasks and notes will remain intact with unlinked course codes.`,
+      confirmText: 'Delete Subject',
+      isDestructive: true,
+    });
+    if (!confirmed) return;
+
     try {
       await deleteSubject(id);
       setSubjects((prev) => prev.filter((s) => s._id !== id));
+      toast.success(`${code} removed successfully`);
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : 'Delete failed');
+      toast.error(err instanceof Error ? err.message : 'Delete failed');
     }
   }
 
@@ -61,26 +73,31 @@ export function SubjectsPage() {
       setCode('');
       setName('');
       setFacultyName('');
+      toast.success('Course enrolled successfully');
       loadSubjects();
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : 'Course creation failed');
+      toast.error(err instanceof Error ? err.message : 'Course creation failed');
     } finally {
       setSubmitting(false);
     }
   }
 
   return (
-    <div className="container" style={{ padding: '2.5rem 1rem' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
-        <div>
-          <span className="badge badge-gold" style={{ marginBottom: '0.5rem' }}>Course Catalog</span>
-          <h1 style={{ fontSize: '2.25rem', color: 'var(--ink)' }}>Enrolled Subjects</h1>
-          <p style={{ color: 'var(--ink-soft)' }}>Manage course curriculum, professors, credit weights, and attendance compliance.</p>
-        </div>
-        <button onClick={() => setShowModal(true)} className="btn btn-primary">
-          + Enroll New Subject
-        </button>
-      </div>
+    <div className="container" style={{ padding: '1rem' }}>
+      <PageHeader
+        badge="Course Catalog"
+        badgeType="gold"
+        title="Enrolled Subjects"
+        description="Manage curriculum, professors, credit weights, and attendance compliance."
+        backTo="/student/dashboard"
+        backLabel="Back to Dashboard"
+        actions={
+          <button onClick={() => setShowModal(true)} className="btn btn-primary" style={{ gap: '0.4rem' }}>
+            <Plus size={16} />
+            <span>Enroll New Subject</span>
+          </button>
+        }
+      />
 
       {loading ? (
         <div style={{ textAlign: 'center', padding: '4rem 1rem', color: 'var(--ink-soft)' }}>Loading academic curriculum...</div>

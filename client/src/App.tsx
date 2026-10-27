@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { ToastProvider } from './context/ToastContext';
 import { RootLayout } from './layouts/RootLayout';
 import { LandingPage } from './pages/LandingPage';
 import { LoginPage } from './pages/LoginPage';
@@ -28,7 +29,8 @@ export function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <Routes>
+        <ToastProvider>
+          <Routes>
         <Route path="/" element={<RootLayout />}>
           <Route index element={<LandingPage />} />
           <Route path="login" element={<LoginPage />} />
@@ -175,6 +177,7 @@ export function App() {
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
+        </ToastProvider>
       </AuthProvider>
     </ThemeProvider>
   );

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useToast } from '../../context/ToastContext';
 import {
   getAttendance,
   parseAttendancePreview,
@@ -32,6 +33,7 @@ const SAMPLE_ERP_DATA = `# University ERP Attendance Report
 11\tCSUT530\tIndustrial Training\tLab\t14\t0\t2\t1\t100.00`;
 
 export function AttendanceIntelligencePage() {
+  const { toast, confirmModal } = useToast();
   const [summary, setSummary] = useState<AttendanceSummary | null>(null);
   const [records, setRecords] = useState<AttendanceRecordItem[]>([]);
   const [shortages, setShortages] = useState<AttendanceRecordItem[]>([]);
@@ -115,7 +117,7 @@ export function AttendanceIntelligencePage() {
   // Handle parsing preview
   async function handleGeneratePreview() {
     if (!rawText.trim()) {
-      alert('Please paste ERP text or upload a CSV first.');
+      toast.error('Please paste ERP text or upload a CSV first.');
       return;
     }
     setParsing(true);
@@ -136,8 +138,9 @@ export function AttendanceIntelligencePage() {
         setPreviewMetadata(res.metadata);
       }
       setPreviewErrors(res.errors || []);
+      toast.info(`Parsed ${res.validRows} valid attendance course rows.`);
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : 'Parsing failed.');
+      toast.error(err instanceof Error ? err.message : 'Parsing failed.');
     } finally {
       setParsing(false);
     }
@@ -164,7 +167,7 @@ export function AttendanceIntelligencePage() {
 
     const validRows = previewRows.filter((r) => r.isValid);
     if (validRows.length === 0) {
-      alert('No valid rows available to import.');
+      toast.error('No valid rows available to import.');
       return;
     }
 
@@ -191,9 +194,10 @@ export function AttendanceIntelligencePage() {
       setPreviewStats(null);
       setPreviewMetadata(null);
       setRawText('');
+      toast.success('Attendance records imported and synchronized successfully');
       loadData();
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : 'Import failed');
+      toast.error(err instanceof Error ? err.message : 'Import failed');
     } finally {
       setImporting(false);
     }
@@ -232,12 +236,19 @@ export function AttendanceIntelligencePage() {
 
   // Delete attendance record
   async function handleDelete(id: string, code: string) {
-    if (!confirm(`Are you sure you want to delete attendance records for ${code}?`)) return;
+    const ok = await confirmModal({
+      title: 'Delete Attendance Record',
+      message: `Are you sure you want to delete attendance records for ${code}? This cannot be undone.`,
+      confirmText: 'Delete Record',
+      isDestructive: true,
+    });
+    if (!ok) return;
     try {
       await deleteAttendanceRecord(id);
+      toast.success(`Deleted attendance for ${code}`);
       loadData();
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : 'Failed to delete record');
+      toast.error(err instanceof Error ? err.message : 'Failed to delete record');
     }
   }
 
@@ -284,9 +295,10 @@ export function AttendanceIntelligencePage() {
     try {
       await updateAttendanceRecord(editingRecord._id, editForm);
       setEditingRecord(null);
+      toast.success('Attendance record updated successfully');
       loadData();
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : 'Update failed');
+      toast.error(err instanceof Error ? err.message : 'Update failed');
     }
   }
 

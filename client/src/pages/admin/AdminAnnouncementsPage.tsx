@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getAnnouncements, createAnnouncement, deleteAnnouncement, AnnouncementItem } from '../../services/admin.service';
+import { useToast } from '../../context/ToastContext';
 
 export function AdminAnnouncementsPage() {
+  const { toast, confirmModal } = useToast();
   const [announcements, setAnnouncements] = useState<AnnouncementItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -49,21 +51,29 @@ export function AdminAnnouncementsPage() {
       setShowModal(false);
       setTitle('');
       setContent('');
+      toast.success('Announcement published successfully');
       loadData();
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : 'Failed to create announcement');
+      toast.error(err instanceof Error ? err.message : 'Failed to create announcement');
     } finally {
       setSubmitting(false);
     }
   }
 
   async function handleDelete(id: string) {
-    if (!confirm('Are you sure you want to permanently delete this announcement?')) return;
+    const ok = await confirmModal({
+      title: 'Delete Announcement',
+      message: 'Are you sure you want to permanently delete this announcement?',
+      confirmText: 'Delete Announcement',
+      isDestructive: true,
+    });
+    if (!ok) return;
     try {
       await deleteAnnouncement(id);
       setAnnouncements((prev) => prev.filter((a) => a._id !== id));
+      toast.success('Announcement deleted');
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : 'Failed to delete announcement');
+      toast.error(err instanceof Error ? err.message : 'Failed to delete announcement');
     }
   }
 

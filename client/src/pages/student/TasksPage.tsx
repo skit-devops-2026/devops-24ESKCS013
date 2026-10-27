@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { Plus } from 'lucide-react';
+import { useToast } from '../../context/ToastContext';
+import { PageHeader } from '../../components/PageHeader';
 import {
   getTasks,
   getTaskSummary,
@@ -12,6 +15,7 @@ import {
 } from '../../services/student.service';
 
 export function TasksPage() {
+  const { toast, confirmModal } = useToast();
   const [tasks, setTasks] = useState<TaskItem[]>([]);
   const [summary, setSummary] = useState<TaskSummary | null>(null);
   const [subjects, setSubjects] = useState<SubjectItem[]>([]);
@@ -64,20 +68,29 @@ export function TasksPage() {
       setTasks((prev) => prev.map((t) => (t._id === updated._id ? updated : t)));
       const newSummary = await getTaskSummary();
       setSummary(newSummary);
+      toast.success(nextStatus === 'completed' ? 'Task marked as completed' : 'Task reopened');
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : 'Update failed');
+      toast.error(err instanceof Error ? err.message : 'Update failed');
     }
   }
 
   async function handleDelete(id: string) {
-    if (!confirm('Are you sure you want to delete this task?')) return;
+    const confirmed = await confirmModal({
+      title: 'Delete Task',
+      message: 'Are you sure you want to delete this task? This cannot be undone.',
+      confirmText: 'Delete Task',
+      isDestructive: true,
+    });
+    if (!confirmed) return;
+
     try {
       await deleteTask(id);
       setTasks((prev) => prev.filter((t) => t._id !== id));
       const newSummary = await getTaskSummary();
       setSummary(newSummary);
+      toast.success('Task deleted successfully');
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : 'Delete failed');
+      toast.error(err instanceof Error ? err.message : 'Delete failed');
     }
   }
 
@@ -101,27 +114,31 @@ export function TasksPage() {
       setShowModal(false);
       setNewTitle('');
       setNewDescription('');
+      toast.success('Task added successfully');
       loadData();
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : 'Task creation failed');
+      toast.error(err instanceof Error ? err.message : 'Task creation failed');
     } finally {
       setSubmitting(false);
     }
   }
 
   return (
-    <div className="container" style={{ padding: '2.5rem 1rem' }}>
-      {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
-        <div>
-          <span className="badge badge-gold" style={{ marginBottom: '0.5rem' }}>Academic Workflow</span>
-          <h1 style={{ fontSize: '2.25rem', color: 'var(--ink)' }}>Assignments & Tasks</h1>
-          <p style={{ color: 'var(--ink-soft)' }}>Track deadlines, prioritize coursework, and mark completion.</p>
-        </div>
-        <button onClick={() => setShowModal(true)} className="btn btn-primary">
-          + Add New Task
-        </button>
-      </div>
+    <div className="container" style={{ padding: '1rem' }}>
+      <PageHeader
+        badge="Academic Workflow"
+        badgeType="gold"
+        title="Assignments & Tasks"
+        description="Track upcoming deadlines, prioritize coursework, and monitor completion status."
+        backTo="/student/dashboard"
+        backLabel="Back to Dashboard"
+        actions={
+          <button onClick={() => setShowModal(true)} className="btn btn-primary" style={{ gap: '0.4rem' }}>
+            <Plus size={16} />
+            <span>Add New Task</span>
+          </button>
+        }
+      />
 
       {/* Summary KPI Cards */}
       {summary && (

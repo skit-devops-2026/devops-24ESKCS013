@@ -12,8 +12,11 @@ import {
   StudyHistoryResponse,
   SubjectItem,
 } from '../../services/student.service';
+import { useToast } from '../../context/ToastContext';
+import { PageHeader } from '../../components/PageHeader';
 
 export function StudyTimerPage() {
+  const { toast, confirmModal } = useToast();
   const [currentSession, setCurrentSession] = useState<CurrentStudySessionResponse['session'] | null>(null);
   const [history, setHistory] = useState<StudyHistoryResponse | null>(null);
   const [subjects, setSubjects] = useState<SubjectItem[]>([]);
@@ -111,31 +114,48 @@ export function StudyTimerPage() {
   }
 
   async function handleFinish() {
-    if (!confirm('Are you ready to conclude this study session and persist it to your academic ledger?')) return;
+    const ok = await confirmModal({
+      title: 'Conclude Study Session',
+      message: 'Are you ready to conclude this study session and persist it to your academic ledger?',
+      confirmText: 'Finish Session',
+    });
+    if (!ok) return;
     setActionLoading(true);
     setErrorMsg(null);
     try {
       await finishStudySession();
       setCurrentSession(null);
       setDisplaySeconds(0);
+      toast.success('Study session saved to your academic ledger!');
       syncServerState();
     } catch (err: unknown) {
-      setErrorMsg(err instanceof Error ? err.message : 'Failed to finish session');
+      const msg = err instanceof Error ? err.message : 'Failed to finish session';
+      setErrorMsg(msg);
+      toast.error(msg);
     } finally {
       setActionLoading(false);
     }
   }
 
   async function handleCancel() {
-    if (!confirm('Are you sure you want to discard this study session? Paused/elapsed time will not be recorded.')) return;
+    const ok = await confirmModal({
+      title: 'Discard Session',
+      message: 'Are you sure you want to discard this study session? Paused and elapsed time will not be recorded.',
+      confirmText: 'Discard',
+      isDestructive: true,
+    });
+    if (!ok) return;
     setActionLoading(true);
     try {
       await cancelStudySession();
       setCurrentSession(null);
       setDisplaySeconds(0);
+      toast.info('Study session discarded');
       syncServerState();
     } catch (err: unknown) {
-      setErrorMsg(err instanceof Error ? err.message : 'Failed to cancel session');
+      const msg = err instanceof Error ? err.message : 'Failed to cancel session';
+      setErrorMsg(msg);
+      toast.error(msg);
     } finally {
       setActionLoading(false);
     }
@@ -152,14 +172,13 @@ export function StudyTimerPage() {
   }
 
   return (
-    <div className="container" style={{ padding: '2.5rem 1rem' }}>
-      <div style={{ textAlign: 'center', maxWidth: '640px', margin: '0 auto 3rem' }}>
-        <span className="badge badge-gold" style={{ marginBottom: '0.5rem' }}>Authoritative Study Focus</span>
-        <h1 style={{ fontSize: '2.5rem', color: 'var(--ink)' }}>Study Timer &amp; Focus Tracker</h1>
-        <p style={{ color: 'var(--ink-soft)' }}>
-          Server-synced timer resilient to browser refreshes. Paused duration is deducted from net study time.
-        </p>
-      </div>
+    <div className="container" style={{ padding: '2rem 1.5rem', maxWidth: '1100px', margin: '0 auto' }}>
+      <PageHeader
+        badge="Authoritative Focus"
+        badgeType="gold"
+        title="Study Timer & Focus Tracker"
+        description="Server-synced timer resilient to browser refreshes. Paused duration is deducted from net study time."
+      />
 
       {errorMsg && (
         <div style={{ maxWidth: '640px', margin: '0 auto 1.5rem', background: 'var(--red-soft)', color: 'var(--red)', padding: '1rem', borderRadius: '6px' }}>

@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getAdminStudents, updateStudentStatus, StudentListItem } from '../../services/admin.service';
+import { useToast } from '../../context/ToastContext';
 
 export function AdminStudentsPage() {
+  const { toast } = useToast();
   const [students, setStudents] = useState<StudentListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -50,9 +52,10 @@ export function AdminStudentsPage() {
     try {
       await updateStudentStatus(selectedStudent.id, nextStatus);
       setSelectedStudent(null);
+      toast.success(`Student status updated to ${nextStatus}`);
       loadData(page);
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : 'Failed to update student status');
+      toast.error(err instanceof Error ? err.message : 'Failed to update student status');
     } finally {
       setUpdating(false);
     }
