@@ -73,3 +73,4 @@ if (process.argv[1]?.endsWith('backfill-subjects.ts') || process.argv[1]?.endsWi
       process.exit(1);
     });
 }
+
