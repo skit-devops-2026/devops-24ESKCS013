@@ -584,7 +584,7 @@ export function AttendanceIntelligencePage() {
                   type="button"
                   onClick={() => setActiveFilter('discrepancy')}
                   className={`btn ${activeFilter === 'discrepancy' ? 'btn-primary' : 'btn-secondary'}`}
-                  style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem', color: activeFilter === 'discrepancy' ? '#fff' : '#D97706' }}
+                  style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem', color: activeFilter === 'discrepancy' ? 'var(--bg-surface)' : 'var(--gold)' }}
                 >
                   ⚖️ Discrepancies ({records.filter((r) => r.isDiscrepancy).length})
                 </button>
@@ -671,7 +671,7 @@ export function AttendanceIntelligencePage() {
                             {r.isDiscrepancy && (
                               <span
                                 title={r.discrepancyNote || `ERP reported ${r.erpPercentage}% vs calculated ${r.calculatedPercentage}%.`}
-                                style={{ display: 'block', fontSize: '0.7rem', color: '#D97706', cursor: 'help', marginTop: '0.2rem' }}
+                                style={{ display: 'block', fontSize: '0.7rem', color: 'var(--gold)', cursor: 'help', marginTop: '0.2rem' }}
                               >
                                 ⚠️ ERP Delta: {r.discrepancyDelta}%
                               </span>
@@ -771,19 +771,19 @@ export function AttendanceIntelligencePage() {
 
             {/* Attendance Counts Grid */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.75rem', marginBottom: '1.25rem', textAlign: 'center' }}>
-              <div style={{ background: 'var(--surface-muted, #f8fafc)', padding: '0.75rem', borderRadius: '6px' }}>
+              <div style={{ background: 'var(--bg-muted)', padding: '0.75rem', borderRadius: '6px' }}>
                 <span style={{ fontSize: '0.7rem', color: 'var(--ink-soft)', display: 'block' }}>PRESENT</span>
                 <strong style={{ fontSize: '1.2rem', color: 'var(--ink)' }}>{selectedSubjectDetail.present}</strong>
               </div>
-              <div style={{ background: 'var(--surface-muted, #f8fafc)', padding: '0.75rem', borderRadius: '6px' }}>
+              <div style={{ background: 'var(--bg-muted)', padding: '0.75rem', borderRadius: '6px' }}>
                 <span style={{ fontSize: '0.7rem', color: 'var(--ink-soft)', display: 'block' }}>ON DUTY (OD)</span>
                 <strong style={{ fontSize: '1.2rem', color: 'var(--ink)' }}>{selectedSubjectDetail.od}</strong>
               </div>
-              <div style={{ background: 'var(--surface-muted, #f8fafc)', padding: '0.75rem', borderRadius: '6px' }}>
+              <div style={{ background: 'var(--bg-muted)', padding: '0.75rem', borderRadius: '6px' }}>
                 <span style={{ fontSize: '0.7rem', color: 'var(--ink-soft)', display: 'block' }}>MAKEUP</span>
                 <strong style={{ fontSize: '1.2rem', color: 'var(--ink)' }}>{selectedSubjectDetail.makeup}</strong>
               </div>
-              <div style={{ background: 'var(--surface-muted, #f8fafc)', padding: '0.75rem', borderRadius: '6px' }}>
+              <div style={{ background: 'var(--bg-muted)', padding: '0.75rem', borderRadius: '6px' }}>
                 <span style={{ fontSize: '0.7rem', color: 'var(--ink-soft)', display: 'block' }}>ABSENT</span>
                 <strong style={{ fontSize: '1.2rem', color: 'var(--crimson)' }}>{selectedSubjectDetail.absent}</strong>
               </div>
@@ -815,11 +815,11 @@ export function AttendanceIntelligencePage() {
 
             {/* Discrepancy Alert */}
             {selectedSubjectDetail.isDiscrepancy && (
-              <div style={{ backgroundColor: 'rgba(245, 158, 11, 0.08)', border: '1px solid #f59e0b', borderRadius: '6px', padding: '0.85rem', marginBottom: '1.25rem' }}>
-                <strong style={{ color: '#b45309', fontSize: '0.85rem', display: 'block', marginBottom: '0.25rem' }}>
+              <div style={{ backgroundColor: 'var(--amber-soft)', border: '1px solid var(--amber)', borderRadius: '6px', padding: '0.85rem', marginBottom: '1.25rem' }}>
+                <strong style={{ color: 'var(--gold-ink)', fontSize: '0.85rem', display: 'block', marginBottom: '0.25rem' }}>
                   ⚖️ Transparent ERP Discrepancy Notice:
                 </strong>
-                <p style={{ margin: 0, color: '#92400e', fontSize: '0.8rem' }}>
+                <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.8rem' }}>
                   {selectedSubjectDetail.discrepancyNote ||
                     `ERP reported ${selectedSubjectDetail.erpPercentage}% while the selected policy derived ${selectedSubjectDetail.calculatedPercentage}%. This is preserved for audit transparency without forcing numbers.`}
                 </p>
@@ -1107,7 +1107,7 @@ export function AttendanceIntelligencePage() {
             </div>
 
             {/* Policy Selector */}
-            <div style={{ marginBottom: '1.25rem', background: 'var(--surface-muted, #f8fafc)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border)' }}>
+            <div style={{ marginBottom: '1.25rem', background: 'var(--bg-muted)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border)' }}>
               <label style={{ fontSize: '0.85rem', fontWeight: 600, display: 'block', marginBottom: '0.35rem' }}>
                 Select Attendance Counting Policy:
               </label>
@@ -1124,7 +1124,7 @@ export function AttendanceIntelligencePage() {
                 ))}
               </select>
               <div style={{ fontSize: '0.78rem', color: 'var(--ink-soft)' }}>
-                <strong>Assumption Formula:</strong> <code style={{ backgroundColor: 'rgba(0,0,0,0.04)', padding: '2px 6px', borderRadius: '4px' }}>{CLIENT_POLICY_METADATA[selectedPolicy]?.formula}</code>
+                <strong>Assumption Formula:</strong> <code style={{ backgroundColor: 'var(--bg-surface)', padding: '2px 6px', borderRadius: '4px', border: '1px solid var(--border)' }}>{CLIENT_POLICY_METADATA[selectedPolicy]?.formula}</code>
               </div>
             </div>
 
@@ -1137,10 +1137,10 @@ export function AttendanceIntelligencePage() {
                       Paste ERP Rows or Report Content:
                     </label>
                     <div style={{ display: 'flex', gap: '0.4rem', marginTop: '0.25rem' }}>
-                      <span style={{ fontSize: '0.7rem', padding: '1px 6px', borderRadius: '4px', background: '#e2e8f0', color: '#334155' }}>TSV Tab-Separated</span>
-                      <span style={{ fontSize: '0.7rem', padding: '1px 6px', borderRadius: '4px', background: '#e2e8f0', color: '#334155' }}>Pipe-Table (|)</span>
-                      <span style={{ fontSize: '0.7rem', padding: '1px 6px', borderRadius: '4px', background: '#e2e8f0', color: '#334155' }}>CSV File</span>
-                      <span style={{ fontSize: '0.7rem', padding: '1px 6px', borderRadius: '4px', background: '#e2e8f0', color: '#334155' }}>Space-Delimited</span>
+                      <span style={{ fontSize: '0.7rem', padding: '1px 6px', borderRadius: '4px', background: 'var(--bg-muted)', color: 'var(--text-secondary)', border: '1px solid var(--border)' }}>TSV Tab-Separated</span>
+                      <span style={{ fontSize: '0.7rem', padding: '1px 6px', borderRadius: '4px', background: 'var(--bg-muted)', color: 'var(--text-secondary)', border: '1px solid var(--border)' }}>Pipe-Table (|)</span>
+                      <span style={{ fontSize: '0.7rem', padding: '1px 6px', borderRadius: '4px', background: 'var(--bg-muted)', color: 'var(--text-secondary)', border: '1px solid var(--border)' }}>CSV File</span>
+                      <span style={{ fontSize: '0.7rem', padding: '1px 6px', borderRadius: '4px', background: 'var(--bg-muted)', color: 'var(--text-secondary)', border: '1px solid var(--border)' }}>Space-Delimited</span>
                     </div>
                   </div>
                   <button
@@ -1248,7 +1248,7 @@ export function AttendanceIntelligencePage() {
                     gap: '0.75rem',
                     marginBottom: '1rem',
                     padding: '0.75rem 1rem',
-                    backgroundColor: 'var(--surface-muted, #f8fafc)',
+                    backgroundColor: 'var(--bg-muted)',
                     borderRadius: '8px',
                     border: '1px solid var(--border)',
                   }}
@@ -1263,13 +1263,13 @@ export function AttendanceIntelligencePage() {
                   </div>
                   <div style={{ textAlign: 'center' }}>
                     <div style={{ fontSize: '0.7rem', color: 'var(--ink-soft)', textTransform: 'uppercase', fontWeight: 600 }}>Changed Rows</div>
-                    <div style={{ fontSize: '1.25rem', fontWeight: 700, color: '#2563eb' }}>
+                    <div style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--accent-primary)' }}>
                       {previewStats?.changedRows ?? previewRows.filter(r => r.isChanged).length}
                     </div>
                   </div>
                   <div style={{ textAlign: 'center' }}>
                     <div style={{ fontSize: '0.7rem', color: 'var(--ink-soft)', textTransform: 'uppercase', fontWeight: 600 }}>Discrepancies</div>
-                    <div style={{ fontSize: '1.25rem', fontWeight: 700, color: '#D97706' }}>
+                    <div style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--gold)' }}>
                       {previewRows.filter(r => r.isDiscrepancy).length}
                     </div>
                   </div>
@@ -1282,13 +1282,13 @@ export function AttendanceIntelligencePage() {
                   {(previewStats?.duplicateRows ?? 0) > 0 && (
                     <div style={{ textAlign: 'center' }}>
                       <div style={{ fontSize: '0.7rem', color: 'var(--ink-soft)', textTransform: 'uppercase', fontWeight: 600 }}>Duplicates</div>
-                      <div style={{ fontSize: '1.25rem', fontWeight: 700, color: '#6366f1' }}>{previewStats?.duplicateRows}</div>
+                      <div style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--accent-primary)' }}>{previewStats?.duplicateRows}</div>
                     </div>
                   )}
                 </div>
 
                 {previewErrors.length > 0 && (
-                  <div style={{ padding: '0.75rem', backgroundColor: 'rgba(239,68,68,0.1)', color: 'var(--crimson)', borderRadius: '6px', marginBottom: '1rem', fontSize: '0.8rem' }}>
+                  <div style={{ padding: '0.75rem', backgroundColor: 'var(--red-soft)', color: 'var(--crimson)', borderRadius: '6px', marginBottom: '1rem', fontSize: '0.8rem' }}>
                     ⚠️ {previewErrors.join(', ')}
                   </div>
                 )}
@@ -1296,7 +1296,7 @@ export function AttendanceIntelligencePage() {
                 <div style={{ overflowX: 'auto', marginBottom: '1.25rem', border: '1px solid var(--border)', borderRadius: '6px' }}>
                   <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
                     <thead>
-                      <tr style={{ backgroundColor: 'var(--surface-muted, #f8fafc)', borderBottom: '2px solid var(--border)', textAlign: 'left' }}>
+                      <tr style={{ backgroundColor: 'var(--bg-muted)', borderBottom: '2px solid var(--border)', textAlign: 'left' }}>
                         <th style={{ padding: '0.6rem 0.5rem', fontWeight: 600 }}>Code</th>
                         <th style={{ padding: '0.6rem 0.5rem', fontWeight: 600 }}>Subject Name</th>
                         <th style={{ padding: '0.6rem 0.5rem', fontWeight: 600 }}>Type</th>
@@ -1386,8 +1386,8 @@ export function AttendanceIntelligencePage() {
                                 {row.isChanged && (
                                   <div
                                     style={{
-                                      backgroundColor: '#dbeafe',
-                                      color: '#1e40af',
+                                      backgroundColor: 'var(--blue-soft)',
+                                      color: 'var(--blue)',
                                       fontSize: '0.7rem',
                                       fontWeight: 600,
                                       padding: '2px 6px',
@@ -1402,8 +1402,8 @@ export function AttendanceIntelligencePage() {
                                 {row.isNew && (
                                   <div
                                     style={{
-                                      backgroundColor: '#f3e8ff',
-                                      color: '#6b21a8',
+                                      backgroundColor: 'var(--accent-primary-soft)',
+                                      color: 'var(--accent-primary)',
                                       fontSize: '0.7rem',
                                       fontWeight: 600,
                                       padding: '2px 6px',
@@ -1417,7 +1417,7 @@ export function AttendanceIntelligencePage() {
                                 )}
                                 {row.isDiscrepancy ? (
                                   <div>
-                                    <span style={{ color: '#D97706', fontSize: '0.75rem', fontWeight: 600, display: 'block' }}>
+                                    <span style={{ color: 'var(--gold)', fontSize: '0.75rem', fontWeight: 600, display: 'block' }}>
                                       ⚠️ Delta: {row.discrepancyDelta}%
                                     </span>
                                     {row.discrepancyNote && (

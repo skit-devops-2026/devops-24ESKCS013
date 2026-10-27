@@ -12,9 +12,10 @@ import {
 
 interface TopBarProps {
   onOpenMobileSidebar: () => void;
+  onOpenCommandPalette: () => void;
 }
 
-export function TopBar({ onOpenMobileSidebar }: TopBarProps) {
+export function TopBar({ onOpenMobileSidebar, onOpenCommandPalette }: TopBarProps) {
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
@@ -55,7 +56,7 @@ export function TopBar({ onOpenMobileSidebar }: TopBarProps) {
         </button>
 
         {/* Global Search / Command Trigger */}
-        <div className="search-trigger-btn" onClick={() => {}} title="Search subjects, tasks, notes...">
+        <div className="search-trigger-btn" onClick={onOpenCommandPalette} title="Search subjects, tasks, notes... (⌘K)">
           <Search size={15} />
           <span>Search portal...</span>
           <span className="kbd-shortcut">⌘K</span>

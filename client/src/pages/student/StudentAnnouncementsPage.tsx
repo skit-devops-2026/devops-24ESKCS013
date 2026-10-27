@@ -70,7 +70,7 @@ export function StudentAnnouncementsPage() {
                 <span className={`badge ${item.priority === 'urgent' ? 'badge-gold' : 'badge-green'}`} style={{ textTransform: 'uppercase' }}>
                   {item.priority}
                 </span>
-                <span className="badge" style={{ background: '#EEF2F6', color: 'var(--ink-soft)' }}>
+                <span className="badge" style={{ background: 'var(--bg-muted)', color: 'var(--text-muted)' }}>
                   Audience: {item.targetAudience.toUpperCase()}
                 </span>
               </div>

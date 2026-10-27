@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { Sidebar } from '../components/Sidebar';
 import { TopBar } from '../components/TopBar';
+import { CommandPalette } from '../components/CommandPalette';
 import { useAuth } from '../context/AuthContext';
 
 export function RootLayout() {
@@ -14,6 +15,19 @@ export function RootLayout() {
     return localStorage.getItem('sidebar_collapsed') === 'true';
   });
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState<boolean>(false);
+  const [commandPaletteOpen, setCommandPaletteOpen] = useState<boolean>(false);
+
+  // Global Cmd+K / Ctrl+K listener
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setCommandPaletteOpen((prev) => !prev);
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   function toggleSidebarCollapse() {
     setSidebarCollapsed((prev) => {
@@ -34,11 +48,18 @@ export function RootLayout() {
           onCloseMobile={() => setMobileSidebarOpen(false)}
         />
         <div className={`app-main-area ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
-          <TopBar onOpenMobileSidebar={() => setMobileSidebarOpen(true)} />
+          <TopBar
+            onOpenMobileSidebar={() => setMobileSidebarOpen(true)}
+            onOpenCommandPalette={() => setCommandPaletteOpen(true)}
+          />
           <main className="main-content" style={{ padding: '1.5rem 0 3rem' }}>
             <Outlet />
           </main>
         </div>
+        <CommandPalette
+          isOpen={commandPaletteOpen}
+          onClose={() => setCommandPaletteOpen(false)}
+        />
       </div>
     );
   }

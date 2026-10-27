@@ -142,19 +142,19 @@ export function AdminStudentDetailPage() {
       <div className="card" style={{ marginBottom: '2rem', padding: '1.5rem' }}>
         <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>Assignment &amp; Task Progression</h3>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '1rem', textAlign: 'center' }}>
-          <div style={{ padding: '1rem', background: '#F8FAFC', borderRadius: '4px' }}>
+          <div style={{ padding: '1rem', background: 'var(--bg-muted)', borderRadius: '4px' }}>
             <span style={{ fontSize: '0.8rem', color: 'var(--ink-soft)' }}>Total Assigned</span>
             <h4 style={{ fontSize: '1.5rem', marginTop: '0.25rem' }}>{taskStats.total}</h4>
           </div>
-          <div style={{ padding: '1rem', background: '#F8FAFC', borderRadius: '4px' }}>
+          <div style={{ padding: '1rem', background: 'var(--bg-muted)', borderRadius: '4px' }}>
             <span style={{ fontSize: '0.8rem', color: 'var(--ink-soft)' }}>Pending</span>
             <h4 style={{ fontSize: '1.5rem', marginTop: '0.25rem', color: 'var(--gold-ink)' }}>{taskStats.pending}</h4>
           </div>
-          <div style={{ padding: '1rem', background: '#F8FAFC', borderRadius: '4px' }}>
+          <div style={{ padding: '1rem', background: 'var(--bg-muted)', borderRadius: '4px' }}>
             <span style={{ fontSize: '0.8rem', color: 'var(--ink-soft)' }}>In Progress</span>
             <h4 style={{ fontSize: '1.5rem', marginTop: '0.25rem', color: 'var(--blue)' }}>{taskStats.in_progress}</h4>
           </div>
-          <div style={{ padding: '1rem', background: '#F8FAFC', borderRadius: '4px' }}>
+          <div style={{ padding: '1rem', background: 'var(--bg-muted)', borderRadius: '4px' }}>
             <span style={{ fontSize: '0.8rem', color: 'var(--ink-soft)' }}>Completed</span>
             <h4 style={{ fontSize: '1.5rem', marginTop: '0.25rem', color: 'var(--green)' }}>{taskStats.completed}</h4>
           </div>
@@ -163,12 +163,12 @@ export function AdminStudentDetailPage() {
 
       {/* Enrolled Courses */}
       <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-        <div style={{ padding: '1.25rem', borderBottom: '1px solid var(--rule-strong)' }}>
+        <div style={{ padding: '1.25rem', borderBottom: '1px solid var(--border-strong)' }}>
           <h3 style={{ fontSize: '1.25rem', margin: 0 }}>Enrolled Academic Courses ({subjects.length})</h3>
         </div>
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.875rem' }}>
-            <thead style={{ background: '#F8FAFC', borderBottom: '1px solid var(--rule-strong)' }}>
+            <thead style={{ background: 'var(--bg-muted)', borderBottom: '1px solid var(--border-strong)' }}>
               <tr>
                 <th style={{ padding: '0.875rem 1rem' }}>Code</th>
                 <th style={{ padding: '0.875rem 1rem' }}>Course Title</th>

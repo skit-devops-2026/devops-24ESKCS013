@@ -73,7 +73,7 @@ export function RegisterPage() {
               borderRadius: '6px',
               fontSize: '0.875rem',
               marginBottom: '1.5rem',
-              border: '1px solid #fca5a5',
+              border: '1px solid var(--red-border)',
             }}
           >
             {errorMsg}
@@ -136,7 +136,7 @@ export function RegisterPage() {
                 id="reg-dept"
                 value={department}
                 onChange={(e) => setDepartment(e.target.value)}
-                style={{ width: '100%', padding: '0.625rem 0.875rem', borderRadius: '6px', border: '1px solid var(--rule-strong)', fontSize: '0.95rem', background: '#fff' }}
+                style={{ width: '100%', padding: '0.625rem 0.875rem', borderRadius: '6px', border: '1px solid var(--border-strong)', fontSize: '0.95rem', background: 'var(--bg-surface)', color: 'var(--text-primary)' }}
               >
                 <option value="Computer Science">Computer Science</option>
                 <option value="Information Technology">Information Technology</option>
@@ -152,7 +152,7 @@ export function RegisterPage() {
                 id="reg-sem"
                 value={semester}
                 onChange={(e) => setSemester(parseInt(e.target.value, 10))}
-                style={{ width: '100%', padding: '0.625rem 0.875rem', borderRadius: '6px', border: '1px solid var(--rule-strong)', fontSize: '0.95rem', background: '#fff' }}
+                style={{ width: '100%', padding: '0.625rem 0.875rem', borderRadius: '6px', border: '1px solid var(--border-strong)', fontSize: '0.95rem', background: 'var(--bg-surface)', color: 'var(--text-primary)' }}
               >
                 {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
                   <option key={s} value={s}>

@@ -116,7 +116,7 @@ export function AdminStudentsPage() {
       <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.875rem' }}>
-            <thead style={{ background: '#F8FAFC', borderBottom: '1px solid var(--rule-strong)' }}>
+            <thead style={{ background: 'var(--bg-muted)', borderBottom: '1px solid var(--border-strong)' }}>
               <tr>
                 <th style={{ padding: '0.875rem 1rem' }}>Roll Number</th>
                 <th style={{ padding: '0.875rem 1rem' }}>Name</th>
@@ -194,7 +194,7 @@ export function AdminStudentsPage() {
         </div>
 
         {/* Pagination Bar */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', borderTop: '1px solid var(--rule-strong)', background: '#F8FAFC' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', borderTop: '1px solid var(--border-strong)', background: 'var(--bg-muted)' }}>
           <span style={{ fontSize: '0.85rem', color: 'var(--ink-soft)' }}>
             Page {page} of {totalPages} ({totalRecords} students total)
           </span>

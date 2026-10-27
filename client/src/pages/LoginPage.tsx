@@ -69,7 +69,7 @@ export function LoginPage() {
               borderRadius: '6px',
               fontSize: '0.875rem',
               marginBottom: '1.5rem',
-              border: '1px solid #fca5a5',
+              border: '1px solid var(--red-border)',
             }}
           >
             {errorMsg}

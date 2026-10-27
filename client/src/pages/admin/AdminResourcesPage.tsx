@@ -169,7 +169,7 @@ export function AdminResourcesPage() {
       <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.875rem' }}>
-            <thead style={{ background: '#F8FAFC', borderBottom: '1px solid var(--rule-strong)' }}>
+            <thead style={{ background: 'var(--bg-muted)', borderBottom: '1px solid var(--border-strong)' }}>
               <tr>
                 <th style={{ padding: '0.875rem 1rem' }}>Title &amp; Description</th>
                 <th style={{ padding: '0.875rem 1rem' }}>Type</th>
@@ -202,7 +202,7 @@ export function AdminResourcesPage() {
                       </span>
                     </td>
                     <td style={{ padding: '0.875rem 1rem' }}>
-                      <span className="badge" style={{ background: '#EEF2F6', color: 'var(--ink-soft)', textTransform: 'capitalize' }}>
+                      <span className="badge" style={{ background: 'var(--bg-muted)', color: 'var(--text-muted)', textTransform: 'capitalize' }}>
                         {item.resourceType.replace('_', ' ')}
                       </span>
                     </td>
