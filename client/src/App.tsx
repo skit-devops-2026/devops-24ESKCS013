@@ -16,6 +16,7 @@ import { NotesPage } from './pages/student/NotesPage';
 import { StudyTimerPage } from './pages/student/StudyTimerPage';
 import { StudentAnnouncementsPage } from './pages/student/StudentAnnouncementsPage';
 import { StudentResourcesPage } from './pages/student/StudentResourcesPage';
+import { AttendanceIntelligencePage } from './pages/student/AttendanceIntelligencePage';
 import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
 import { AdminStudentsPage } from './pages/admin/AdminStudentsPage';
 import { AdminStudentDetailPage } from './pages/admin/AdminStudentDetailPage';
@@ -113,6 +114,14 @@ export function App() {
             element={
               <ProtectedRoute allowedRole="student">
                 <StudentResourcesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="student/attendance"
+            element={
+              <ProtectedRoute allowedRole="student">
+                <AttendanceIntelligencePage />
               </ProtectedRoute>
             }
           />

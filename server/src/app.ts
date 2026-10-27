@@ -12,6 +12,7 @@ import { studyRouter } from './routes/study.routes.js';
 import { adminRouter } from './routes/admin.routes.js';
 import { announcementRouter } from './routes/announcement.routes.js';
 import { resourceRouter } from './routes/resource.routes.js';
+import { attendanceRouter } from './routes/attendance.routes.js';
 import { notFoundHandler, errorHandler } from './middleware/error-handler.js';
 
 export function createApp() {
@@ -44,6 +45,7 @@ export function createApp() {
   app.use('/api/goals', goalRouter);
   app.use('/api/notes', noteRouter);
   app.use('/api/study', studyRouter);
+  app.use('/api/attendance', attendanceRouter);
 
   // Mount Admin and Institutional Management routes
   app.use('/api/admin', adminRouter);

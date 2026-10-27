@@ -44,6 +44,7 @@ The current repository contains **30 HTML pages**, **5 CSS stylesheets**, and **
 | [student/announcements.html](file:///Users/manoj/Desktop/fsd%20project/student/announcements.html) | Institutional bulletins, department notices, urgent holiday alerts. | Static card feed | `/student/announcements` -> `StudentAnnouncementsPage.tsx` | `GET /api/v1/announcements` | `Announcement` |
 | [student/ai.html](file:///Users/manoj/Desktop/fsd%20project/student/ai.html) | Academic tutor chat interface with prompt suggestions and study advice. | `js/ai.js` mock responses | `/student/ai` -> `AiTutorPage.tsx` | `POST /api/v1/ai/query` (Local rule-engine or LLM) | `AiInteraction` (Audit log) |
 | [student/profile.html](file:///Users/manoj/Desktop/fsd%20project/student/profile.html) | Profile information (Roll, Section, Email), password change, notification toggles. | Mock data | `/student/profile` -> `ProfilePage.tsx` | `GET /api/v1/users/me`<br>`PUT /api/v1/users/me` | `User`, `StudentProfile` |
+| **Attendance Intelligence Hub** | Real ERP report parser (TSV/CSV), subject-wise recovery planner, OD/Makeup counting policies, bunk calculator. See [ATTENDANCE_INTELLIGENCE_PLAN.md](file:///Users/manoj/Desktop/fsd%20project/docs/ATTENDANCE_INTELLIGENCE_PLAN.md). | ERP TSV/CSV Import + Mongoose persistence | `/student/attendance` -> `AttendanceIntelligencePage.tsx` | `POST /api/attendance/parse-preview`<br>`POST /api/attendance/import`<br>`GET /api/attendance`<br>`PATCH /api/attendance/:id`<br>`POST /api/attendance/simulate` | `AttendanceRecord` |
 
 ---
 

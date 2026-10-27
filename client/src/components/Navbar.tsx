@@ -38,6 +38,9 @@ export function Navbar() {
               <NavLink to="/student/subjects" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
                 Subjects
               </NavLink>
+              <NavLink to="/student/attendance" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                Attendance
+              </NavLink>
               <NavLink to="/student/notes" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
                 Notes
               </NavLink>
