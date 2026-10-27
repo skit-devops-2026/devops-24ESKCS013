@@ -448,8 +448,8 @@ export function AttendanceIntelligencePage() {
             <div
               className="card"
               style={{
-                background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(168, 85, 247, 0.03))',
-                borderLeft: '4px solid #6366f1',
+                background: 'var(--accent-primary-soft)',
+                borderLeft: '4px solid var(--accent-primary)',
                 padding: '1.25rem 1.5rem',
                 marginBottom: '1.5rem',
               }}
@@ -457,7 +457,7 @@ export function AttendanceIntelligencePage() {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
-                    <span className="badge" style={{ backgroundColor: '#e0e7ff', color: '#4338ca', fontWeight: 600 }}>
+                    <span className="badge" style={{ backgroundColor: 'var(--blue-soft)', color: 'var(--blue)', fontWeight: 600 }}>
                       🏛️ Official ERP Aggregate & Event Hours
                     </span>
                     <span className="badge badge-gold">Overall ODs: {summary.overallOdCount ?? 17}</span>
