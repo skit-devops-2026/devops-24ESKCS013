@@ -1,95 +1,68 @@
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
+import { GraduationCap, Sun, Moon, ArrowRight } from 'lucide-react';
 
 export function Navbar() {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
-
-  async function handleLogout() {
-    await logout();
-    navigate('/', { replace: true });
-  }
+  const { user } = useAuth();
+  const { theme, toggleTheme } = useTheme();
 
   return (
     <header className="navbar">
       <div className="container navbar-inner">
         <Link to="/" className="brand">
-          <span>Student</span>Hub
+          <div
+            style={{
+              width: '32px',
+              height: '32px',
+              borderRadius: 'var(--radius-md)',
+              background: 'linear-gradient(135deg, var(--gold) 0%, #B45309 100%)',
+              color: '#fff',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <GraduationCap size={18} />
+          </div>
+          <span style={{ fontWeight: 700, letterSpacing: '-0.02em' }}>
+            <span style={{ color: 'var(--gold)' }}>Student</span>Hub
+          </span>
         </Link>
+
         <nav className="nav-links">
           <NavLink to="/" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
             Home
           </NavLink>
+          <a href="/#features" className="nav-link">
+            Features
+          </a>
 
-          {user && user.role === 'student' && (
-            <>
-              <NavLink to="/student/dashboard" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-                Dashboard
-              </NavLink>
-              <NavLink to="/student/tasks" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-                Tasks
-              </NavLink>
-              <NavLink to="/student/goals" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-                Goals
-              </NavLink>
-              <NavLink to="/student/subjects" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-                Subjects
-              </NavLink>
-              <NavLink to="/student/attendance" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-                Attendance
-              </NavLink>
-              <NavLink to="/student/notes" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-                Notes
-              </NavLink>
-              <NavLink to="/student/study" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-                Study Timer
-              </NavLink>
-              <NavLink to="/student/announcements" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-                Notices
-              </NavLink>
-              <NavLink to="/student/resources" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-                Resources
-              </NavLink>
-            </>
-          )}
-
-          {user && user.role === 'admin' && (
-            <>
-              <NavLink to="/admin/dashboard" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-                Dashboard
-              </NavLink>
-              <NavLink to="/admin/students" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-                Students
-              </NavLink>
-              <NavLink to="/admin/announcements" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-                Announcements
-              </NavLink>
-              <NavLink to="/admin/resources" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-                Resources
-              </NavLink>
-            </>
-          )}
+          <button
+            onClick={toggleTheme}
+            className="btn-icon"
+            title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`}
+            aria-label={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`}
+            style={{ marginLeft: '0.5rem' }}
+          >
+            {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
+          </button>
 
           {user ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <span className={`badge ${user.role === 'admin' ? 'badge-gold' : 'badge-green'}`}>
-                {user.role.toUpperCase()}
-              </span>
-              <span style={{ fontSize: '0.875rem', fontWeight: 600 }}>{user.name}</span>
-              <button
-                onClick={handleLogout}
-                className="btn btn-secondary"
-                style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}
-              >
-                Sign Out
-              </button>
-            </div>
+            <Link
+              to={user.role === 'admin' ? '/admin/dashboard' : '/student/dashboard'}
+              className="btn btn-primary"
+              style={{ gap: '0.4rem' }}
+            >
+              <span>Dashboard</span>
+              <ArrowRight size={14} />
+            </Link>
           ) : (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <Link to="/login" className="btn btn-secondary" style={{ padding: '0.45rem 0.9rem', fontSize: '0.85rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginLeft: '0.5rem' }}>
+              <Link to="/login" className="btn btn-secondary" style={{ padding: '0.4rem 0.85rem' }}>
                 Sign In
               </Link>
-              <Link to="/register" className="btn btn-primary" style={{ padding: '0.45rem 1rem', fontSize: '0.85rem' }}>
+              <Link to="/register" className="btn btn-primary" style={{ padding: '0.4rem 0.95rem' }}>
                 Register
               </Link>
             </div>
