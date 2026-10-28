@@ -1,5 +1,18 @@
 import { useState, useEffect } from 'react';
-import { LayoutGrid, Table as TableIcon } from 'lucide-react';
+import {
+  LayoutGrid,
+  Table as TableIcon,
+  UploadCloud,
+  AlertTriangle,
+  CheckCircle2,
+  Sparkles,
+  Building2,
+  Eye,
+  Edit3,
+  Trash2,
+  BarChart2,
+  X,
+} from 'lucide-react';
 import { useToast } from '../../context/ToastContext';
 import {
   getAttendance,
@@ -7,14 +20,13 @@ import {
   importAttendance,
   updateAttendanceRecord,
   deleteAttendanceRecord,
-  simulateAttendance,
   AttendanceRecordItem,
   AttendanceSummary,
   ParsedRowPreview,
   AttendancePolicy,
   CLIENT_POLICY_METADATA,
-  SimulationResult,
 } from '../../services/attendance.service';
+import { simulateScenario } from '../../utils/attendance-math';
 
 const SAMPLE_ERP_DATA = `# University ERP Attendance Report
 # Student ERP Aggregate: 80.1% | Overall OD Count: 17
@@ -85,8 +97,6 @@ export function AttendanceIntelligencePage() {
   const [simAttended, setSimAttended] = useState(0);
   const [simMissed, setSimMissed] = useState(0);
   const [simThreshold, setSimThreshold] = useState(75);
-  const [simulationResult, setSimulationResult] = useState<SimulationResult | null>(null);
-  const [simulating, setSimulating] = useState(false);
 
   // Edit Row State
   const [editingRecord, setEditingRecord] = useState<AttendanceRecordItem | null>(null);
@@ -256,30 +266,11 @@ export function AttendanceIntelligencePage() {
   }
 
   // Trigger Scenario Simulator for a given subject
-  async function handleOpenSimulator(record: AttendanceRecordItem) {
+  function handleOpenSimulator(record: AttendanceRecordItem) {
     setSelectedRecordForSim(record);
     setSimAttended(0);
     setSimMissed(0);
     setSimThreshold(record.threshold || 75);
-    runSimulation(record, 0, 0, record.threshold || 75);
-  }
-
-  async function runSimulation(record: AttendanceRecordItem, addAttended: number, addMissed: number, threshold?: number) {
-    setSimulating(true);
-    const targetThreshold = threshold ?? simThreshold ?? record.threshold ?? 75;
-    try {
-      const res = await simulateAttendance({
-        recordId: record._id,
-        additionalAttended: addAttended,
-        additionalMissed: addMissed,
-        threshold: targetThreshold,
-      });
-      setSimulationResult(res);
-    } catch (err: unknown) {
-      console.error(err);
-    } finally {
-      setSimulating(false);
-    }
   }
 
   // Edit existing record
@@ -372,8 +363,10 @@ export function AttendanceIntelligencePage() {
               setPreviewRows(null);
             }}
             className="btn btn-primary"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem' }}
           >
-            📥 Import ERP Attendance
+            <UploadCloud size={16} />
+            <span>Import ERP Attendance</span>
           </button>
         </div>
       </div>
@@ -393,7 +386,9 @@ export function AttendanceIntelligencePage() {
       ) : records.length === 0 ? (
         /* Empty State */
         <div className="card" style={{ textAlign: 'center', padding: '4rem 2rem' }}>
-          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📊</div>
+          <div style={{ color: 'var(--brand-gold)', marginBottom: '1rem' }}>
+            <BarChart2 size={48} style={{ margin: '0 auto' }} />
+          </div>
           <h2 style={{ fontSize: '1.5rem', marginBottom: '0.5rem', color: 'var(--ink)' }}>
             No ERP Attendance Records Imported Yet
           </h2>
@@ -407,8 +402,10 @@ export function AttendanceIntelligencePage() {
               setRawText(SAMPLE_ERP_DATA);
             }}
             className="btn btn-primary"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem', margin: '0 auto' }}
           >
-            📥 Import Sample ERP Data
+            <UploadCloud size={16} />
+            <span>Import Sample ERP Data</span>
           </button>
         </div>
       ) : (
@@ -427,7 +424,10 @@ export function AttendanceIntelligencePage() {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                    <span className="badge badge-red">🚨 Critical Attendance Shortage</span>
+                    <span className="badge badge-red" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+                      <AlertTriangle size={13} />
+                      <span>Critical Attendance Shortage</span>
+                    </span>
                     <span className="badge badge-gold">{primaryShortage.subjectCode}</span>
                   </div>
                   <h2 style={{ fontSize: '1.5rem', color: 'var(--ink)', marginBottom: '0.25rem' }}>
@@ -451,9 +451,10 @@ export function AttendanceIntelligencePage() {
                   <button
                     onClick={() => handleOpenSimulator(primaryShortage)}
                     className="btn btn-primary"
-                    style={{ whiteSpace: 'nowrap' }}
+                    style={{ whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '0.45rem' }}
                   >
-                    🎲 Simulate Recovery Plan
+                    <Sparkles size={16} />
+                    <span>Simulate Recovery Plan</span>
                   </button>
                 </div>
               </div>
@@ -474,8 +475,9 @@ export function AttendanceIntelligencePage() {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
-                    <span className="badge" style={{ backgroundColor: 'var(--blue-soft)', color: 'var(--blue)', fontWeight: 600 }}>
-                      🏛️ Official ERP Aggregate & Event Hours
+                    <span className="badge" style={{ backgroundColor: 'var(--blue-soft)', color: 'var(--blue)', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+                      <Building2 size={13} />
+                      <span>Official ERP Aggregate &amp; Event Hours</span>
                     </span>
                     <span className="badge badge-gold">Overall ODs: {summary.overallOdCount ?? 17}</span>
                   </div>
@@ -585,25 +587,28 @@ export function AttendanceIntelligencePage() {
                   type="button"
                   onClick={() => setActiveFilter('shortages')}
                   className={`btn ${activeFilter === 'shortages' ? 'btn-primary' : 'btn-secondary'}`}
-                  style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem', color: activeFilter === 'shortages' ? '#fff' : 'var(--crimson)' }}
+                  style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem', color: activeFilter === 'shortages' ? '#fff' : 'var(--crimson)', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
                 >
-                  ⚠️ Shortages ({shortages.length})
+                  <AlertTriangle size={13} />
+                  <span>Shortages ({shortages.length})</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setActiveFilter('safe')}
                   className={`btn ${activeFilter === 'safe' ? 'btn-primary' : 'btn-secondary'}`}
-                  style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem', color: activeFilter === 'safe' ? '#fff' : 'var(--emerald)' }}
+                  style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem', color: activeFilter === 'safe' ? '#fff' : 'var(--emerald)', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
                 >
-                  ✓ Safe ({records.length - shortages.length})
+                  <CheckCircle2 size={13} />
+                  <span>Safe ({records.length - shortages.length})</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setActiveFilter('discrepancy')}
                   className={`btn ${activeFilter === 'discrepancy' ? 'btn-primary' : 'btn-secondary'}`}
-                  style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem', color: activeFilter === 'discrepancy' ? 'var(--bg-surface)' : 'var(--gold)' }}
+                  style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem', color: activeFilter === 'discrepancy' ? 'var(--bg-surface)' : 'var(--brand-gold)', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
                 >
-                  ⚖️ Discrepancies ({records.filter((r) => r.isDiscrepancy).length})
+                  <AlertTriangle size={13} />
+                  <span>Discrepancies ({records.filter((r) => r.isDiscrepancy).length})</span>
                 </button>
               </div>
 
@@ -681,7 +686,7 @@ export function AttendanceIntelligencePage() {
                   No subjects match your current filter or search criteria.
                 </div>
               ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.25rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))', gap: '1.25rem' }}>
                   {filteredAndSortedRecords.map((r) => {
                     const isShort = r.isShortage;
                     return (
@@ -705,9 +710,10 @@ export function AttendanceIntelligencePage() {
                             </div>
                             <span
                               className={`badge ${isShort ? 'badge-red' : 'badge-green'}`}
-                              style={{ fontWeight: 700 }}
+                              style={{ fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}
                             >
-                              {isShort ? 'Shortage' : 'Compliant'}
+                              {isShort ? <AlertTriangle size={11} /> : <CheckCircle2 size={11} />}
+                              <span>{isShort ? 'Shortage' : 'Compliant'}</span>
                             </span>
                           </div>
 
@@ -783,15 +789,21 @@ export function AttendanceIntelligencePage() {
                           >
                             {isShort ? (
                               <div>
-                                <strong style={{ color: 'var(--crimson)' }}>⚠️ Deficit: Recovery Math</strong>
-                                <div style={{ color: 'var(--ink)', marginTop: '0.15rem' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: 'var(--crimson)', fontWeight: 700 }}>
+                                  <AlertTriangle size={14} />
+                                  <span>Deficit: Recovery Math</span>
+                                </div>
+                                <div style={{ color: 'var(--ink)', marginTop: '0.2rem' }}>
                                   Must attend next <strong>{r.classesNeeded} consecutive {r.classesNeeded === 1 ? 'class' : 'classes'}</strong> without absence to cross 75%.
                                 </div>
                               </div>
                             ) : (
                               <div>
-                                <strong style={{ color: 'var(--emerald)' }}>✓ Can I Bunk? Safe Margin</strong>
-                                <div style={{ color: 'var(--ink)', marginTop: '0.15rem' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: 'var(--emerald)', fontWeight: 700 }}>
+                                  <CheckCircle2 size={14} />
+                                  <span>Can I Bunk? Safe Margin</span>
+                                </div>
+                                <div style={{ color: 'var(--ink)', marginTop: '0.2rem' }}>
                                   {r.classesSkippable > 0 ? (
                                     <>You can safely miss up to <strong>{r.classesSkippable} {r.classesSkippable === 1 ? 'class' : 'classes'}</strong> and remain at or above 75%.</>
                                   ) : (
@@ -804,37 +816,40 @@ export function AttendanceIntelligencePage() {
                         </div>
 
                         {/* Action Buttons */}
-                        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', borderTop: '1px solid var(--border)', paddingTop: '0.85rem' }}>
+                        <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', borderTop: '1px solid var(--border)', paddingTop: '0.85rem' }}>
                           <button
                             onClick={() => handleOpenSimulator(r)}
                             className="btn btn-primary"
-                            style={{ fontSize: '0.78rem', padding: '0.4rem 0.75rem', flex: 1, justifyContent: 'center' }}
+                            style={{ fontSize: '0.78rem', padding: '0.4rem 0.65rem', flex: 1, justifyContent: 'center', gap: '0.35rem' }}
                           >
-                            🎲 Simulate
+                            <Sparkles size={13} />
+                            <span>Simulate</span>
                           </button>
                           <button
                             onClick={() => setSelectedSubjectDetail(r)}
                             className="btn btn-secondary"
-                            style={{ fontSize: '0.78rem', padding: '0.4rem 0.65rem' }}
+                            style={{ fontSize: '0.78rem', padding: '0.4rem 0.55rem', gap: '0.3rem' }}
                             title="Inspect full details"
                           >
-                            Details
+                            <Eye size={13} />
+                            <span>Details</span>
                           </button>
                           <button
                             onClick={() => handleStartEdit(r)}
                             className="btn btn-secondary"
-                            style={{ fontSize: '0.78rem', padding: '0.4rem 0.65rem' }}
+                            style={{ fontSize: '0.78rem', padding: '0.4rem 0.55rem', gap: '0.3rem' }}
                             title="Edit class counts"
                           >
-                            Edit
+                            <Edit3 size={13} />
+                            <span>Edit</span>
                           </button>
                           <button
                             onClick={() => handleDelete(r._id, r.subjectCode)}
                             className="btn btn-secondary"
-                            style={{ fontSize: '0.78rem', padding: '0.4rem 0.65rem', color: 'var(--crimson)' }}
+                            style={{ fontSize: '0.78rem', padding: '0.4rem 0.55rem', color: 'var(--crimson)' }}
                             title="Delete record"
                           >
-                            🗑
+                            <Trash2 size={13} />
                           </button>
                         </div>
                       </div>
@@ -902,9 +917,10 @@ export function AttendanceIntelligencePage() {
                               {r.isDiscrepancy && (
                                 <span
                                   title={r.discrepancyNote || `ERP reported ${r.erpPercentage}% vs calculated ${r.calculatedPercentage}%.`}
-                                  style={{ display: 'block', fontSize: '0.7rem', color: 'var(--gold)', cursor: 'help', marginTop: '0.2rem' }}
+                                  style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.7rem', color: 'var(--brand-gold)', cursor: 'help', marginTop: '0.2rem' }}
                                 >
-                                  ⚠️ ERP Delta: {r.discrepancyDelta}%
+                                  <AlertTriangle size={11} />
+                                  <span>ERP Delta: {r.discrepancyDelta}%</span>
                                 </span>
                               )}
                             </td>
@@ -923,34 +939,37 @@ export function AttendanceIntelligencePage() {
                               <button
                                 onClick={() => setSelectedSubjectDetail(r)}
                                 className="btn btn-secondary"
-                                style={{ padding: '0.3rem 0.6rem', fontSize: '0.8rem', marginRight: '0.4rem' }}
+                                style={{ padding: '0.3rem 0.55rem', fontSize: '0.78rem', marginRight: '0.35rem', display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}
                                 title="Inspect full subject breakdown"
                               >
-                                🔍 Details
+                                <Eye size={12} />
+                                <span>Details</span>
                               </button>
                               <button
                                 onClick={() => handleOpenSimulator(r)}
                                 className="btn btn-secondary"
-                                style={{ padding: '0.3rem 0.6rem', fontSize: '0.8rem', marginRight: '0.4rem' }}
+                                style={{ padding: '0.3rem 0.55rem', fontSize: '0.78rem', marginRight: '0.35rem', display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}
                                 title="Simulate attendance scenario"
                               >
-                                🎲 Simulate
+                                <Sparkles size={12} />
+                                <span>Simulate</span>
                               </button>
                               <button
                                 onClick={() => handleStartEdit(r)}
                                 className="btn btn-secondary"
-                                style={{ padding: '0.3rem 0.6rem', fontSize: '0.8rem', marginRight: '0.4rem' }}
+                                style={{ padding: '0.3rem 0.55rem', fontSize: '0.78rem', marginRight: '0.35rem', display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}
                                 title="Edit class counts"
                               >
-                                ✏️ Edit
+                                <Edit3 size={12} />
+                                <span>Edit</span>
                               </button>
                               <button
                                 onClick={() => handleDelete(r._id, r.subjectCode)}
                                 className="btn btn-secondary"
-                                style={{ padding: '0.3rem 0.6rem', fontSize: '0.8rem', color: 'var(--crimson)' }}
+                                style={{ padding: '0.3rem 0.55rem', fontSize: '0.78rem', color: 'var(--crimson)' }}
                                 title="Delete record"
                               >
-                                🗑
+                                <Trash2 size={12} />
                               </button>
                             </td>
                           </tr>
@@ -1047,10 +1066,11 @@ export function AttendanceIntelligencePage() {
 
             {/* Discrepancy Alert */}
             {selectedSubjectDetail.isDiscrepancy && (
-              <div style={{ backgroundColor: 'var(--amber-soft)', border: '1px solid var(--amber)', borderRadius: '6px', padding: '0.85rem', marginBottom: '1.25rem' }}>
-                <strong style={{ color: 'var(--gold-ink)', fontSize: '0.85rem', display: 'block', marginBottom: '0.25rem' }}>
-                  ⚖️ Transparent ERP Discrepancy Notice:
-                </strong>
+              <div style={{ backgroundColor: 'rgba(217, 119, 6, 0.08)', border: '1px solid var(--brand-gold)', borderRadius: '6px', padding: '0.85rem', marginBottom: '1.25rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: 'var(--brand-gold)', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.25rem' }}>
+                  <AlertTriangle size={14} />
+                  <span>ERP Discrepancy Notice</span>
+                </div>
                 <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.8rem' }}>
                   {selectedSubjectDetail.discrepancyNote ||
                     `ERP reported ${selectedSubjectDetail.erpPercentage}% while the selected policy derived ${selectedSubjectDetail.calculatedPercentage}%. This is preserved for audit transparency without forcing numbers.`}
@@ -1059,10 +1079,11 @@ export function AttendanceIntelligencePage() {
             )}
 
             {/* Recovery / Safety Guidance */}
-            <div style={{ background: selectedSubjectDetail.isShortage ? 'rgba(239, 68, 68, 0.05)' : 'rgba(16, 185, 129, 0.05)', borderRadius: '8px', padding: '1rem', marginBottom: '1.5rem' }}>
-              <h4 style={{ margin: '0 0 0.5rem', color: selectedSubjectDetail.isShortage ? 'var(--crimson)' : 'var(--emerald)', fontSize: '0.95rem' }}>
-                {selectedSubjectDetail.isShortage ? '🚨 Action Required to Reach 75%' : '✓ Safe Attendance Buffer'}
-              </h4>
+            <div style={{ background: selectedSubjectDetail.isShortage ? 'rgba(239, 68, 68, 0.05)' : 'rgba(16, 185, 129, 0.05)', borderRadius: '8px', padding: '1rem', marginBottom: '1.5rem', border: `1px solid ${selectedSubjectDetail.isShortage ? 'rgba(239, 68, 68, 0.2)' : 'rgba(16, 185, 129, 0.2)'}` }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', margin: '0 0 0.5rem', color: selectedSubjectDetail.isShortage ? 'var(--crimson)' : 'var(--emerald)', fontSize: '0.95rem', fontWeight: 700 }}>
+                {selectedSubjectDetail.isShortage ? <AlertTriangle size={15} /> : <CheckCircle2 size={15} />}
+                <span>{selectedSubjectDetail.isShortage ? 'Action Required to Reach 75%' : 'Safe Attendance Buffer'}</span>
+              </div>
               <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--ink)' }}>
                 {selectedSubjectDetail.isShortage
                   ? `You must attend the next ${selectedSubjectDetail.classesNeeded} consecutive classes without missing any to restore attendance to ${selectedSubjectDetail.threshold || 75}.00%.`
@@ -1071,7 +1092,7 @@ export function AttendanceIntelligencePage() {
             </div>
 
             {/* Actions */}
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', flexWrap: 'wrap' }}>
               <button
                 type="button"
                 onClick={() => {
@@ -1080,8 +1101,10 @@ export function AttendanceIntelligencePage() {
                   handleOpenSimulator(rec);
                 }}
                 className="btn btn-primary"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
               >
-                🎲 Open Scenario Simulator
+                <Sparkles size={14} />
+                <span>Open Scenario Simulator</span>
               </button>
               <button
                 type="button"
@@ -1091,8 +1114,10 @@ export function AttendanceIntelligencePage() {
                   handleStartEdit(rec);
                 }}
                 className="btn btn-secondary"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
               >
-                ✏️ Edit Counts
+                <Edit3 size={14} />
+                <span>Edit Counts</span>
               </button>
               <button
                 type="button"
@@ -1120,7 +1145,7 @@ export function AttendanceIntelligencePage() {
             padding: '1rem',
           }}
         >
-          <div className="card" style={{ maxWidth: '580px', width: '100%', padding: '2rem' }}>
+          <div className="card" style={{ maxWidth: '580px', width: '100%', padding: 'clamp(1.25rem, 4vw, 2rem)', maxHeight: '90vh', overflowY: 'auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
               <div>
                 <span className="badge badge-gold" style={{ marginBottom: '0.25rem' }}>
@@ -1128,18 +1153,17 @@ export function AttendanceIntelligencePage() {
                 </span>
                 <h3 style={{ fontSize: '1.35rem', color: 'var(--ink)' }}>
                   Scenario Simulator: {selectedRecordForSim.subjectCode}
-                  {simulating && <span style={{ fontSize: '0.8rem', color: 'var(--ink-soft)', fontWeight: 400, marginLeft: '0.5rem' }}> (Calculating...)</span>}
                 </h3>
               </div>
               <button
                 onClick={() => {
                   setSelectedRecordForSim(null);
-                  setSimulationResult(null);
                 }}
                 className="btn btn-secondary"
-                style={{ padding: '0.25rem 0.6rem' }}
+                style={{ padding: '0.25rem 0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                aria-label="Close"
               >
-                ✕
+                <X size={16} />
               </button>
             </div>
 
@@ -1162,7 +1186,6 @@ export function AttendanceIntelligencePage() {
                     onClick={() => {
                       setSimAttended(n);
                       setSimMissed(0);
-                      runSimulation(selectedRecordForSim, n, 0);
                     }}
                     className="btn btn-secondary"
                     style={{ fontSize: '0.8rem', padding: '0.35rem 0.7rem' }}
@@ -1177,7 +1200,6 @@ export function AttendanceIntelligencePage() {
                     onClick={() => {
                       setSimAttended(0);
                       setSimMissed(n);
-                      runSimulation(selectedRecordForSim, 0, n);
                     }}
                     className="btn btn-secondary"
                     style={{ fontSize: '0.8rem', padding: '0.35rem 0.7rem', color: 'var(--crimson)' }}
@@ -1203,7 +1225,6 @@ export function AttendanceIntelligencePage() {
                     onChange={(e) => {
                       const val = Math.max(0, parseInt(e.target.value) || 0);
                       setSimAttended(val);
-                      runSimulation(selectedRecordForSim, val, simMissed, simThreshold);
                     }}
                     className="input-field"
                     style={{ width: '65px', padding: '0.2rem 0.4rem', fontSize: '0.85rem', textAlign: 'center' }}
@@ -1218,7 +1239,6 @@ export function AttendanceIntelligencePage() {
                   onChange={(e) => {
                     const val = parseInt(e.target.value) || 0;
                     setSimAttended(val);
-                    runSimulation(selectedRecordForSim, val, simMissed, simThreshold);
                   }}
                   style={{ width: '100%', accentColor: 'var(--emerald, #10b981)' }}
                 />
@@ -1237,7 +1257,6 @@ export function AttendanceIntelligencePage() {
                     onChange={(e) => {
                       const val = Math.max(0, parseInt(e.target.value) || 0);
                       setSimMissed(val);
-                      runSimulation(selectedRecordForSim, simAttended, val, simThreshold);
                     }}
                     className="input-field"
                     style={{ width: '65px', padding: '0.2rem 0.4rem', fontSize: '0.85rem', textAlign: 'center' }}
@@ -1252,7 +1271,6 @@ export function AttendanceIntelligencePage() {
                   onChange={(e) => {
                     const val = parseInt(e.target.value) || 0;
                     setSimMissed(val);
-                    runSimulation(selectedRecordForSim, simAttended, val, simThreshold);
                   }}
                   style={{ width: '100%', accentColor: 'var(--crimson, #ef4444)' }}
                 />
@@ -1268,7 +1286,6 @@ export function AttendanceIntelligencePage() {
                     onChange={(e) => {
                       const val = Number(e.target.value);
                       setSimThreshold(val);
-                      runSimulation(selectedRecordForSim, simAttended, simMissed, val);
                     }}
                     className="input-field"
                     style={{ width: '90px', padding: '0.2rem 0.4rem', fontSize: '0.82rem' }}
@@ -1290,7 +1307,6 @@ export function AttendanceIntelligencePage() {
                   onChange={(e) => {
                     const val = Number(e.target.value);
                     setSimThreshold(val);
-                    runSimulation(selectedRecordForSim, simAttended, simMissed, val);
                   }}
                   style={{ width: '100%', accentColor: 'var(--brand-gold)' }}
                 />
@@ -1301,18 +1317,14 @@ export function AttendanceIntelligencePage() {
             {(() => {
               const curAtt = selectedRecordForSim.totalAttended;
               const curCond = selectedRecordForSim.totalConducted;
-              const projAtt = simulationResult ? simulationResult.projection.projectedAttended : (curAtt + simAttended);
-              const projCond = simulationResult ? simulationResult.projection.projectedConducted : (curCond + simAttended + simMissed);
-              const projPct = simulationResult
-                ? simulationResult.projection.projectedPercentage
-                : (projCond > 0 ? Number(((projAtt / projCond) * 100).toFixed(2)) : 0);
-              const isSafe = projPct >= simThreshold;
-              const needed = simulationResult
-                ? simulationResult.projection.classesNeeded
-                : (isSafe ? 0 : Math.max(0, Math.ceil((simThreshold * projCond - 100 * projAtt) / (100 - simThreshold))));
-              const skippable = simulationResult
-                ? simulationResult.projection.classesSkippable
-                : (!isSafe ? 0 : Math.max(0, Math.floor((100 * projAtt - simThreshold * projCond) / simThreshold)));
+              // Shared canonical recovery math
+              const sim = simulateScenario(curAtt, curCond, simAttended, simMissed, simThreshold);
+              const projAtt = sim.projectedAttended;
+              const projCond = sim.projectedConducted;
+              const projPct = sim.projectedPercentage;
+              const isSafe = sim.status === 'safe';
+              const needed = sim.classesNeeded;
+              const skippable = sim.classesSkippable;
 
               return (
                 <div
@@ -1367,12 +1379,18 @@ export function AttendanceIntelligencePage() {
 
                   <div style={{ borderTop: '1px solid var(--border)', marginTop: '0.75rem', paddingTop: '0.75rem', fontSize: '0.85rem' }}>
                     {isSafe ? (
-                      <div style={{ color: 'var(--emerald)' }}>
-                        <strong>🎉 Safe to Bunk:</strong> You can safely miss up to <strong>{skippable} additional {skippable === 1 ? 'class' : 'classes'}</strong> and maintain at least {simThreshold}% eligibility.
+                      <div style={{ color: 'var(--emerald)', display: 'flex', alignItems: 'flex-start', gap: '0.4rem' }}>
+                        <CheckCircle2 size={16} style={{ flexShrink: 0, marginTop: '0.1rem' }} />
+                        <div>
+                          <strong>Safe to Bunk:</strong> You can safely miss up to <strong>{skippable} additional {skippable === 1 ? 'class' : 'classes'}</strong> and maintain at least {simThreshold}% eligibility.
+                        </div>
                       </div>
                     ) : (
-                      <div style={{ color: 'var(--crimson)' }}>
-                        <strong>⚠️ Shortage Deficit:</strong> Recovery requires attending <strong>{needed} consecutive {needed === 1 ? 'class' : 'classes'}</strong> without absence to reach {simThreshold}%.
+                      <div style={{ color: 'var(--crimson)', display: 'flex', alignItems: 'flex-start', gap: '0.4rem' }}>
+                        <AlertTriangle size={16} style={{ flexShrink: 0, marginTop: '0.1rem' }} />
+                        <div>
+                          <strong>Shortage Deficit:</strong> Recovery requires attending <strong>{needed} consecutive {needed === 1 ? 'class' : 'classes'}</strong> without absence to reach {simThreshold}%.
+                        </div>
                       </div>
                     )}
                   </div>
@@ -1385,7 +1403,6 @@ export function AttendanceIntelligencePage() {
                 type="button"
                 onClick={() => {
                   setSelectedRecordForSim(null);
-                  setSimulationResult(null);
                 }}
                 className="btn btn-secondary"
               >
@@ -1566,8 +1583,9 @@ export function AttendanceIntelligencePage() {
                     }}
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
-                      <div>
-                        <strong>🏛️ ERP Aggregate:</strong> {previewMetadata.erpAggregatePercentage ?? 80.1}% &bull;{' '}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <Building2 size={14} color="var(--brand-gold)" />
+                        <span><strong>ERP Aggregate:</strong> {previewMetadata.erpAggregatePercentage ?? 80.1}% &bull;{' '}</span>
                         <strong>Total University ODs:</strong> {previewMetadata.overallOdCount ?? 17}
                       </div>
                       {previewMetadata.eventAttendance && (
@@ -1627,8 +1645,9 @@ export function AttendanceIntelligencePage() {
                 </div>
 
                 {previewErrors.length > 0 && (
-                  <div style={{ padding: '0.75rem', backgroundColor: 'var(--red-soft)', color: 'var(--crimson)', borderRadius: '6px', marginBottom: '1rem', fontSize: '0.8rem' }}>
-                    ⚠️ {previewErrors.join(', ')}
+                  <div style={{ padding: '0.75rem', backgroundColor: 'var(--red-soft)', color: 'var(--crimson)', borderRadius: '6px', marginBottom: '1rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                    <AlertTriangle size={14} />
+                    <span>{previewErrors.join(', ')}</span>
                   </div>
                 )}
 
@@ -1719,7 +1738,10 @@ export function AttendanceIntelligencePage() {
                           </td>
                           <td style={{ padding: '0.5rem' }}>
                             {!row.isValid ? (
-                              <span style={{ color: 'var(--crimson)', fontSize: '0.75rem', fontWeight: 600 }}>⚠️ {row.error}</span>
+                              <span style={{ color: 'var(--crimson)', fontSize: '0.75rem', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
+                                <AlertTriangle size={12} />
+                                <span>{row.error}</span>
+                              </span>
                             ) : (
                               <div>
                                 {row.isChanged && (
@@ -1735,7 +1757,7 @@ export function AttendanceIntelligencePage() {
                                       display: 'inline-block',
                                     }}
                                   >
-                                    🔄 Updated (was Absent: {row.oldValues?.absent}, ERP: {row.oldValues?.erpPercentage}%)
+                                    Updated (was Absent: {row.oldValues?.absent}, ERP: {row.oldValues?.erpPercentage}%)
                                   </div>
                                 )}
                                 {row.isNew && (
@@ -1751,13 +1773,14 @@ export function AttendanceIntelligencePage() {
                                       display: 'inline-block',
                                     }}
                                   >
-                                    ✨ New Subject
+                                    New Subject
                                   </div>
                                 )}
                                 {row.isDiscrepancy ? (
                                   <div>
-                                    <span style={{ color: 'var(--gold)', fontSize: '0.75rem', fontWeight: 600, display: 'block' }}>
-                                      ⚠️ Delta: {row.discrepancyDelta}%
+                                    <span style={{ color: 'var(--brand-gold)', fontSize: '0.75rem', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
+                                      <AlertTriangle size={12} />
+                                      <span>Delta: {row.discrepancyDelta}%</span>
                                     </span>
                                     {row.discrepancyNote && (
                                       <span style={{ fontSize: '0.7rem', color: 'var(--ink-soft)', lineHeight: 1.2, display: 'block', maxWidth: '200px' }}>
@@ -1767,7 +1790,10 @@ export function AttendanceIntelligencePage() {
                                   </div>
                                 ) : (
                                   !row.isChanged && !row.isNew && (
-                                    <span style={{ color: 'var(--emerald)', fontSize: '0.75rem', fontWeight: 600 }}>✅ Valid (Unchanged)</span>
+                                    <span style={{ color: 'var(--emerald)', fontSize: '0.75rem', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
+                                      <CheckCircle2 size={12} />
+                                      <span>Valid (Unchanged)</span>
+                                    </span>
                                   )
                                 )}
                               </div>

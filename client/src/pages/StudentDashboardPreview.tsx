@@ -49,6 +49,7 @@ import {
   AttendanceSummary,
   AttendanceRecordItem,
 } from '../services/attendance.service';
+import { calculateClassesNeeded, calculateSkippableClasses } from '../utils/attendance-math';
 import { Skeleton, SkeletonCard } from '../components/Skeleton';
 
 interface DayStudyData {
@@ -191,8 +192,12 @@ export function StudentDashboardPreview() {
           percentage,
           totalAttended: match?.totalAttended,
           totalConducted: match?.totalConducted,
-          classesNeeded: match?.classesNeeded ?? (isShortage ? Math.ceil((threshold * 10 - 100 * (percentage / 10)) / (100 - threshold)) : 0),
-          classesSkippable: match?.classesSkippable ?? (!isShortage ? Math.floor((100 * (percentage / 10) - threshold * 10) / threshold) : 0),
+          classesNeeded: match
+            ? match.classesNeeded
+            : (isShortage ? calculateClassesNeeded(percentage, 100, threshold) : 0),
+          classesSkippable: match
+            ? match.classesSkippable
+            : (!isShortage ? calculateSkippableClasses(percentage, 100, threshold) : 0),
           isShortage,
         };
       });
