@@ -354,3 +354,4 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
     </div>
   );
 }
+

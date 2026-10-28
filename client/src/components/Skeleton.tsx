@@ -51,3 +51,4 @@ export function SkeletonTableRow({ columns = 5 }: { columns?: number }) {
     </tr>
   );
 }
+
