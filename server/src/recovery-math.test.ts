@@ -1,5 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
+import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 import {
   calculateClassesNeeded,
   calculateSkippableClasses,
@@ -234,6 +236,59 @@ describe('Attendance Recovery Math Engine - Pure Unit Tests', () => {
       // Verify: 80 / 100 = 80.00%
       const sim80 = simulateScenario(30, 50, 50, 0, 80);
       assert.equal(sim80.projectedPercentage, 80.0);
+    });
+  });
+
+  /* -------------------------------------------------------------
+   * 4. CROSS-BOUNDARY CLIENT / SERVER CONSOLIDATION PARITY TEST
+   * ------------------------------------------------------------- */
+  describe('Cross-Boundary Client/Server Parity Invariant', () => {
+    it('proves client/src/utils/attendance-math.ts and server/src/services/attendance-calc.service.ts produce identical results across 1,000+ permutations', async () => {
+      const clientPath = path.resolve(__dirname, '../../client/src/utils/attendance-math.ts');
+      const clientMath = await import(pathToFileURL(clientPath).href);
+
+      const thresholds = [60, 65, 70, 75, 80, 85];
+      let permutationsChecked = 0;
+
+      for (let conducted = 0; conducted <= 30; conducted += 3) {
+        for (let attended = 0; attended <= conducted; attended += 3) {
+          for (const thresh of thresholds) {
+            // 1. calculateClassesNeeded parity
+            const serverNeeded = calculateClassesNeeded(attended, conducted, thresh);
+            const clientNeeded = clientMath.calculateClassesNeeded(attended, conducted, thresh);
+            assert.equal(
+              clientNeeded,
+              serverNeeded,
+              `calculateClassesNeeded mismatch at attended=${attended}, conducted=${conducted}, thresh=${thresh}`
+            );
+
+            // 2. calculateSkippableClasses parity
+            const serverSkippable = calculateSkippableClasses(attended, conducted, thresh);
+            const clientSkippable = clientMath.calculateSkippableClasses(attended, conducted, thresh);
+            assert.equal(
+              clientSkippable,
+              serverSkippable,
+              `calculateSkippableClasses mismatch at attended=${attended}, conducted=${conducted}, thresh=${thresh}`
+            );
+
+            // 3. simulateScenario parity
+            for (let addAtt = 0; addAtt <= 2; addAtt++) {
+              for (let addMiss = 0; addMiss <= 2; addMiss++) {
+                const serverSim = simulateScenario(attended, conducted, addAtt, addMiss, thresh);
+                const clientSim = clientMath.simulateScenario(attended, conducted, addAtt, addMiss, thresh);
+                assert.deepEqual(
+                  clientSim,
+                  serverSim,
+                  `simulateScenario mismatch at att=${attended}, cond=${conducted}, addAtt=${addAtt}, addMiss=${addMiss}, thresh=${thresh}`
+                );
+                permutationsChecked++;
+              }
+            }
+          }
+        }
+      }
+
+      assert.ok(permutationsChecked >= 1000, `Expected >= 1000 permutations, verified ${permutationsChecked}`);
     });
   });
 });

@@ -1,3 +1,5 @@
+import { BookOpen, Clock, CheckSquare, Shield } from 'lucide-react';
+
 export function LandingPage() {
   return (
     <div>
@@ -36,31 +38,39 @@ export function LandingPage() {
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
             <div className="card">
-              <div style={{ fontSize: '1.75rem', marginBottom: '0.75rem' }}>📚</div>
-              <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>Curriculum & Subjects</h3>
+              <div style={{ color: 'var(--brand-gold)', marginBottom: '0.75rem' }}>
+                <BookOpen size={28} />
+              </div>
+              <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>Curriculum &amp; Subjects</h3>
               <p style={{ color: 'var(--ink-soft)', fontSize: '0.9rem' }}>
                 Track course codes, assigned professors, credit hours, and syllabus milestones in real-time.
               </p>
             </div>
 
             <div className="card">
-              <div style={{ fontSize: '1.75rem', marginBottom: '0.75rem' }}>⏱️</div>
-              <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>Study Tracker & Timer</h3>
+              <div style={{ color: 'var(--brand-gold)', marginBottom: '0.75rem' }}>
+                <Clock size={28} />
+              </div>
+              <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>Study Tracker &amp; Timer</h3>
               <p style={{ color: 'var(--ink-soft)', fontSize: '0.9rem' }}>
                 Structured Pomodoro focus sessions with subject duration logging and weekly trend analytics.
               </p>
             </div>
 
             <div className="card">
-              <div style={{ fontSize: '1.75rem', marginBottom: '0.75rem' }}>📝</div>
-              <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>Notes & Task Kanban</h3>
+              <div style={{ color: 'var(--brand-gold)', marginBottom: '0.75rem' }}>
+                <CheckSquare size={28} />
+              </div>
+              <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>Notes &amp; Task Kanban</h3>
               <p style={{ color: 'var(--ink-soft)', fontSize: '0.9rem' }}>
                 Markdown lecture note editor and priority task boards with status workflows.
               </p>
             </div>
 
             <div className="card">
-              <div style={{ fontSize: '1.75rem', marginBottom: '0.75rem' }}>🛡️</div>
+              <div style={{ color: 'var(--brand-gold)', marginBottom: '0.75rem' }}>
+                <Shield size={28} />
+              </div>
               <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>Administrative Oversight</h3>
               <p style={{ color: 'var(--ink-soft)', fontSize: '0.9rem' }}>
                 Role-based controls for student registry, resource uploads, institutional announcements, and analytics.

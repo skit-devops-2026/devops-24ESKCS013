@@ -1,12 +1,17 @@
 import { Router, Response } from 'express';
 import { z } from 'zod';
 import { Types } from 'mongoose';
-import { Goal } from '../models/Goal.js';
+import { Goal, IGoal } from '../models/Goal.js';
+import { Subject } from '../models/Subject.js';
+import { Task } from '../models/Task.js';
+import { StudySession } from '../models/StudySession.js';
 import { requireAuth, AuthenticatedRequest } from '../middleware/auth.middleware.js';
 
 export const goalRouter = Router();
 
 goalRouter.use(requireAuth);
+
+type MongoQueryFilter = Record<string, unknown>;
 
 const goalInputSchema = z.object({
   title: z.string().min(1, 'Goal title cannot be empty').max(200).trim(),
@@ -18,15 +23,68 @@ const goalInputSchema = z.object({
   currentValue: z.coerce.number().min(0, 'Current progress cannot be negative').default(0),
   unit: z.string().trim().max(20).optional().default('%'),
   category: z.string().trim().max(50).optional().default('Academic'),
+  subjectId: z.string().optional().nullable(),
+  subjectCode: z.string().trim().optional().default(''),
+  autoLinkMetric: z.enum(['none', 'attendance', 'task_completion', 'study_hours']).optional().default('none'),
   status: z.enum(['active', 'completed', 'abandoned']).optional().default('active'),
 });
 
 const updateGoalSchema = goalInputSchema.partial();
 
+/**
+ * Synchronizes auto-linked goals with live academic data:
+ * - attendance: auto-updates currentValue from linked Subject's attendancePercentage
+ * - task_completion: auto-updates currentValue from completed tasks
+ * - study_hours: auto-updates currentValue from completed focus study hours
+ */
+async function syncAutoLinkedGoals(goals: IGoal[], userId: Types.ObjectId): Promise<void> {
+  for (const goal of goals) {
+    if (!goal.autoLinkMetric || goal.autoLinkMetric === 'none') continue;
+
+    let newValue = goal.currentValue;
+
+    if (goal.autoLinkMetric === 'attendance' && goal.subjectId) {
+      const subject = await Subject.findOne({ _id: goal.subjectId, userId });
+      if (subject) {
+        newValue = subject.attendancePercentage;
+      }
+    } else if (goal.autoLinkMetric === 'task_completion') {
+      const taskFilter: MongoQueryFilter = { userId, status: 'completed' };
+      if (goal.subjectId) {
+        taskFilter.subjectId = goal.subjectId;
+      }
+      const count = await Task.countDocuments(taskFilter);
+      newValue = count;
+    } else if (goal.autoLinkMetric === 'study_hours') {
+      const sessionFilter: MongoQueryFilter = { userId, status: 'completed' };
+      if (goal.subjectId) {
+        sessionFilter.subjectId = goal.subjectId;
+      }
+      const sessions = await StudySession.find(sessionFilter);
+      const totalSeconds = sessions.reduce((acc, s) => acc + (s.durationSeconds || 0), 0);
+      newValue = Number((totalSeconds / 3600).toFixed(1));
+    }
+
+    if (newValue !== goal.currentValue) {
+      goal.currentValue = newValue;
+      if (goal.currentValue >= goal.targetValue && goal.status === 'active') {
+        goal.status = 'completed';
+      }
+      await Goal.updateOne(
+        { _id: goal._id, userId },
+        { $set: { currentValue: goal.currentValue, status: goal.status } }
+      );
+    }
+  }
+}
+
 // GET /api/goals/summary
 goalRouter.get('/summary', async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const userId = req.user!._id;
   const goals = await Goal.find({ userId });
+
+  // Sync auto-linked goals before returning summary
+  await syncAutoLinkedGoals(goals, userId);
 
   const total = goals.length;
   const active = goals.filter((g) => g.status === 'active').length;
@@ -56,12 +114,15 @@ goalRouter.get('/summary', async (req: AuthenticatedRequest, res: Response): Pro
 
 // GET /api/goals
 goalRouter.get('/', async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const query: any = { userId: req.user!._id };
+  const query: MongoQueryFilter = { userId: req.user!._id };
   if (req.query.status) {
-    query.status = req.query.status;
+    query.status = String(req.query.status);
   }
   const goals = await Goal.find(query).sort({ targetDate: 1 });
+
+  // Sync auto-linked goals with live metrics
+  await syncAutoLinkedGoals(goals, req.user!._id);
+
   res.status(200).json({ status: 'ok', count: goals.length, data: goals });
 });
 
@@ -77,8 +138,30 @@ goalRouter.post('/', async (req: AuthenticatedRequest, res: Response): Promise<v
     return;
   }
 
-  const { title, description, targetDate, targetValue, currentValue, unit, category, status } =
-    parseResult.data;
+  const {
+    title,
+    description,
+    targetDate,
+    targetValue,
+    currentValue,
+    unit,
+    category,
+    subjectId,
+    subjectCode,
+    autoLinkMetric,
+    status,
+  } = parseResult.data;
+
+  let resolvedSubjectCode = subjectCode;
+  let parsedSubjectId: Types.ObjectId | null = null;
+
+  if (subjectId && Types.ObjectId.isValid(subjectId)) {
+    parsedSubjectId = new Types.ObjectId(subjectId);
+    const sub = await Subject.findOne({ _id: parsedSubjectId, userId: req.user!._id });
+    if (sub) {
+      resolvedSubjectCode = sub.code;
+    }
+  }
 
   // Auto-complete if currentValue >= targetValue
   const initialStatus = currentValue >= targetValue ? 'completed' : status;
@@ -92,6 +175,9 @@ goalRouter.post('/', async (req: AuthenticatedRequest, res: Response): Promise<v
     currentValue,
     unit,
     category,
+    subjectId: parsedSubjectId,
+    subjectCode: resolvedSubjectCode,
+    autoLinkMetric,
     status: initialStatus,
   });
 
@@ -110,6 +196,8 @@ goalRouter.get('/:id', async (req: AuthenticatedRequest, res: Response): Promise
     res.status(404).json({ status: 'error', statusCode: 404, message: 'Goal not found' });
     return;
   }
+
+  await syncAutoLinkedGoals([goal], req.user!._id);
 
   res.status(200).json({ status: 'ok', data: goal });
 });
@@ -131,10 +219,9 @@ goalRouter.patch('/:id', async (req: AuthenticatedRequest, res: Response): Promi
     return;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const updates: any = { ...parseResult.data };
-  if (updates.targetDate) {
-    updates.targetDate = new Date(updates.targetDate);
+  const updates: Partial<IGoal> = { ...parseResult.data } as Partial<IGoal>;
+  if (parseResult.data.targetDate) {
+    updates.targetDate = new Date(parseResult.data.targetDate);
   }
 
   const existingGoal = await Goal.findOne({ _id: req.params.id, userId: req.user!._id });

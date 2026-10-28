@@ -138,6 +138,9 @@ export interface GoalItem {
   currentValue: number;
   unit: string;
   category: string;
+  subjectId?: string | null;
+  subjectCode?: string;
+  autoLinkMetric?: 'none' | 'attendance' | 'task_completion' | 'study_hours';
   status: 'active' | 'completed' | 'abandoned';
   createdAt: string;
   updatedAt: string;

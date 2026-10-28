@@ -1,40 +1,187 @@
-# Student Hub
+# Student Hub — Academic Management Platform
 
-> Student Hub is a full-stack web application that provides a centralised platform for students to manage their academic activities and for administrators to oversee student progress.
+> A full-stack academic management platform designed for university students to track coursework, manage tasks, record lecture notes, and master attendance exam eligibility with integrated Attendance Intelligence.
 
-## Author
+---
 
-| Roll No. | Name | GitHub username |
-|---|---|---|
-| 24ESKCS013 | Abhimanyu Single Rathore | Abhimanyu2211 |
+## Author & Project Metadata
 
-## About
+| Roll No. | Name | GitHub Username | Role |
+|---|---|---|---|
+| 24ESKCS013 | Abhimanyu Single Rathore | Abhimanyu2211 | Full-Stack Architect & Lead Developer |
 
-Student Hub is a frontend web application that provides students with a dashboard to track subjects, notes, tasks, goals, attendance, and analytics. Admins can manage student records, announcements, resources, and view detailed analytics — all from a clean, responsive interface built with HTML, CSS, and JavaScript.
+---
 
-## Tech stack
+## Architecture & Technology Stack
 
-- Frontend: HTML5, CSS3, Vanilla JavaScript
-- Backend: None (static site)
-- Database: None (localStorage / mock data)
+```
+┌──────────────────────────────────────────────────────────┐
+│                   React + TypeScript Client              │
+│       Vite • Design Tokens (Light/Dark) • Recharts       │
+│      @dnd-kit Kanban • Split-Pane Markdown • DOMPurify   │
+└────────────────────────────┬─────────────────────────────┘
+                             │  HTTP / JSON / Cookies
+                             ▼
+┌──────────────────────────────────────────────────────────┐
+│                    Express REST API                      │
+│        Helmet Security Headers • Express Rate Limit      │
+│      JWT Cookie Authentication • Role-Based Access (RBAC)│
+└────────────────────────────┬─────────────────────────────┘
+                             │  Mongoose ODM
+                             ▼
+┌──────────────────────────────────────────────────────────┐
+│                   MongoDB Database                       │
+│     Compound Indexes • Full-Text Index • Data Isolation  │
+└──────────────────────────────────────────────────────────┘
+```
 
-## Running locally
+* **Frontend**: React 18, TypeScript, Vite, Recharts, `@dnd-kit/core`, `@dnd-kit/sortable`, DOMPurify, Lucide React (Zero emojis).
+* **Backend API**: Node.js, Express, TypeScript, Helmet, Cookie-Parser, Express Rate Limit, Zod schema validation.
+* **Database & Persistence**: MongoDB via Mongoose with multi-tenancy isolation and compound indexes.
+* **Testing Engines**: Node.js Native Test Runner (`node:test`, `node:assert/strict`) with `tsx` and experimental type stripping.
+
+---
+
+## Flagship Features
+
+### 1. Attendance Intelligence
+* **Multi-Format ERP Ingestion**: Copy-paste TSV, pipe-delimited tables, space-separated records, or CSV files from university ERP portals.
+* **Transparent Counting Policies**:
+  * `Standard (Present + OD)`: $\text{Attended} = P + OD$; $\text{Conducted} = P + OD + M + A$
+  * `Compensatory Makeup`: $\text{Conducted} = \text{Attended} + \max(0, A - M)$
+  * `Strict (Present Only)`: $\text{Attended} = P$; $\text{Conducted} = P + A$
+  * `Official ERP Direct`: Uses institutionally reported percentage directly for industrial training/seminars.
+* **Pure Integer Recovery Math Engine**:
+  * Minimum consecutive classes to restore $\ge 75\%$ eligibility:
+    $$\text{needed} = \left\lceil \frac{\text{threshold} \times C - 100 \times A}{100 - \text{threshold}} \right\rceil$$
+  * Maximum skippable classes without falling below $75\%$ ("Can I Bunk?" calculator):
+    $$\text{skippable} = \left\lfloor \frac{100 \times A - \text{threshold} \times C}{\text{threshold}} \right\rfloor$$
+* **Interactive What-If Scenario Simulator**: Instant 60fps sliders to forecast attendance percentage and safe bunker margins across custom threshold targets ($60\%$ to $85\%$).
+* **Cross-Boundary Parity Test**: Automated test verifying 1,000+ permutations ensuring client-side projections and server-side evaluations remain mathematically identical.
+
+### 2. Assignments & Kanban Board
+* **Drag-and-Drop Columns**: Smooth movement across **To Do** (`pending`), **In Progress** (`in_progress`), and **Completed** (`completed`) via `@dnd-kit`.
+* **Accessible Keyboard Controls**: Accessible action buttons on every card allow non-mouse navigation and instant state transitions.
+* **Overdue Highlighting**: Automatic detection of past-due tasks with crimson status badges and due-date highlighting.
+* **Optimistic Updates & Instant Rollback**: UI updates immediately upon drag; any network failure triggers a rollback to the prior state with a toast alert.
+
+### 3. Personal Notebook & Markdown Engine
+* **Split-Pane Editor on Desktop**: Live side-by-side editing with markdown input on the left and rendered preview on the right.
+* **Mobile Edit/Preview Tabs**: Responsive tabbed interface for comfortable editing on smaller viewports.
+* **DOMPurify Sanitization**: Strict XSS prevention ensuring embedded scripts, event handlers, and dangerous protocols are completely stripped before rendering.
+* **Tag System & Pinning**: Categorize notes by course or concept with interactive hashtag pills; pin critical formulas and summaries to the top of your notebook.
+
+### 4. Authoritative Study Timer & Analytics
+* **Server-Authoritative Focus**: Pomodoro focus timer that survives page reloads, browser crashes, or device switches; paused duration is strictly deducted from net study time.
+* **Recharts Weekly Analytics**: Interactive bar chart displaying daily focus minutes over the past 7 days, styled with dynamic CSS tokens for light and dark themes.
+* **Study Ledger**: Detailed historical table tracking subject codes, net study minutes, and completion timestamps.
+
+### 5. Academic Goals & Auto-Linking
+* **Live System Auto-Linking**:
+  * Link a goal to **Attendance** to auto-sync with course attendance percentage.
+  * Link to **Task Completion** to auto-track completed assignments.
+  * Link to **Study Focus** to auto-accumulate focus study hours.
+* **Milestone Achievements**: Automatic completion transition when current progress meets or exceeds the target.
+
+### 6. Administration & Oversight
+* **Role-Based Access Control (RBAC)**: Secure separation between `student` and `admin` roles.
+* **Student Registry**: Paginated student directory with profile inspection, course rosters, and account status controls.
+* **Institutional Notice Board**: Campus-wide bulletins and examination notifications with draft/publish workflows.
+* **Resource Library**: Curated repository for syllabi, lab manuals, and previous year question papers with URL safety validation.
+
+---
+
+## Security & Reliability Architecture
+
+* **Helmet HTTP Headers**: Configured Content Security Policy, HTTP Strict Transport Security (HSTS), X-Frame-Options (`DENY`), and MIME-sniffing protection.
+* **Rate Limiting**: Tiered IP rate limiting via `express-rate-limit` protecting authentication endpoints and general API routes against brute-force attacks.
+* **Data Isolation**: Multi-tenancy query enforcement ensuring students can only view and mutate their own subjects, tasks, goals, notes, and timers.
+* **Search Sanitization**: `escapeRegExp` utility preventing regular expression denial of service (ReDoS) and query injection in keyword searches.
+* **Zero `any` Types**: Strict TypeScript definitions across the entire codebase.
+
+---
+
+## Getting Started
+
+### Prerequisites
+* Node.js v20+ or v22+
+* MongoDB v6.0+ running locally (`mongodb://127.0.0.1:27017`) or a MongoDB Atlas URI
+
+### 1. Clone & Install Dependencies
+```bash
+# Clone the repository
+git clone https://github.com/Abhimanyu2211/student-hub.git
+cd student-hub
+
+# Install server and client dependencies
+npm install --prefix server
+npm install --prefix client
+```
+
+### 2. Environment Configuration
+Copy the example environment templates:
+```bash
+cp server/.env.example server/.env
+cp client/.env.example client/.env
+```
+
+**`server/.env` parameters**:
+```env
+PORT=5001
+NODE_ENV=development
+CLIENT_ORIGIN=http://localhost:5173
+MONGODB_URI=mongodb://127.0.0.1:27017/student-hub
+JWT_SECRET=student_hub_dev_secret_key_minimum_32_bytes_safe_default
+JWT_EXPIRES_IN=7d
+```
+
+**`client/.env` parameters**:
+```env
+VITE_API_BASE_URL=http://localhost:5001/api
+```
+
+### 3. Seed Demo Data (Optional)
+To populate realistic sample courses, tasks, notes, goals, and focus sessions for the Demo Student account:
+```bash
+npm run seed:demo --prefix server
+```
+*Note: This script strictly modifies only `demostudent99@university.edu` and never alters any other student account.*
+
+### 4. Run Development Servers
+```bash
+# Launch both API server (port 5001) and Vite client (port 5173) concurrently:
+npm run dev
+
+# Or launch independently:
+npm run dev:server
+npm run dev:client
+```
+Open [http://localhost:5173](http://localhost:5173) in your browser.
+
+---
+
+## Test Suites
+
+Student Hub maintains test coverage spanning unit, integration, and mathematical parity invariants:
 
 ```bash
-make install
-make run
+# Run server test suite (129 integration & unit tests)
+npm test --prefix server
+
+# Run client test suite (11 unit & invariant tests)
+npm test --prefix client
+
+# Run TypeScript compile validation across both projects
+npm run typecheck --prefix server
+npm run lint --prefix client
 ```
 
-Or simply open `index.html` in your browser.
+### Verified Test Summary
+* **Server**: 129 tests passing across 32 suites (`Admin Subsystem`, `Attendance Invariants`, `Multi-Tenancy Isolation`, `Task Workflows`, `Goal Auto-Linking`, `Study Timer Sync`, `Cross-Boundary Client/Server Parity`).
+* **Client**: 11 tests passing across 2 suites (`Attendance Math Engine Proofs`, `Markdown Parsing & XSS Prevention`).
 
-## Live URL
+---
 
-https://abhimanyu2211.github.io/student-hub/
+## License
 
-## Health endpoint
-
-This is a static site. No `/health` endpoint is applicable at this stage. Will be added in M5 when the app is deployed with a server.
-
-```
-GET /health
-```
+This project is licensed under the ISC License.

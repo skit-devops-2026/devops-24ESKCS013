@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { Users, Megaphone, BookOpen, AlertTriangle } from 'lucide-react';
 import { getAdminStats, AdminStats } from '../../services/admin.service';
 
 export function AdminDashboardPage() {
@@ -60,8 +61,9 @@ export function AdminDashboardPage() {
       </div>
 
       {error && (
-        <div style={{ background: 'var(--red-light)', color: 'var(--red)', padding: '1rem', borderRadius: '6px', marginBottom: '1.5rem', border: '1px solid var(--red)' }}>
-          ⚠️ {error}
+        <div style={{ background: 'var(--red-light)', color: 'var(--red)', padding: '1rem', borderRadius: '6px', marginBottom: '1.5rem', border: '1px solid var(--red)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <AlertTriangle size={16} />
+          <span>{error}</span>
         </div>
       )}
 
@@ -115,7 +117,9 @@ export function AdminDashboardPage() {
       <h3 style={{ fontSize: '1.25rem', marginBottom: '1.25rem', color: 'var(--ink)' }}>Management Modules</h3>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
         <Link to="/admin/students" className="card" style={{ textDecoration: 'none', transition: 'border-color 0.2s ease' }}>
-          <span style={{ fontSize: '1.75rem', display: 'block', marginBottom: '0.5rem' }}>👥</span>
+          <div style={{ color: 'var(--brand-gold)', marginBottom: '0.65rem' }}>
+            <Users size={28} />
+          </div>
           <strong style={{ fontSize: '1.2rem', color: 'var(--ink)', display: 'block', marginBottom: '0.35rem' }}>
             Student Directory &amp; RBAC
           </strong>
@@ -125,7 +129,9 @@ export function AdminDashboardPage() {
         </Link>
 
         <Link to="/admin/announcements" className="card" style={{ textDecoration: 'none' }}>
-          <span style={{ fontSize: '1.75rem', display: 'block', marginBottom: '0.5rem' }}>📢</span>
+          <div style={{ color: 'var(--brand-gold)', marginBottom: '0.65rem' }}>
+            <Megaphone size={28} />
+          </div>
           <strong style={{ fontSize: '1.2rem', color: 'var(--ink)', display: 'block', marginBottom: '0.35rem' }}>
             Campus Announcements
           </strong>
@@ -135,7 +141,9 @@ export function AdminDashboardPage() {
         </Link>
 
         <Link to="/admin/resources" className="card" style={{ textDecoration: 'none' }}>
-          <span style={{ fontSize: '1.75rem', display: 'block', marginBottom: '0.5rem' }}>📚</span>
+          <div style={{ color: 'var(--brand-gold)', marginBottom: '0.65rem' }}>
+            <BookOpen size={28} />
+          </div>
           <strong style={{ fontSize: '1.2rem', color: 'var(--ink)', display: 'block', marginBottom: '0.35rem' }}>
             Resource Library Repository
           </strong>

@@ -361,7 +361,13 @@ export function StudentDashboardPreview() {
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                 <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--brand-gold)' }}>STEP 1</span>
                 <span style={{ fontSize: '0.72rem', color: subjects.length > 0 ? 'var(--emerald)' : 'var(--ink-soft)' }}>
-                  {subjects.length > 0 ? '✓ Completed' : 'Pending'}
+                  {subjects.length > 0 ? (
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}>
+                      <CheckCircle2 size={12} /> Completed
+                    </span>
+                  ) : (
+                    'Pending'
+                  )}
                 </span>
               </div>
               <div style={{ fontWeight: 600, color: 'var(--ink)', fontSize: '0.9rem', marginBottom: '0.25rem' }}>
@@ -379,7 +385,13 @@ export function StudentDashboardPreview() {
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                 <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--brand-gold)' }}>STEP 2</span>
                 <span style={{ fontSize: '0.72rem', color: (taskSummary?.total ?? 0) > 0 ? 'var(--emerald)' : 'var(--ink-soft)' }}>
-                  {(taskSummary?.total ?? 0) > 0 ? '✓ Completed' : 'Pending'}
+                  {(taskSummary?.total ?? 0) > 0 ? (
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}>
+                      <CheckCircle2 size={12} /> Completed
+                    </span>
+                  ) : (
+                    'Pending'
+                  )}
                 </span>
               </div>
               <div style={{ fontWeight: 600, color: 'var(--ink)', fontSize: '0.9rem', marginBottom: '0.25rem' }}>
@@ -397,7 +409,13 @@ export function StudentDashboardPreview() {
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                 <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--brand-gold)' }}>STEP 3</span>
                 <span style={{ fontSize: '0.72rem', color: (goalSummary?.total ?? 0) > 0 ? 'var(--emerald)' : 'var(--ink-soft)' }}>
-                  {(goalSummary?.total ?? 0) > 0 ? '✓ Completed' : 'Pending'}
+                  {(goalSummary?.total ?? 0) > 0 ? (
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}>
+                      <CheckCircle2 size={12} /> Completed
+                    </span>
+                  ) : (
+                    'Pending'
+                  )}
                 </span>
               </div>
               <div style={{ fontWeight: 600, color: 'var(--ink)', fontSize: '0.9rem', marginBottom: '0.25rem' }}>
@@ -415,7 +433,13 @@ export function StudentDashboardPreview() {
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                 <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--brand-gold)' }}>STEP 4</span>
                 <span style={{ fontSize: '0.72rem', color: (studyHistory?.summary.totalSessions ?? 0) > 0 ? 'var(--emerald)' : 'var(--ink-soft)' }}>
-                  {(studyHistory?.summary.totalSessions ?? 0) > 0 ? '✓ Completed' : 'Pending'}
+                  {(studyHistory?.summary.totalSessions ?? 0) > 0 ? (
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}>
+                      <CheckCircle2 size={12} /> Completed
+                    </span>
+                  ) : (
+                    'Pending'
+                  )}
                 </span>
               </div>
               <div style={{ fontWeight: 600, color: 'var(--ink)', fontSize: '0.9rem', marginBottom: '0.25rem' }}>
@@ -509,12 +533,26 @@ export function StudentDashboardPreview() {
                   fontSize: '0.76rem',
                   fontWeight: 600,
                   color: isAttendanceCompliant ? 'var(--emerald, #10b981)' : 'var(--crimson, #ef4444)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.3rem',
                 }}
               >
-                {isAttendanceCompliant ? '✓ Above 75% cutoff' : '⚠ Below 75% cutoff'}
+                {isAttendanceCompliant ? (
+                  <>
+                    <CheckCircle2 size={13} />
+                    <span>Above 75% cutoff</span>
+                  </>
+                ) : (
+                  <>
+                    <AlertTriangle size={13} />
+                    <span>Below 75% cutoff</span>
+                  </>
+                )}
               </span>
-              <Link to="/student/attendance" style={{ fontSize: '0.78rem', color: 'var(--brand-gold)', fontWeight: 600, textDecoration: 'none' }}>
-                Details →
+              <Link to="/student/attendance" style={{ fontSize: '0.78rem', color: 'var(--brand-gold)', fontWeight: 600, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}>
+                <span>Details</span>
+                <ArrowRight size={13} />
               </Link>
             </div>
           </div>

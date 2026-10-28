@@ -1,13 +1,15 @@
 import { Router, Response } from 'express';
 import { z } from 'zod';
 import { Types } from 'mongoose';
-import { Task } from '../models/Task.js';
+import { Task, ITask } from '../models/Task.js';
 import { Subject } from '../models/Subject.js';
 import { requireAuth, AuthenticatedRequest } from '../middleware/auth.middleware.js';
 
 export const taskRouter = Router();
 
 taskRouter.use(requireAuth);
+
+type MongoQueryFilter = Record<string, unknown>;
 
 const taskInputSchema = z.object({
   title: z.string().min(1, 'Task title cannot be empty').max(200).trim(),
@@ -50,8 +52,7 @@ taskRouter.get('/summary', async (req: AuthenticatedRequest, res: Response): Pro
 // GET /api/tasks
 taskRouter.get('/', async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const userId = req.user!._id;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const query: any = { userId };
+  const query: MongoQueryFilter = { userId };
 
   if (req.query.status) {
     query.status = req.query.status;
@@ -142,8 +143,7 @@ taskRouter.patch('/:id', async (req: AuthenticatedRequest, res: Response): Promi
     return;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const updates: any = { ...parseResult.data };
+  const updates: Partial<ITask> = { ...parseResult.data } as Partial<ITask>;
   if (updates.dueDate) {
     updates.dueDate = new Date(updates.dueDate);
   }

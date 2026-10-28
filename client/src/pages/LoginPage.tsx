@@ -14,8 +14,7 @@ export function LoginPage() {
   const location = useLocation();
 
   // Destination after successful login
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const from = (location.state as any)?.from?.pathname;
+  const from = (location.state as { from?: { pathname?: string } } | null)?.from?.pathname;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

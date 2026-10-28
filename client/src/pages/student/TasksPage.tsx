@@ -145,6 +145,8 @@ export function TasksPage() {
     const targetTask = tasks.find((t) => t._id === taskId);
     if (!targetTask || targetTask.status === nextStatus) return;
 
+    const previousStatus = targetTask.status;
+
     // Optimistic update
     setTasks((prev) =>
       prev.map((t) => (t._id === taskId ? { ...t, status: nextStatus } : t))
@@ -157,8 +159,11 @@ export function TasksPage() {
       const col = COLUMNS.find((c) => c.id === nextStatus);
       toast.success(`Task moved to ${col?.title || nextStatus}`);
     } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : 'Status update failed');
-      loadData(); // rollback
+      // Explicit immediate rollback of card status
+      setTasks((prev) =>
+        prev.map((t) => (t._id === taskId ? { ...t, status: previousStatus } : t))
+      );
+      toast.error(err instanceof Error ? err.message : 'Status update failed; card rolled back');
     }
   }
 

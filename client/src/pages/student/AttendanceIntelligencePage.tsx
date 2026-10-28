@@ -12,6 +12,7 @@ import {
   Trash2,
   BarChart2,
   X,
+  ArrowRight,
 } from 'lucide-react';
 import { useToast } from '../../context/ToastContext';
 import {
@@ -220,8 +221,7 @@ export function AttendanceIntelligencePage() {
   function handlePreviewCellChange(index: number, field: keyof ParsedRowPreview, val: unknown) {
     if (!previewRows) return;
     const updated = [...previewRows];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (updated[index] as any)[field] = val;
+    (updated[index] as Record<keyof ParsedRowPreview, unknown>)[field] = val;
 
     // Recalculate preview row metrics on edit
     const p = Math.max(0, updated[index].present || 0);
@@ -587,7 +587,7 @@ export function AttendanceIntelligencePage() {
                   type="button"
                   onClick={() => setActiveFilter('shortages')}
                   className={`btn ${activeFilter === 'shortages' ? 'btn-primary' : 'btn-secondary'}`}
-                  style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem', color: activeFilter === 'shortages' ? '#fff' : 'var(--crimson)', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+                  style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem', color: activeFilter === 'shortages' ? 'var(--ink-on-primary, #fff)' : 'var(--crimson)', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
                 >
                   <AlertTriangle size={13} />
                   <span>Shortages ({shortages.length})</span>
@@ -596,7 +596,7 @@ export function AttendanceIntelligencePage() {
                   type="button"
                   onClick={() => setActiveFilter('safe')}
                   className={`btn ${activeFilter === 'safe' ? 'btn-primary' : 'btn-secondary'}`}
-                  style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem', color: activeFilter === 'safe' ? '#fff' : 'var(--emerald)', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+                  style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem', color: activeFilter === 'safe' ? 'var(--ink-on-primary, #fff)' : 'var(--emerald)', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
                 >
                   <CheckCircle2 size={13} />
                   <span>Safe ({records.length - shortages.length})</span>
@@ -605,7 +605,7 @@ export function AttendanceIntelligencePage() {
                   type="button"
                   onClick={() => setActiveFilter('discrepancy')}
                   className={`btn ${activeFilter === 'discrepancy' ? 'btn-primary' : 'btn-secondary'}`}
-                  style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem', color: activeFilter === 'discrepancy' ? 'var(--bg-surface)' : 'var(--brand-gold)', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+                  style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem', color: activeFilter === 'discrepancy' ? 'var(--ink-on-primary, #fff)' : 'var(--brand-gold)', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
                 >
                   <AlertTriangle size={13} />
                   <span>Discrepancies ({records.filter((r) => r.isDiscrepancy).length})</span>
@@ -625,7 +625,7 @@ export function AttendanceIntelligencePage() {
                       alignItems: 'center',
                       gap: '0.35rem',
                       backgroundColor: viewMode === 'cards' ? 'var(--brand-gold)' : 'var(--surface)',
-                      color: viewMode === 'cards' ? '#fff' : 'var(--ink-soft)',
+                      color: viewMode === 'cards' ? 'var(--ink-on-primary, #fff)' : 'var(--ink-soft)',
                       border: 'none',
                       cursor: 'pointer',
                       fontWeight: 600,
@@ -645,7 +645,7 @@ export function AttendanceIntelligencePage() {
                       alignItems: 'center',
                       gap: '0.35rem',
                       backgroundColor: viewMode === 'table' ? 'var(--brand-gold)' : 'var(--surface)',
-                      color: viewMode === 'table' ? '#fff' : 'var(--ink-soft)',
+                      color: viewMode === 'table' ? 'var(--ink-on-primary, #fff)' : 'var(--ink-soft)',
                       border: 'none',
                       cursor: 'pointer',
                       fontWeight: 600,
@@ -667,7 +667,11 @@ export function AttendanceIntelligencePage() {
                 />
                 <select
                   value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as any)}
+                  onChange={(e) =>
+                    setSortBy(
+                      e.target.value as 'shortage_first' | 'percentage_asc' | 'percentage_desc' | 'code'
+                    )
+                  }
                   className="input-field"
                   style={{ fontSize: '0.85rem', padding: '0.4rem 0.75rem' }}
                 >
@@ -1014,9 +1018,10 @@ export function AttendanceIntelligencePage() {
               <button
                 onClick={() => setSelectedSubjectDetail(null)}
                 className="btn btn-secondary"
-                style={{ padding: '0.25rem 0.6rem' }}
+                style={{ padding: '0.25rem 0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                aria-label="Close"
               >
-                ✕
+                <X size={16} />
               </button>
             </div>
 
@@ -1336,15 +1341,15 @@ export function AttendanceIntelligencePage() {
                     marginBottom: '1.25rem',
                   }}
                 >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem', flexWrap: 'wrap', gap: '0.5rem' }}>
                     <span style={{ fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--ink)' }}>
                       Scenario Projection
                     </span>
                     <span
                       className={`badge ${isSafe ? 'badge-green' : 'badge-red'}`}
-                      style={{ fontSize: '0.85rem', fontWeight: 800 }}
+                      style={{ fontSize: '0.82rem', fontWeight: 800 }}
                     >
-                      {projPct}% ({isSafe ? 'ELIGIBLE / SAFE' : 'SHORTAGE ALERT'})
+                      {projPct}% ({isSafe ? 'ELIGIBLE' : 'SHORTAGE ALERT'})
                     </span>
                   </div>
 
@@ -1455,10 +1460,10 @@ export function AttendanceIntelligencePage() {
               <button
                 onClick={() => setShowImportModal(false)}
                 className="btn btn-secondary"
-                style={{ padding: '0.35rem 0.75rem', borderRadius: '6px' }}
+                style={{ padding: '0.35rem 0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 aria-label="Close modal"
               >
-                ✕
+                <X size={16} />
               </button>
             </div>
 
@@ -1520,7 +1525,7 @@ export function AttendanceIntelligencePage() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
                   <div>
                     <label style={{ fontSize: '0.8rem', color: 'var(--ink-soft)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                      📁 <strong>Or upload file:</strong>
+                      <UploadCloud size={14} /> <strong>Or upload file:</strong>
                       <input
                         type="file"
                         accept=".csv,.tsv,.txt"
@@ -1542,8 +1547,10 @@ export function AttendanceIntelligencePage() {
                       onClick={handleGeneratePreview}
                       disabled={parsing || !rawText.trim()}
                       className="btn btn-primary"
+                      style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
                     >
-                      {parsing ? 'Parsing...' : 'Generate Import Preview ➔'}
+                      <span>{parsing ? 'Parsing...' : 'Generate Import Preview'}</span>
+                      {!parsing && <ArrowRight size={14} />}
                     </button>
                   </div>
                 </div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus } from 'lucide-react';
+import { Plus, CheckCircle2, AlertTriangle, ArrowRight } from 'lucide-react';
 import { useToast } from '../../context/ToastContext';
 import { PageHeader } from '../../components/PageHeader';
 import { getSubjects, createSubject, deleteSubject, SubjectItem } from '../../services/student.service';
@@ -136,18 +136,20 @@ export function SubjectsPage() {
                   )}
 
                   <div style={{ background: 'var(--paper)', padding: '0.75rem 1rem', borderRadius: '6px', marginBottom: '1.25rem' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', alignItems: 'center' }}>
                       <span>Attendance Record</span>
-                      <strong style={{ color: isAttendanceSafe ? 'var(--green)' : 'var(--red)' }}>
-                        {sub.attendancePercentage}% {isAttendanceSafe ? '✓' : '⚠️'}
+                      <strong style={{ color: isAttendanceSafe ? 'var(--green)' : 'var(--red)', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+                        <span>{sub.attendancePercentage}%</span>
+                        {isAttendanceSafe ? <CheckCircle2 size={14} /> : <AlertTriangle size={14} />}
                       </strong>
                     </div>
                   </div>
                 </div>
 
                 <div style={{ borderTop: '1px solid var(--rule)', paddingTop: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Link to={`/student/subjects/${sub._id}`} className="btn btn-secondary" style={{ padding: '0.35rem 0.85rem', fontSize: '0.85rem' }}>
-                    View Syllabus &amp; Tasks →
+                  <Link to={`/student/subjects/${sub._id}`} className="btn btn-secondary" style={{ padding: '0.35rem 0.85rem', fontSize: '0.85rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+                    <span>View Syllabus &amp; Tasks</span>
+                    <ArrowRight size={13} />
                   </Link>
                   <button
                     onClick={() => handleDelete(sub._id, sub.code)}

@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+import jwt, { SignOptions } from 'jsonwebtoken';
 import { CookieOptions, Response } from 'express';
 import { env } from '../config/env.js';
 import { UserRole } from '../models/User.js';
@@ -10,9 +10,8 @@ export interface TokenPayload {
 }
 
 export function generateToken(payload: TokenPayload): string {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return jwt.sign(payload, env.JWT_SECRET, {
-    expiresIn: env.JWT_EXPIRES_IN as any,
+    expiresIn: env.JWT_EXPIRES_IN as SignOptions['expiresIn'],
   });
 }
 

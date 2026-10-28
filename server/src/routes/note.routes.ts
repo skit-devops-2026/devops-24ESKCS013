@@ -1,7 +1,7 @@
 import { Router, Response } from 'express';
 import { z } from 'zod';
 import { Types } from 'mongoose';
-import { Note } from '../models/Note.js';
+import { Note, INote } from '../models/Note.js';
 import { Subject } from '../models/Subject.js';
 import { requireAuth, AuthenticatedRequest } from '../middleware/auth.middleware.js';
 import { escapeRegExp } from '../utils/security.js';
@@ -9,6 +9,8 @@ import { escapeRegExp } from '../utils/security.js';
 export const noteRouter = Router();
 
 noteRouter.use(requireAuth);
+
+type MongoQueryFilter = Record<string, unknown>;
 
 const noteInputSchema = z.object({
   title: z.string().min(1, 'Note title cannot be empty').max(200).trim(),
@@ -23,8 +25,7 @@ const updateNoteSchema = noteInputSchema.partial();
 // GET /api/notes
 noteRouter.get('/', async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const userId = req.user!._id;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const query: any = { userId };
+  const query: MongoQueryFilter = { userId };
 
   if (req.query.q) {
     const rawTerm = String(req.query.q).trim();
@@ -120,8 +121,7 @@ const updateHandler = async (req: AuthenticatedRequest, res: Response): Promise<
     return;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const updates: any = { ...parseResult.data };
+  const updates: Partial<INote> = { ...parseResult.data } as Partial<INote>;
 
   if (updates.subjectId) {
     const subject = await Subject.findOne({ _id: updates.subjectId, userId: req.user!._id });

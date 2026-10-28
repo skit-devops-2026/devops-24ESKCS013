@@ -57,6 +57,10 @@ const noteSchema = new Schema<INote>(
 );
 
 noteSchema.index({ userId: 1, isPinned: -1, updatedAt: -1 });
+noteSchema.index(
+  { title: 'text', content: 'text', tags: 'text' },
+  { weights: { title: 5, tags: 3, content: 1 }, name: 'NoteFullTextIndex' }
+);
 
 export const Note =
   (mongoose.models.Note as mongoose.Model<INote>) ||

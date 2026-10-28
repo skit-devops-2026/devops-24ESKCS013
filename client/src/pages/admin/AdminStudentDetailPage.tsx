@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { AlertTriangle } from 'lucide-react';
 import { getAdminStudentDetails, updateStudentStatus, StudentDetailData } from '../../services/admin.service';
 import { useToast } from '../../context/ToastContext';
 
@@ -63,8 +64,9 @@ export function AdminStudentDetailPage() {
   if (error || !data) {
     return (
       <div className="container" style={{ padding: '3rem 1rem' }}>
-        <div style={{ background: 'var(--red-light)', color: 'var(--red)', padding: '1.5rem', borderRadius: '6px' }}>
-          ⚠️ {error || 'Student record could not be found.'}
+        <div style={{ background: 'var(--red-light)', color: 'var(--red)', padding: '1.5rem', borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <AlertTriangle size={18} />
+          <span>{error || 'Student record could not be found.'}</span>
         </div>
         <Link to="/admin/students" className="btn btn-secondary" style={{ marginTop: '1rem' }}>
           ← Back to Students Directory

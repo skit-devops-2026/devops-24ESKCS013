@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { AlertTriangle } from 'lucide-react';
 import { getAnnouncements, createAnnouncement, deleteAnnouncement, AnnouncementItem } from '../../services/admin.service';
 import { useToast } from '../../context/ToastContext';
 
@@ -98,8 +99,9 @@ export function AdminAnnouncementsPage() {
       </div>
 
       {error && (
-        <div style={{ background: 'var(--red-light)', color: 'var(--red)', padding: '1rem', borderRadius: '6px', marginBottom: '1.5rem', border: '1px solid var(--red)' }}>
-          ⚠️ {error}
+        <div style={{ background: 'var(--red-light)', color: 'var(--red)', padding: '1rem', borderRadius: '6px', marginBottom: '1.5rem', border: '1px solid var(--red)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <AlertTriangle size={16} />
+          <span>{error}</span>
         </div>
       )}
 

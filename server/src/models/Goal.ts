@@ -1,6 +1,7 @@
 import mongoose, { Schema, Document, Types } from 'mongoose';
 
 export type GoalStatus = 'active' | 'completed' | 'abandoned';
+export type AutoLinkMetric = 'none' | 'attendance' | 'task_completion' | 'study_hours';
 
 export interface IGoal extends Document {
   userId: Types.ObjectId;
@@ -11,6 +12,9 @@ export interface IGoal extends Document {
   currentValue: number;
   unit: string;
   category: string;
+  subjectId?: Types.ObjectId | null;
+  subjectCode?: string;
+  autoLinkMetric: AutoLinkMetric;
   status: GoalStatus;
   createdAt: Date;
   updatedAt: Date;
@@ -62,6 +66,21 @@ const goalSchema = new Schema<IGoal>(
       type: String,
       default: 'Academic',
       trim: true,
+    },
+    subjectId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Subject',
+      default: null,
+    },
+    subjectCode: {
+      type: String,
+      default: '',
+      trim: true,
+    },
+    autoLinkMetric: {
+      type: String,
+      enum: ['none', 'attendance', 'task_completion', 'study_hours'],
+      default: 'none',
     },
     status: {
       type: String,
