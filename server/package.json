@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "test": "node --test --import tsx src/**/*.test.ts",
     "create-admin": "tsx src/scripts/create-admin.ts",
-    "backfill-subjects": "tsx src/scripts/backfill-subjects.ts"
+    "backfill-subjects": "tsx src/scripts/backfill-subjects.ts",
+    "dry-run-backfill": "tsx src/scripts/dry-run-backfill.ts"
   },
   "keywords": [
     "student-hub",

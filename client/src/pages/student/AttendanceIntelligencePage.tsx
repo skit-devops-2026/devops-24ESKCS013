@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { LayoutGrid, Table as TableIcon } from 'lucide-react';
 import { useToast } from '../../context/ToastContext';
 import {
   getAttendance,
@@ -44,6 +45,7 @@ export function AttendanceIntelligencePage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<'all' | 'shortages' | 'safe' | 'discrepancy'>('all');
   const [sortBy, setSortBy] = useState<'shortage_first' | 'percentage_asc' | 'percentage_desc' | 'code'>('shortage_first');
+  const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
 
   // Detail View Modal State
   const [selectedSubjectDetail, setSelectedSubjectDetail] = useState<AttendanceRecordItem | null>(null);
@@ -82,6 +84,7 @@ export function AttendanceIntelligencePage() {
   const [selectedRecordForSim, setSelectedRecordForSim] = useState<AttendanceRecordItem | null>(null);
   const [simAttended, setSimAttended] = useState(0);
   const [simMissed, setSimMissed] = useState(0);
+  const [simThreshold, setSimThreshold] = useState(75);
   const [simulationResult, setSimulationResult] = useState<SimulationResult | null>(null);
   const [simulating, setSimulating] = useState(false);
 
@@ -257,17 +260,19 @@ export function AttendanceIntelligencePage() {
     setSelectedRecordForSim(record);
     setSimAttended(0);
     setSimMissed(0);
-    runSimulation(record, 0, 0);
+    setSimThreshold(record.threshold || 75);
+    runSimulation(record, 0, 0, record.threshold || 75);
   }
 
-  async function runSimulation(record: AttendanceRecordItem, addAttended: number, addMissed: number) {
+  async function runSimulation(record: AttendanceRecordItem, addAttended: number, addMissed: number, threshold?: number) {
     setSimulating(true);
+    const targetThreshold = threshold ?? simThreshold ?? record.threshold ?? 75;
     try {
       const res = await simulateAttendance({
         recordId: record._id,
         additionalAttended: addAttended,
         additionalMissed: addMissed,
-        threshold: record.threshold || 75,
+        threshold: targetThreshold,
       });
       setSimulationResult(res);
     } catch (err: unknown) {
@@ -476,10 +481,10 @@ export function AttendanceIntelligencePage() {
                   </div>
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem', marginTop: '0.25rem' }}>
                     <span style={{ fontSize: '1.6rem', fontWeight: 700, color: 'var(--ink)' }}>
-                      Student ERP Aggregate: {summary.erpAggregatePercentage ?? 80.1}%
+                      ERP aggregate (incl. event hours): {summary.erpAggregatePercentage ?? 80.1}%
                     </span>
                     <span style={{ fontSize: '0.85rem', color: 'var(--ink-soft)' }}>
-                      (vs {summary.overallPercentage}% Course Lecture/Lab Average)
+                      (vs {summary.overallPercentage}% Course average (lectures/labs))
                     </span>
                   </div>
                   {summary.eventAttendance && (
@@ -505,8 +510,8 @@ export function AttendanceIntelligencePage() {
               }}
             >
               <div className="card" style={{ padding: '1.25rem' }}>
-                <span style={{ fontSize: '0.8rem', color: 'var(--ink-soft)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                  Overall Semester Attendance
+                <span style={{ fontSize: '0.78rem', color: 'var(--ink-soft)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  Course average (lectures/labs)
                 </span>
                 <div style={{ fontSize: '2rem', fontWeight: 700, color: summary.overallPercentage >= 75 ? 'var(--emerald)' : 'var(--crimson)', marginTop: '0.25rem' }}>
                   {summary.overallPercentage}%
@@ -603,13 +608,57 @@ export function AttendanceIntelligencePage() {
               </div>
 
               <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                {/* View Mode Toggle */}
+                <div style={{ display: 'flex', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', overflow: 'hidden' }}>
+                  <button
+                    type="button"
+                    onClick={() => setViewMode('cards')}
+                    style={{
+                      padding: '0.4rem 0.65rem',
+                      fontSize: '0.8rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.35rem',
+                      backgroundColor: viewMode === 'cards' ? 'var(--brand-gold)' : 'var(--surface)',
+                      color: viewMode === 'cards' ? '#fff' : 'var(--ink-soft)',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontWeight: 600,
+                    }}
+                    title="Grid Cards View"
+                  >
+                    <LayoutGrid size={14} />
+                    <span>Cards</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setViewMode('table')}
+                    style={{
+                      padding: '0.4rem 0.65rem',
+                      fontSize: '0.8rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.35rem',
+                      backgroundColor: viewMode === 'table' ? 'var(--brand-gold)' : 'var(--surface)',
+                      color: viewMode === 'table' ? '#fff' : 'var(--ink-soft)',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontWeight: 600,
+                    }}
+                    title="Compact Table View"
+                  >
+                    <TableIcon size={14} />
+                    <span>Table</span>
+                  </button>
+                </div>
+
                 <input
                   type="text"
                   placeholder="Search subject code or name..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="input-field"
-                  style={{ fontSize: '0.85rem', padding: '0.4rem 0.75rem', width: '220px' }}
+                  style={{ fontSize: '0.85rem', padding: '0.4rem 0.75rem', width: '200px' }}
                 />
                 <select
                   value={sortBy}
@@ -625,122 +674,293 @@ export function AttendanceIntelligencePage() {
               </div>
             </div>
 
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
-                <thead>
-                  <tr style={{ borderBottom: '2px solid var(--border)', color: 'var(--ink-soft)' }}>
-                    <th style={{ padding: '0.75rem' }}>Course</th>
-                    <th style={{ padding: '0.75rem' }}>Type</th>
-                    <th style={{ padding: '0.75rem', textAlign: 'center' }}>Present</th>
-                    <th style={{ padding: '0.75rem', textAlign: 'center' }}>OD</th>
-                    <th style={{ padding: '0.75rem', textAlign: 'center' }}>Makeup</th>
-                    <th style={{ padding: '0.75rem', textAlign: 'center' }}>Absent</th>
-                    <th style={{ padding: '0.75rem', textAlign: 'center' }}>ERP %</th>
-                    <th style={{ padding: '0.75rem', textAlign: 'center' }}>Calculated %</th>
-                    <th style={{ padding: '0.75rem' }}>Action Plan</th>
-                    <th style={{ padding: '0.75rem', textAlign: 'right' }}>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredAndSortedRecords.length === 0 ? (
-                    <tr>
-                      <td colSpan={10} style={{ padding: '2rem', textAlign: 'center', color: 'var(--ink-soft)' }}>
-                        No subjects match your current filter or search criteria.
-                      </td>
-                    </tr>
-                  ) : (
-                    filteredAndSortedRecords.map((r) => {
-                      const isShort = r.isShortage;
-                      return (
-                        <tr
-                          key={r._id}
-                          style={{
-                            borderBottom: '1px solid var(--border)',
-                            backgroundColor: isShort ? 'rgba(239, 68, 68, 0.03)' : 'transparent',
-                          }}
-                        >
-                          <td style={{ padding: '0.75rem' }}>
-                            <strong>{r.subjectCode}</strong>
-                            <div style={{ fontSize: '0.8rem', color: 'var(--ink-soft)' }}>{r.subjectName}</div>
-                          </td>
-                          <td style={{ padding: '0.75rem' }}>
-                            <span className="badge" style={{ fontSize: '0.75rem' }}>{r.subjectType}</span>
-                          </td>
-                          <td style={{ padding: '0.75rem', textAlign: 'center' }}>{r.present}</td>
-                          <td style={{ padding: '0.75rem', textAlign: 'center' }}>{r.od}</td>
-                          <td style={{ padding: '0.75rem', textAlign: 'center' }}>{r.makeup}</td>
-                          <td style={{ padding: '0.75rem', textAlign: 'center' }}>{r.absent}</td>
-                          <td style={{ padding: '0.75rem', textAlign: 'center', fontWeight: 600 }}>
-                            {r.erpPercentage}%
-                          </td>
-                          <td style={{ padding: '0.75rem', textAlign: 'center' }}>
+            {/* View 1: Cards View */}
+            {viewMode === 'cards' ? (
+              filteredAndSortedRecords.length === 0 ? (
+                <div style={{ padding: '3rem 1rem', textAlign: 'center', color: 'var(--ink-soft)' }}>
+                  No subjects match your current filter or search criteria.
+                </div>
+              ) : (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.25rem' }}>
+                  {filteredAndSortedRecords.map((r) => {
+                    const isShort = r.isShortage;
+                    return (
+                      <div
+                        key={r._id}
+                        className="card"
+                        style={{
+                          padding: '1.25rem',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'space-between',
+                          border: isShort ? '1px solid var(--crimson)' : '1px solid var(--border)',
+                          backgroundColor: isShort ? 'rgba(239, 68, 68, 0.02)' : 'var(--surface)',
+                        }}
+                      >
+                        <div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                              <span className="badge badge-gold" style={{ fontWeight: 700 }}>{r.subjectCode}</span>
+                              <span className="badge" style={{ fontSize: '0.72rem' }}>{r.subjectType}</span>
+                            </div>
                             <span
                               className={`badge ${isShort ? 'badge-red' : 'badge-green'}`}
                               style={{ fontWeight: 700 }}
                             >
+                              {isShort ? 'Shortage' : 'Compliant'}
+                            </span>
+                          </div>
+
+                          <h4 style={{ fontSize: '1.05rem', color: 'var(--ink)', margin: '0 0 0.5rem', fontWeight: 600 }}>
+                            {r.subjectName}
+                          </h4>
+
+                          {/* Percentage & Progress Bar */}
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.35rem' }}>
+                            <span style={{ fontSize: '1.8rem', fontWeight: 800, color: isShort ? 'var(--crimson)' : 'var(--emerald)' }}>
                               {r.calculatedPercentage}%
                             </span>
-                            {r.isDiscrepancy && (
-                              <span
-                                title={r.discrepancyNote || `ERP reported ${r.erpPercentage}% vs calculated ${r.calculatedPercentage}%.`}
-                                style={{ display: 'block', fontSize: '0.7rem', color: 'var(--gold)', cursor: 'help', marginTop: '0.2rem' }}
-                              >
-                                ⚠️ ERP Delta: {r.discrepancyDelta}%
-                              </span>
-                            )}
-                          </td>
-                          <td style={{ padding: '0.75rem' }}>
+                            <span style={{ fontSize: '0.78rem', color: 'var(--ink-soft)' }}>
+                              Target: {r.threshold || 75}% &bull; ERP: {r.erpPercentage}%
+                            </span>
+                          </div>
+
+                          <div style={{ height: 7, width: '100%', backgroundColor: 'var(--surface-muted)', borderRadius: 4, overflow: 'hidden', marginBottom: '1rem', position: 'relative' }}>
+                            <div
+                              style={{
+                                height: '100%',
+                                width: `${Math.min(100, r.calculatedPercentage)}%`,
+                                backgroundColor: isShort ? 'var(--crimson)' : 'var(--emerald)',
+                                borderRadius: 4,
+                              }}
+                            />
+                            {/* 75% Threshold indicator mark */}
+                            <div
+                              style={{
+                                position: 'absolute',
+                                top: 0,
+                                bottom: 0,
+                                left: '75%',
+                                width: 2,
+                                backgroundColor: 'var(--ink-soft)',
+                                opacity: 0.7,
+                              }}
+                              title="75% minimum requirement cutoff"
+                            />
+                          </div>
+
+                          {/* Quick Metrics Strip */}
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.4rem', textAlign: 'center', padding: '0.6rem 0.4rem', backgroundColor: 'var(--surface-muted)', borderRadius: 'var(--radius-sm)', marginBottom: '1rem', fontSize: '0.75rem' }}>
+                            <div>
+                              <div style={{ color: 'var(--ink-soft)' }}>Present</div>
+                              <div style={{ fontWeight: 700, color: 'var(--ink)' }}>{r.present}</div>
+                            </div>
+                            <div>
+                              <div style={{ color: 'var(--ink-soft)' }}>OD</div>
+                              <div style={{ fontWeight: 700, color: 'var(--ink)' }}>{r.od}</div>
+                            </div>
+                            <div>
+                              <div style={{ color: 'var(--ink-soft)' }}>Absent</div>
+                              <div style={{ fontWeight: 700, color: 'var(--ink)' }}>{r.absent}</div>
+                            </div>
+                            <div>
+                              <div style={{ color: 'var(--ink-soft)' }}>Total</div>
+                              <div style={{ fontWeight: 700, color: 'var(--ink)' }}>{r.totalConducted}</div>
+                            </div>
+                          </div>
+
+                          {/* "Can I Bunk?" Status Pill */}
+                          <div
+                            style={{
+                              padding: '0.65rem 0.85rem',
+                              borderRadius: 'var(--radius-md)',
+                              marginBottom: '1rem',
+                              backgroundColor: isShort ? 'var(--crimson-soft, rgba(239, 68, 68, 0.08))' : 'var(--emerald-soft, rgba(16, 185, 129, 0.08))',
+                              border: `1px solid ${isShort ? 'var(--crimson, rgba(239, 68, 68, 0.3))' : 'var(--emerald, rgba(16, 185, 129, 0.3))'}`,
+                              fontSize: '0.82rem',
+                              lineHeight: 1.4,
+                            }}
+                          >
                             {isShort ? (
-                              <span style={{ color: 'var(--crimson)', fontWeight: 600 }}>
-                                Need {r.classesNeeded} consecutive {r.classesNeeded === 1 ? 'class' : 'classes'}
-                              </span>
+                              <div>
+                                <strong style={{ color: 'var(--crimson)' }}>⚠️ Deficit: Recovery Math</strong>
+                                <div style={{ color: 'var(--ink)', marginTop: '0.15rem' }}>
+                                  Must attend next <strong>{r.classesNeeded} consecutive {r.classesNeeded === 1 ? 'class' : 'classes'}</strong> without absence to cross 75%.
+                                </div>
+                              </div>
                             ) : (
-                              <span style={{ color: 'var(--emerald)' }}>
-                                Can miss {r.classesSkippable} {r.classesSkippable === 1 ? 'class' : 'classes'}
-                              </span>
+                              <div>
+                                <strong style={{ color: 'var(--emerald)' }}>✓ Can I Bunk? Safe Margin</strong>
+                                <div style={{ color: 'var(--ink)', marginTop: '0.15rem' }}>
+                                  {r.classesSkippable > 0 ? (
+                                    <>You can safely miss up to <strong>{r.classesSkippable} {r.classesSkippable === 1 ? 'class' : 'classes'}</strong> and remain at or above 75%.</>
+                                  ) : (
+                                    <>At exact threshold margin. <strong>0 safe bunks</strong> (any absence drops below 75%).</>
+                                  )}
+                                </div>
+                              </div>
                             )}
-                          </td>
-                          <td style={{ padding: '0.75rem', textAlign: 'right', whiteSpace: 'nowrap' }}>
-                            <button
-                              onClick={() => setSelectedSubjectDetail(r)}
-                              className="btn btn-secondary"
-                              style={{ padding: '0.3rem 0.6rem', fontSize: '0.8rem', marginRight: '0.4rem' }}
-                              title="Inspect full subject breakdown"
-                            >
-                              🔍 Details
-                            </button>
-                            <button
-                              onClick={() => handleOpenSimulator(r)}
-                              className="btn btn-secondary"
-                              style={{ padding: '0.3rem 0.6rem', fontSize: '0.8rem', marginRight: '0.4rem' }}
-                              title="Simulate attendance scenario"
-                            >
-                              🎲 Simulate
-                            </button>
-                            <button
-                              onClick={() => handleStartEdit(r)}
-                              className="btn btn-secondary"
-                              style={{ padding: '0.3rem 0.6rem', fontSize: '0.8rem', marginRight: '0.4rem' }}
-                              title="Edit class counts"
-                            >
-                              ✏️ Edit
-                            </button>
-                            <button
-                              onClick={() => handleDelete(r._id, r.subjectCode)}
-                              className="btn btn-secondary"
-                              style={{ padding: '0.3rem 0.6rem', fontSize: '0.8rem', color: 'var(--crimson)' }}
-                              title="Delete record"
-                            >
-                              🗑
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    })
-                  )}
-                </tbody>
-              </table>
-            </div>
+                          </div>
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', borderTop: '1px solid var(--border)', paddingTop: '0.85rem' }}>
+                          <button
+                            onClick={() => handleOpenSimulator(r)}
+                            className="btn btn-primary"
+                            style={{ fontSize: '0.78rem', padding: '0.4rem 0.75rem', flex: 1, justifyContent: 'center' }}
+                          >
+                            🎲 Simulate
+                          </button>
+                          <button
+                            onClick={() => setSelectedSubjectDetail(r)}
+                            className="btn btn-secondary"
+                            style={{ fontSize: '0.78rem', padding: '0.4rem 0.65rem' }}
+                            title="Inspect full details"
+                          >
+                            Details
+                          </button>
+                          <button
+                            onClick={() => handleStartEdit(r)}
+                            className="btn btn-secondary"
+                            style={{ fontSize: '0.78rem', padding: '0.4rem 0.65rem' }}
+                            title="Edit class counts"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDelete(r._id, r.subjectCode)}
+                            className="btn btn-secondary"
+                            style={{ fontSize: '0.78rem', padding: '0.4rem 0.65rem', color: 'var(--crimson)' }}
+                            title="Delete record"
+                          >
+                            🗑
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )
+            ) : (
+              /* View 2: Table View */
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
+                  <thead>
+                    <tr style={{ borderBottom: '2px solid var(--border)', color: 'var(--ink-soft)' }}>
+                      <th style={{ padding: '0.75rem' }}>Course</th>
+                      <th style={{ padding: '0.75rem' }}>Type</th>
+                      <th style={{ padding: '0.75rem', textAlign: 'center' }}>Present</th>
+                      <th style={{ padding: '0.75rem', textAlign: 'center' }}>OD</th>
+                      <th style={{ padding: '0.75rem', textAlign: 'center' }}>Makeup</th>
+                      <th style={{ padding: '0.75rem', textAlign: 'center' }}>Absent</th>
+                      <th style={{ padding: '0.75rem', textAlign: 'center' }}>ERP %</th>
+                      <th style={{ padding: '0.75rem', textAlign: 'center' }}>Calculated %</th>
+                      <th style={{ padding: '0.75rem' }}>Action Plan</th>
+                      <th style={{ padding: '0.75rem', textAlign: 'right' }}>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredAndSortedRecords.length === 0 ? (
+                      <tr>
+                        <td colSpan={10} style={{ padding: '2rem', textAlign: 'center', color: 'var(--ink-soft)' }}>
+                          No subjects match your current filter or search criteria.
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredAndSortedRecords.map((r) => {
+                        const isShort = r.isShortage;
+                        return (
+                          <tr
+                            key={r._id}
+                            style={{
+                              borderBottom: '1px solid var(--border)',
+                              backgroundColor: isShort ? 'rgba(239, 68, 68, 0.03)' : 'transparent',
+                            }}
+                          >
+                            <td style={{ padding: '0.75rem' }}>
+                              <strong>{r.subjectCode}</strong>
+                              <div style={{ fontSize: '0.8rem', color: 'var(--ink-soft)' }}>{r.subjectName}</div>
+                            </td>
+                            <td style={{ padding: '0.75rem' }}>
+                              <span className="badge" style={{ fontSize: '0.75rem' }}>{r.subjectType}</span>
+                            </td>
+                            <td style={{ padding: '0.75rem', textAlign: 'center' }}>{r.present}</td>
+                            <td style={{ padding: '0.75rem', textAlign: 'center' }}>{r.od}</td>
+                            <td style={{ padding: '0.75rem', textAlign: 'center' }}>{r.makeup}</td>
+                            <td style={{ padding: '0.75rem', textAlign: 'center' }}>{r.absent}</td>
+                            <td style={{ padding: '0.75rem', textAlign: 'center', fontWeight: 600 }}>
+                              {r.erpPercentage}%
+                            </td>
+                            <td style={{ padding: '0.75rem', textAlign: 'center' }}>
+                              <span
+                                className={`badge ${isShort ? 'badge-red' : 'badge-green'}`}
+                                style={{ fontWeight: 700 }}
+                              >
+                                {r.calculatedPercentage}%
+                              </span>
+                              {r.isDiscrepancy && (
+                                <span
+                                  title={r.discrepancyNote || `ERP reported ${r.erpPercentage}% vs calculated ${r.calculatedPercentage}%.`}
+                                  style={{ display: 'block', fontSize: '0.7rem', color: 'var(--gold)', cursor: 'help', marginTop: '0.2rem' }}
+                                >
+                                  ⚠️ ERP Delta: {r.discrepancyDelta}%
+                                </span>
+                              )}
+                            </td>
+                            <td style={{ padding: '0.75rem' }}>
+                              {isShort ? (
+                                <span style={{ color: 'var(--crimson)', fontWeight: 600 }}>
+                                  Need {r.classesNeeded} consecutive {r.classesNeeded === 1 ? 'class' : 'classes'}
+                                </span>
+                              ) : (
+                                <span style={{ color: 'var(--emerald)' }}>
+                                  Can miss {r.classesSkippable} {r.classesSkippable === 1 ? 'class' : 'classes'}
+                                </span>
+                              )}
+                            </td>
+                            <td style={{ padding: '0.75rem', textAlign: 'right', whiteSpace: 'nowrap' }}>
+                              <button
+                                onClick={() => setSelectedSubjectDetail(r)}
+                                className="btn btn-secondary"
+                                style={{ padding: '0.3rem 0.6rem', fontSize: '0.8rem', marginRight: '0.4rem' }}
+                                title="Inspect full subject breakdown"
+                              >
+                                🔍 Details
+                              </button>
+                              <button
+                                onClick={() => handleOpenSimulator(r)}
+                                className="btn btn-secondary"
+                                style={{ padding: '0.3rem 0.6rem', fontSize: '0.8rem', marginRight: '0.4rem' }}
+                                title="Simulate attendance scenario"
+                              >
+                                🎲 Simulate
+                              </button>
+                              <button
+                                onClick={() => handleStartEdit(r)}
+                                className="btn btn-secondary"
+                                style={{ padding: '0.3rem 0.6rem', fontSize: '0.8rem', marginRight: '0.4rem' }}
+                                title="Edit class counts"
+                              >
+                                ✏️ Edit
+                              </button>
+                              <button
+                                onClick={() => handleDelete(r._id, r.subjectCode)}
+                                className="btn btn-secondary"
+                                style={{ padding: '0.3rem 0.6rem', fontSize: '0.8rem', color: 'var(--crimson)' }}
+                                title="Delete record"
+                              >
+                                🗑
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         </>
       )}
@@ -968,90 +1188,197 @@ export function AttendanceIntelligencePage() {
               </div>
             </div>
 
-            {/* Custom Inputs */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
+            {/* What-If Interactive Range Sliders & Inputs */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', marginBottom: '1.5rem', backgroundColor: 'var(--surface-muted)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
               <div>
-                <label style={{ fontSize: '0.85rem', fontWeight: 600, display: 'block', marginBottom: '0.25rem' }}>
-                  Additional Attended:
-                </label>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+                  <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--ink)' }}>
+                    Classes Attended: <strong style={{ color: 'var(--emerald)' }}>+{simAttended}</strong>
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="50"
+                    value={simAttended}
+                    onChange={(e) => {
+                      const val = Math.max(0, parseInt(e.target.value) || 0);
+                      setSimAttended(val);
+                      runSimulation(selectedRecordForSim, val, simMissed, simThreshold);
+                    }}
+                    className="input-field"
+                    style={{ width: '65px', padding: '0.2rem 0.4rem', fontSize: '0.85rem', textAlign: 'center' }}
+                  />
+                </div>
                 <input
-                  type="number"
+                  type="range"
                   min="0"
+                  max="25"
+                  step="1"
                   value={simAttended}
                   onChange={(e) => {
-                    const val = Math.max(0, parseInt(e.target.value) || 0);
+                    const val = parseInt(e.target.value) || 0;
                     setSimAttended(val);
-                    runSimulation(selectedRecordForSim, val, simMissed);
+                    runSimulation(selectedRecordForSim, val, simMissed, simThreshold);
                   }}
-                  className="input-field"
-                  style={{ width: '100%' }}
+                  style={{ width: '100%', accentColor: 'var(--emerald, #10b981)' }}
                 />
               </div>
+
               <div>
-                <label style={{ fontSize: '0.85rem', fontWeight: 600, display: 'block', marginBottom: '0.25rem' }}>
-                  Additional Missed:
-                </label>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+                  <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--ink)' }}>
+                    Classes Bunked / Missed: <strong style={{ color: 'var(--crimson)' }}>+{simMissed}</strong>
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="30"
+                    value={simMissed}
+                    onChange={(e) => {
+                      const val = Math.max(0, parseInt(e.target.value) || 0);
+                      setSimMissed(val);
+                      runSimulation(selectedRecordForSim, simAttended, val, simThreshold);
+                    }}
+                    className="input-field"
+                    style={{ width: '65px', padding: '0.2rem 0.4rem', fontSize: '0.85rem', textAlign: 'center' }}
+                  />
+                </div>
                 <input
-                  type="number"
+                  type="range"
                   min="0"
+                  max="20"
+                  step="1"
                   value={simMissed}
                   onChange={(e) => {
-                    const val = Math.max(0, parseInt(e.target.value) || 0);
+                    const val = parseInt(e.target.value) || 0;
                     setSimMissed(val);
-                    runSimulation(selectedRecordForSim, simAttended, val);
+                    runSimulation(selectedRecordForSim, simAttended, val, simThreshold);
                   }}
-                  className="input-field"
-                  style={{ width: '100%' }}
+                  style={{ width: '100%', accentColor: 'var(--crimson, #ef4444)' }}
+                />
+              </div>
+
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+                  <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--ink)' }}>
+                    Eligibility Threshold Cutoff: <strong style={{ color: 'var(--brand-gold)' }}>{simThreshold}%</strong>
+                  </label>
+                  <select
+                    value={simThreshold}
+                    onChange={(e) => {
+                      const val = Number(e.target.value);
+                      setSimThreshold(val);
+                      runSimulation(selectedRecordForSim, simAttended, simMissed, val);
+                    }}
+                    className="input-field"
+                    style={{ width: '90px', padding: '0.2rem 0.4rem', fontSize: '0.82rem' }}
+                  >
+                    <option value="60">60%</option>
+                    <option value="65">65%</option>
+                    <option value="70">70%</option>
+                    <option value="75">75% (Std)</option>
+                    <option value="80">80%</option>
+                    <option value="85">85%</option>
+                  </select>
+                </div>
+                <input
+                  type="range"
+                  min="60"
+                  max="85"
+                  step="5"
+                  value={simThreshold}
+                  onChange={(e) => {
+                    const val = Number(e.target.value);
+                    setSimThreshold(val);
+                    runSimulation(selectedRecordForSim, simAttended, simMissed, val);
+                  }}
+                  style={{ width: '100%', accentColor: 'var(--brand-gold)' }}
                 />
               </div>
             </div>
 
-            {/* Simulation Output Card */}
-            {simulationResult && (
-              <div
-                style={{
-                  padding: '1.25rem',
-                  borderRadius: '8px',
-                  backgroundColor:
-                    simulationResult.projection.status === 'safe'
-                      ? 'rgba(16, 185, 129, 0.08)'
-                      : 'rgba(239, 68, 68, 0.08)',
-                  border: `1px solid ${
-                    simulationResult.projection.status === 'safe'
-                      ? 'rgba(16, 185, 129, 0.3)'
-                      : 'rgba(239, 68, 68, 0.3)'
-                  }`,
-                  marginBottom: '1rem',
-                }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>Projected Result:</span>
-                  <span
-                    className={`badge ${
-                      simulationResult.projection.status === 'safe' ? 'badge-green' : 'badge-red'
-                    }`}
-                  >
-                    {simulationResult.projection.projectedPercentage}% ({simulationResult.projection.status.toUpperCase()})
-                  </span>
-                </div>
-                <div style={{ fontSize: '0.85rem', marginTop: '0.5rem', color: 'var(--ink)' }}>
-                  Total Attended: <strong>{simulationResult.projection.projectedAttended}</strong> /{' '}
-                  Conducted: <strong>{simulationResult.projection.projectedConducted}</strong>
-                </div>
-                <div style={{ fontSize: '0.85rem', marginTop: '0.25rem', color: 'var(--ink-soft)' }}>
-                  {simulationResult.projection.status === 'safe' ? (
-                    <span>
-                      ✅ You can miss up to <strong>{simulationResult.projection.classesSkippable}</strong> more{' '}
-                      {simulationResult.projection.classesSkippable === 1 ? 'class' : 'classes'} before dropping below threshold.
+            {/* Live Instant / Authoritative Projection Card */}
+            {(() => {
+              const curAtt = selectedRecordForSim.totalAttended;
+              const curCond = selectedRecordForSim.totalConducted;
+              const projAtt = simulationResult ? simulationResult.projection.projectedAttended : (curAtt + simAttended);
+              const projCond = simulationResult ? simulationResult.projection.projectedConducted : (curCond + simAttended + simMissed);
+              const projPct = simulationResult
+                ? simulationResult.projection.projectedPercentage
+                : (projCond > 0 ? Number(((projAtt / projCond) * 100).toFixed(2)) : 0);
+              const isSafe = projPct >= simThreshold;
+              const needed = simulationResult
+                ? simulationResult.projection.classesNeeded
+                : (isSafe ? 0 : Math.max(0, Math.ceil((simThreshold * projCond - 100 * projAtt) / (100 - simThreshold))));
+              const skippable = simulationResult
+                ? simulationResult.projection.classesSkippable
+                : (!isSafe ? 0 : Math.max(0, Math.floor((100 * projAtt - simThreshold * projCond) / simThreshold)));
+
+              return (
+                <div
+                  style={{
+                    padding: '1.25rem',
+                    borderRadius: 'var(--radius-md)',
+                    backgroundColor: isSafe ? 'var(--emerald-soft, rgba(16, 185, 129, 0.08))' : 'var(--crimson-soft, rgba(239, 68, 68, 0.08))',
+                    border: `1px solid ${isSafe ? 'var(--emerald, rgba(16, 185, 129, 0.3))' : 'var(--crimson, rgba(239, 68, 68, 0.3))'}`,
+                    marginBottom: '1.25rem',
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                    <span style={{ fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--ink)' }}>
+                      Scenario Projection
                     </span>
-                  ) : (
-                    <span>
-                      ⚠️ Still below margin. You need <strong>{simulationResult.projection.classesNeeded}</strong> more consecutive attended classes to reach {selectedRecordForSim.threshold || 75}%.
+                    <span
+                      className={`badge ${isSafe ? 'badge-green' : 'badge-red'}`}
+                      style={{ fontSize: '0.85rem', fontWeight: 800 }}
+                    >
+                      {projPct}% ({isSafe ? 'ELIGIBLE / SAFE' : 'SHORTAGE ALERT'})
                     </span>
-                  )}
+                  </div>
+
+                  {/* Visual Projected Bar with Threshold Marker */}
+                  <div style={{ height: 8, width: '100%', backgroundColor: 'var(--surface-muted)', borderRadius: 4, overflow: 'hidden', position: 'relative', margin: '0.6rem 0' }}>
+                    <div
+                      style={{
+                        height: '100%',
+                        width: `${Math.min(100, projPct)}%`,
+                        backgroundColor: isSafe ? 'var(--emerald)' : 'var(--crimson)',
+                        borderRadius: 4,
+                        transition: 'width 0.2s ease',
+                      }}
+                    />
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        bottom: 0,
+                        left: `${simThreshold}%`,
+                        width: 2,
+                        backgroundColor: 'var(--ink)',
+                      }}
+                      title={`Target threshold: ${simThreshold}%`}
+                    />
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', color: 'var(--ink-soft)' }}>
+                    <span>Projected: <strong>{projAtt}</strong> attended of <strong>{projCond}</strong> conducted</span>
+                    <span>Cutoff Target: <strong>{simThreshold}%</strong></span>
+                  </div>
+
+                  <div style={{ borderTop: '1px solid var(--border)', marginTop: '0.75rem', paddingTop: '0.75rem', fontSize: '0.85rem' }}>
+                    {isSafe ? (
+                      <div style={{ color: 'var(--emerald)' }}>
+                        <strong>🎉 Safe to Bunk:</strong> You can safely miss up to <strong>{skippable} additional {skippable === 1 ? 'class' : 'classes'}</strong> and maintain at least {simThreshold}% eligibility.
+                      </div>
+                    ) : (
+                      <div style={{ color: 'var(--crimson)' }}>
+                        <strong>⚠️ Shortage Deficit:</strong> Recovery requires attending <strong>{needed} consecutive {needed === 1 ? 'class' : 'classes'}</strong> without absence to reach {simThreshold}%.
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            )}
+              );
+            })()}
 
             <div style={{ textAlign: 'right' }}>
               <button
