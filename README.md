@@ -95,6 +95,10 @@
 
 ## Visual Previews & Screenshots
 
+Student Hub includes pre-configured preview comps across both Light and Dark themes. When running locally or evaluating on cloud deployments, sign in with the **Demo Student account** (`demostudent99@university.edu` / `DemoStudent@123`) to view and capture screens with full academic data.
+
+### Core Interface Preview Directory
+
 | Interface View | Capabilities Highlighted | Light Theme Preview | Dark Theme Preview |
 |---|---|---|---|
 | **Course Dashboard** | Recharts visual analytics, attendance status, quick tasks, onboarding checklist | [Light Preview](docs/screenshots/dashboard-light.png) | [Dark Preview](docs/screenshots/dashboard-dark.png) |
@@ -102,6 +106,19 @@
 | **Kanban Assignments** | Drag-and-drop workflow across Pending, In Progress, and Completed columns | [Light Preview](docs/screenshots/tasks-kanban-light.png) | [Dark Preview](docs/screenshots/tasks-kanban-dark.png) |
 | **Markdown Notebook** | Split-pane markdown editor with live preview, hashtag filtering, and DOMPurify sanitization | [Light Preview](docs/screenshots/notes-light.png) | [Dark Preview](docs/screenshots/notes-dark.png) |
 | **Study Focus Timer** | Authoritative Pomodoro tracker with 25/5 and 50/10 presets and weekly focus chart | [Light Preview](docs/screenshots/study-timer-light.png) | [Dark Preview](docs/screenshots/study-timer-dark.png) |
+
+### Recommended Screenshot Capture Checklist (Demo Student Account)
+
+When preparing documentation or portfolio presentations, capture the following screens:
+1. `docs/screenshots/landing-page-light.png` / `dark.png` — Public landing page hero with theme toggle and platform summary.
+2. `docs/screenshots/dashboard-light.png` / `dark.png` — Student dashboard showing 11 enrolled courses, Recharts weekly study graph, and attendance health.
+3. `docs/screenshots/attendance-light.png` / `dark.png` — Attendance Intelligence page with CSUL501 shortage recovery math and what-if simulation sliders.
+4. `docs/screenshots/tasks-kanban-light.png` / `dark.png` — Kanban assignment board with drag-and-drop columns and priority badges.
+5. `docs/screenshots/notes-light.png` / `dark.png` — Lecture notes split-pane editor with live markdown preview and tag chips.
+6. `docs/screenshots/study-timer-light.png` / `dark.png` — Focus timer displaying active Pomodoro countdown and weekly focus ledger.
+7. `docs/screenshots/admin-students-light.png` — Institutional admin directory with student search and profile inspection.
+
+*Automated capture script*: Run `node scripts/capture-screenshots.js` while local dev servers are active to refresh all PNG screenshots automatically.
 
 ---
 

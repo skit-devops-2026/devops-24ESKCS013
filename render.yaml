@@ -9,7 +9,7 @@ services:
       - key: NODE_ENV
         value: production
       - key: COOKIE_SAME_SITE
-        value: none
+        value: lax
       - key: CLIENT_ORIGIN
         sync: false
       - key: MONGODB_URI
@@ -18,3 +18,4 @@ services:
         generateValue: true
       - key: JWT_EXPIRES_IN
         value: 7d
+

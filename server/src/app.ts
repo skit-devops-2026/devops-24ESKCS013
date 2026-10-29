@@ -16,6 +16,7 @@ import { resourceRouter } from './routes/resource.routes.js';
 import { attendanceRouter } from './routes/attendance.routes.js';
 import { notFoundHandler, errorHandler } from './middleware/error-handler.js';
 import { generalRateLimiter } from './middleware/rate-limiter.js';
+import { csrfProtection } from './middleware/csrf.middleware.js';
 
 export function createApp() {
   const app = express();
@@ -51,6 +52,9 @@ export function createApp() {
       allowedHeaders: ['Content-Type', 'Authorization'],
     })
   );
+
+  // CSRF Origin verification (enforced when COOKIE_SAME_SITE=none)
+  app.use(csrfProtection);
 
   // Mount API health routes
   app.use('/api', healthRouter);

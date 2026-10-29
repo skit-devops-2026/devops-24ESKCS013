@@ -41,11 +41,12 @@ export interface DbHealthResponse {
   timestamp: string;
 }
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+const rawBase = (import.meta.env.VITE_API_BASE_URL || '/api').trim();
+const API_BASE_URL = rawBase.endsWith('/') ? rawBase.slice(0, -1) : rawBase;
 
 function getApiUrl(path: string): string {
   const cleanPath = path.startsWith('/') ? path : `/${path}`;
-  if (API_BASE_URL.endsWith('/api')) {
+  if (API_BASE_URL === '/api' || API_BASE_URL.endsWith('/api')) {
     return `${API_BASE_URL}${cleanPath}`;
   }
   return `${API_BASE_URL}/api${cleanPath}`;
