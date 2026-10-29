@@ -56,10 +56,7 @@ export function RootLayout() {
             <Outlet />
           </main>
         </div>
-        <CommandPalette
-          isOpen={commandPaletteOpen}
-          onClose={() => setCommandPaletteOpen(false)}
-        />
+        <CommandPalette isOpen={commandPaletteOpen} onClose={() => setCommandPaletteOpen(false)} />
       </div>
     );
   }

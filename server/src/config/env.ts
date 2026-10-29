@@ -11,13 +11,9 @@ const envSchema = z.object({
     .refine((val) => !isNaN(val) && val > 0 && val <= 65535, {
       message: 'PORT must be a valid number between 1 and 65535',
     }),
-  NODE_ENV: z
-    .enum(['development', 'test', 'production'])
-    .default('development'),
+  NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   CLIENT_ORIGIN: z.string().default('http://localhost:5173'),
-  MONGODB_URI: z
-    .string()
-    .default('mongodb://127.0.0.1:27017/student-hub'),
+  MONGODB_URI: z.string().default('mongodb://127.0.0.1:27017/student-hub'),
   JWT_SECRET: z
     .string()
     .min(16, { message: 'JWT_SECRET must be at least 16 characters long' })

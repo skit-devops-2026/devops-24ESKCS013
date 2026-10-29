@@ -41,13 +41,16 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
-  const addToast = useCallback((type: ToastType, message: string, title?: string) => {
-    const id = Math.random().toString(36).substring(2, 9);
-    setToasts((prev) => [...prev, { id, type, message, title }]);
-    setTimeout(() => {
-      removeToast(id);
-    }, 4500);
-  }, [removeToast]);
+  const addToast = useCallback(
+    (type: ToastType, message: string, title?: string) => {
+      const id = Math.random().toString(36).substring(2, 9);
+      setToasts((prev) => [...prev, { id, type, message, title }]);
+      setTimeout(() => {
+        removeToast(id);
+      }, 4500);
+    },
+    [removeToast]
+  );
 
   const toast = {
     success: (msg: string, title?: string) => addToast('success', msg, title),
@@ -96,18 +99,18 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
           const iconColor = isError
             ? 'var(--red)'
             : isSuccess
-            ? 'var(--green)'
-            : isWarning
-            ? 'var(--amber)'
-            : 'var(--blue)';
+              ? 'var(--green)'
+              : isWarning
+                ? 'var(--amber)'
+                : 'var(--blue)';
 
           const borderColor = isError
             ? 'var(--red-border)'
             : isSuccess
-            ? 'var(--green-border)'
-            : isWarning
-            ? 'var(--amber)'
-            : 'var(--blue)';
+              ? 'var(--green-border)'
+              : isWarning
+                ? 'var(--amber)'
+                : 'var(--blue)';
 
           return (
             <div
@@ -143,7 +146,9 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                     {t.title}
                   </div>
                 )}
-                <div style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
+                <div
+                  style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}
+                >
                   {t.message}
                 </div>
               </div>
@@ -196,7 +201,9 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                   width: '40px',
                   height: '40px',
                   borderRadius: 'var(--radius-md)',
-                  backgroundColor: confirmState.options.isDestructive ? 'var(--red-soft)' : 'var(--blue-soft)',
+                  backgroundColor: confirmState.options.isDestructive
+                    ? 'var(--red-soft)'
+                    : 'var(--blue-soft)',
                   color: confirmState.options.isDestructive ? 'var(--red)' : 'var(--blue)',
                   display: 'flex',
                   alignItems: 'center',
@@ -204,7 +211,11 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                   flexShrink: 0,
                 }}
               >
-                {confirmState.options.isDestructive ? <AlertTriangle size={22} /> : <Info size={22} />}
+                {confirmState.options.isDestructive ? (
+                  <AlertTriangle size={22} />
+                ) : (
+                  <Info size={22} />
+                )}
               </div>
               <div>
                 <h3 style={{ fontSize: '1.15rem', color: 'var(--text-primary)', margin: 0 }}>
@@ -213,11 +224,25 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
               </div>
             </div>
 
-            <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+            <p
+              style={{
+                margin: 0,
+                fontSize: '0.9rem',
+                color: 'var(--text-secondary)',
+                lineHeight: 1.5,
+              }}
+            >
               {confirmState.options.message}
             </p>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'flex-end',
+                gap: '0.75rem',
+                marginTop: '0.5rem',
+              }}
+            >
               <button
                 type="button"
                 onClick={() => handleConfirmAction(false)}
@@ -252,4 +277,3 @@ export function useToast() {
   }
   return context;
 }
-

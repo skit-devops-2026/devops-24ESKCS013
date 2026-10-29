@@ -41,7 +41,9 @@ export function renderMarkdown(rawMarkdown: string): string {
     // Fenced code blocks
     if (line.trim().startsWith('```')) {
       if (inCodeBlock) {
-        output.push(`<pre class="md-code-block"><code>${escapeHtml(codeBlockLines.join('\n'))}</code></pre>`);
+        output.push(
+          `<pre class="md-code-block"><code>${escapeHtml(codeBlockLines.join('\n'))}</code></pre>`
+        );
         codeBlockLines = [];
         inCodeBlock = false;
       } else {
@@ -137,7 +139,9 @@ export function renderMarkdown(rawMarkdown: string): string {
 
   // Clean up hanging blocks
   if (inCodeBlock) {
-    output.push(`<pre class="md-code-block"><code>${escapeHtml(codeBlockLines.join('\n'))}</code></pre>`);
+    output.push(
+      `<pre class="md-code-block"><code>${escapeHtml(codeBlockLines.join('\n'))}</code></pre>`
+    );
   }
   if (inList) {
     output.push(inList === 'ul' ? '</ul>' : '</ol>');
@@ -149,8 +153,26 @@ export function renderMarkdown(rawMarkdown: string): string {
   if (typeof window !== 'undefined' && DOMPurify.sanitize) {
     return DOMPurify.sanitize(rawHtml, {
       ALLOWED_TAGS: [
-        'h1', 'h2', 'h3', 'h4', 'p', 'b', 'strong', 'i', 'em', 's', 'del',
-        'code', 'pre', 'blockquote', 'ul', 'ol', 'li', 'hr', 'a', 'span',
+        'h1',
+        'h2',
+        'h3',
+        'h4',
+        'p',
+        'b',
+        'strong',
+        'i',
+        'em',
+        's',
+        'del',
+        'code',
+        'pre',
+        'blockquote',
+        'ul',
+        'ol',
+        'li',
+        'hr',
+        'a',
+        'span',
       ],
       ALLOWED_ATTR: ['href', 'target', 'rel', 'class'],
     });
@@ -163,15 +185,20 @@ export function renderMarkdown(rawMarkdown: string): string {
  * Parses inline elements: bold, italic, strikethrough, inline code, and links.
  */
 function parseInline(text: string): string {
-  return text
-    // Inline code: `code`
-    .replace(/`([^`]+)`/g, '<code class="md-inline-code">$1</code>')
-    // Bold: **text**
-    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-    // Italic: *text*
-    .replace(/\*([^*]+)\*/g, '<em>$1</em>')
-    // Strikethrough: ~~text~~
-    .replace(/~~([^~]+)~~/g, '<del>$1</del>')
-    // Links: [title](url) - only http, https, mailto allowed
-    .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+|mailto:[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="md-link">$1</a>');
+  return (
+    text
+      // Inline code: `code`
+      .replace(/`([^`]+)`/g, '<code class="md-inline-code">$1</code>')
+      // Bold: **text**
+      .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+      // Italic: *text*
+      .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+      // Strikethrough: ~~text~~
+      .replace(/~~([^~]+)~~/g, '<del>$1</del>')
+      // Links: [title](url) - only http, https, mailto allowed
+      .replace(
+        /\[([^\]]+)\]\((https?:\/\/[^\s)]+|mailto:[^\s)]+)\)/g,
+        '<a href="$2" target="_blank" rel="noopener noreferrer" class="md-link">$1</a>'
+      )
+  );
 }

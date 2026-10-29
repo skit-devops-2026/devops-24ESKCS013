@@ -25,22 +25,36 @@ const goalInputSchema = z.object({
   category: z.string().trim().max(50).optional().default('Academic'),
   subjectId: z.string().optional().nullable(),
   subjectCode: z.string().trim().optional().default(''),
-  autoLinkMetric: z.enum(['none', 'attendance', 'task_completion', 'study_hours']).optional().default('none'),
+  autoLinkMetric: z
+    .enum(['none', 'attendance', 'task_completion', 'study_hours'])
+    .optional()
+    .default('none'),
   status: z.enum(['active', 'completed', 'abandoned']).optional().default('active'),
 });
 
 const updateGoalSchema = goalInputSchema.partial();
 
 /**
- * Synchronizes auto-linked goals with live academic data:
- * - attendance: auto-updates currentValue from linked Subject's attendancePercentage
- * - task_completion: auto-updates currentValue from completed tasks
- * - study_hours: auto-updates currentValue from completed focus study hours
+ * Calculates live metrics for auto-linked goals:
+ * - attendance: currentValue from linked Subject's attendancePercentage
+ * - task_completion: currentValue from completed tasks
+ * - study_hours: currentValue from completed focus study hours
+ *
+ * In-memory calculation for GET endpoints (zero DB writes / strictly side-effect free).
+ * Set persist = true only on explicit mutations like POST /api/goals/recompute.
+ * Drop-below rule: For auto-linked active/completed goals, status reverts to 'active'
+ * if progress falls below targetValue (unless explicitly marked 'abandoned').
  */
-async function syncAutoLinkedGoals(goals: IGoal[], userId: Types.ObjectId): Promise<void> {
+async function computeAutoLinkedGoals(
+  goals: IGoal[],
+  userId: Types.ObjectId,
+  persist: boolean = false
+): Promise<void> {
   for (const goal of goals) {
     if (!goal.autoLinkMetric || goal.autoLinkMetric === 'none') continue;
 
+    const originalValue = goal.currentValue;
+    const originalStatus = goal.status;
     let newValue = goal.currentValue;
 
     if (goal.autoLinkMetric === 'attendance' && goal.subjectId) {
@@ -65,11 +79,12 @@ async function syncAutoLinkedGoals(goals: IGoal[], userId: Types.ObjectId): Prom
       newValue = Number((totalSeconds / 3600).toFixed(1));
     }
 
-    if (newValue !== goal.currentValue) {
-      goal.currentValue = newValue;
-      if (goal.currentValue >= goal.targetValue && goal.status === 'active') {
-        goal.status = 'completed';
-      }
+    goal.currentValue = newValue;
+    if (goal.status !== 'abandoned') {
+      goal.status = goal.currentValue >= goal.targetValue ? 'completed' : 'active';
+    }
+
+    if (persist && (goal.currentValue !== originalValue || goal.status !== originalStatus)) {
       await Goal.updateOne(
         { _id: goal._id, userId },
         { $set: { currentValue: goal.currentValue, status: goal.status } }
@@ -83,8 +98,8 @@ goalRouter.get('/summary', async (req: AuthenticatedRequest, res: Response): Pro
   const userId = req.user!._id;
   const goals = await Goal.find({ userId });
 
-  // Sync auto-linked goals before returning summary
-  await syncAutoLinkedGoals(goals, userId);
+  // Pure in-memory calculation (no DB writes on GET)
+  await computeAutoLinkedGoals(goals, userId, false);
 
   const total = goals.length;
   const active = goals.filter((g) => g.status === 'active').length;
@@ -120,10 +135,23 @@ goalRouter.get('/', async (req: AuthenticatedRequest, res: Response): Promise<vo
   }
   const goals = await Goal.find(query).sort({ targetDate: 1 });
 
-  // Sync auto-linked goals with live metrics
-  await syncAutoLinkedGoals(goals, req.user!._id);
+  // Pure in-memory calculation (no DB writes on GET)
+  await computeAutoLinkedGoals(goals, req.user!._id, false);
 
   res.status(200).json({ status: 'ok', count: goals.length, data: goals });
+});
+
+// POST /api/goals/recompute (explicit persistent synchronization)
+goalRouter.post('/recompute', async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  const userId = req.user!._id;
+  const goals = await Goal.find({ userId });
+  await computeAutoLinkedGoals(goals, userId, true);
+  res.status(200).json({
+    status: 'ok',
+    message: 'Goals recomputed and persisted successfully',
+    count: goals.length,
+    data: goals,
+  });
 });
 
 // POST /api/goals
@@ -197,7 +225,7 @@ goalRouter.get('/:id', async (req: AuthenticatedRequest, res: Response): Promise
     return;
   }
 
-  await syncAutoLinkedGoals([goal], req.user!._id);
+  await computeAutoLinkedGoals([goal], req.user!._id, false);
 
   res.status(200).json({ status: 'ok', data: goal });
 });
@@ -230,8 +258,10 @@ goalRouter.patch('/:id', async (req: AuthenticatedRequest, res: Response): Promi
     return;
   }
 
-  const targetVal = updates.targetValue !== undefined ? updates.targetValue : existingGoal.targetValue;
-  const currentVal = updates.currentValue !== undefined ? updates.currentValue : existingGoal.currentValue;
+  const targetVal =
+    updates.targetValue !== undefined ? updates.targetValue : existingGoal.targetValue;
+  const currentVal =
+    updates.currentValue !== undefined ? updates.currentValue : existingGoal.currentValue;
 
   if (currentVal >= targetVal && !updates.status) {
     updates.status = 'completed';

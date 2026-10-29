@@ -2,11 +2,9 @@ import { describe, it, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import request from 'supertest';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import mongoose from 'mongoose';
 import { createApp } from './app.js';
 import { connectDB, disconnectDB } from './config/db.js';
 import { User } from './models/User.js';
-import { StudentProfile } from './models/StudentProfile.js';
 import { AUTH_COOKIE_NAME } from './services/auth.service.js';
 
 let mongod: MongoMemoryServer;
@@ -39,16 +37,14 @@ describe('Authentication & MongoDB Integration Tests', () => {
   });
 
   it('POST /api/auth/register successfully registers a new student with hashed password', async () => {
-    const res = await request(app)
-      .post('/api/auth/register')
-      .send({
-        name: 'Jane Doe',
-        email: 'jane.doe@university.edu',
-        password: 'SecurePassword123!',
-        rollNumber: '24CS001',
-        department: 'Computer Science',
-        semester: 3,
-      });
+    const res = await request(app).post('/api/auth/register').send({
+      name: 'Jane Doe',
+      email: 'jane.doe@university.edu',
+      password: 'SecurePassword123!',
+      rollNumber: '24CS001',
+      department: 'Computer Science',
+      semester: 3,
+    });
 
     assert.equal(res.status, 201);
     assert.equal(res.body.status, 'ok');
@@ -72,15 +68,13 @@ describe('Authentication & MongoDB Integration Tests', () => {
   });
 
   it('POST /api/auth/register prevents duplicate email registration', async () => {
-    const res = await request(app)
-      .post('/api/auth/register')
-      .send({
-        name: 'Duplicate Jane',
-        email: 'JANE.DOE@university.edu', // Test lowercase normalization
-        password: 'AnotherPassword456!',
-        rollNumber: '24CS002',
-        department: 'Computer Science',
-      });
+    const res = await request(app).post('/api/auth/register').send({
+      name: 'Duplicate Jane',
+      email: 'JANE.DOE@university.edu', // Test lowercase normalization
+      password: 'AnotherPassword456!',
+      rollNumber: '24CS002',
+      department: 'Computer Science',
+    });
 
     assert.equal(res.status, 409);
     assert.equal(res.body.status, 'error');
@@ -88,15 +82,13 @@ describe('Authentication & MongoDB Integration Tests', () => {
   });
 
   it('POST /api/auth/register prevents duplicate roll number registration', async () => {
-    const res = await request(app)
-      .post('/api/auth/register')
-      .send({
-        name: 'New Student',
-        email: 'new.student@university.edu',
-        password: 'Password789!',
-        rollNumber: '24cs001', // Lowercase candidate should collide with uppercase 24CS001
-        department: 'Information Technology',
-      });
+    const res = await request(app).post('/api/auth/register').send({
+      name: 'New Student',
+      email: 'new.student@university.edu',
+      password: 'Password789!',
+      rollNumber: '24cs001', // Lowercase candidate should collide with uppercase 24CS001
+      department: 'Information Technology',
+    });
 
     assert.equal(res.status, 409);
     assert.equal(res.body.status, 'error');
@@ -104,27 +96,23 @@ describe('Authentication & MongoDB Integration Tests', () => {
   });
 
   it('POST /api/auth/register rejects invalid inputs (validation check)', async () => {
-    const res = await request(app)
-      .post('/api/auth/register')
-      .send({
-        name: '',
-        email: 'invalid-email',
-        password: '123', // Too short
-        rollNumber: '',
-        department: '',
-      });
+    const res = await request(app).post('/api/auth/register').send({
+      name: '',
+      email: 'invalid-email',
+      password: '123', // Too short
+      rollNumber: '',
+      department: '',
+    });
 
     assert.equal(res.status, 400);
     assert.equal(res.body.status, 'error');
   });
 
   it('POST /api/auth/login succeeds with valid credentials and sets session cookie', async () => {
-    const res = await request(app)
-      .post('/api/auth/login')
-      .send({
-        email: 'jane.doe@university.edu',
-        password: 'SecurePassword123!',
-      });
+    const res = await request(app).post('/api/auth/login').send({
+      email: 'jane.doe@university.edu',
+      password: 'SecurePassword123!',
+    });
 
     assert.equal(res.status, 200);
     assert.equal(res.body.status, 'ok');
@@ -138,12 +126,10 @@ describe('Authentication & MongoDB Integration Tests', () => {
   });
 
   it('POST /api/auth/login fails with invalid password (401)', async () => {
-    const res = await request(app)
-      .post('/api/auth/login')
-      .send({
-        email: 'jane.doe@university.edu',
-        password: 'WrongPassword!',
-      });
+    const res = await request(app).post('/api/auth/login').send({
+      email: 'jane.doe@university.edu',
+      password: 'WrongPassword!',
+    });
 
     assert.equal(res.status, 401);
     assert.equal(res.body.status, 'error');
@@ -152,19 +138,15 @@ describe('Authentication & MongoDB Integration Tests', () => {
 
   it('GET /api/auth/me returns current user profile when session cookie is provided', async () => {
     // First login to get cookie
-    const loginRes = await request(app)
-      .post('/api/auth/login')
-      .send({
-        email: 'jane.doe@university.edu',
-        password: 'SecurePassword123!',
-      });
+    const loginRes = await request(app).post('/api/auth/login').send({
+      email: 'jane.doe@university.edu',
+      password: 'SecurePassword123!',
+    });
 
     const cookie = loginRes.headers['set-cookie'];
 
     // Call /api/auth/me with cookie
-    const meRes = await request(app)
-      .get('/api/auth/me')
-      .set('Cookie', cookie);
+    const meRes = await request(app).get('/api/auth/me').set('Cookie', cookie);
 
     assert.equal(meRes.status, 200);
     assert.equal(meRes.body.status, 'ok');
@@ -175,31 +157,25 @@ describe('Authentication & MongoDB Integration Tests', () => {
 
   it('session persists across multiple requests and reloads using session cookie', async () => {
     // Re-login to get active session cookie
-    const loginRes = await request(app)
-      .post('/api/auth/login')
-      .send({
-        email: 'jane.doe@university.edu',
-        password: 'SecurePassword123!',
-      });
+    const loginRes = await request(app).post('/api/auth/login').send({
+      email: 'jane.doe@university.edu',
+      password: 'SecurePassword123!',
+    });
     const cookie = loginRes.headers['set-cookie'];
 
     // Simulate 3 consecutive page views / refreshes
     for (let i = 0; i < 3; i++) {
-      const res = await request(app)
-        .get('/api/auth/me')
-        .set('Cookie', cookie);
+      const res = await request(app).get('/api/auth/me').set('Cookie', cookie);
       assert.equal(res.status, 200);
       assert.equal(res.body.user.email, 'jane.doe@university.edu');
     }
   });
 
   it('never exposes password hashes in any authentication responses', async () => {
-    const loginRes = await request(app)
-      .post('/api/auth/login')
-      .send({
-        email: 'jane.doe@university.edu',
-        password: 'SecurePassword123!',
-      });
+    const loginRes = await request(app).post('/api/auth/login').send({
+      email: 'jane.doe@university.edu',
+      password: 'SecurePassword123!',
+    });
     assert.equal(loginRes.status, 200);
     assert.equal(loginRes.body.user.passwordHash, undefined);
     assert.equal(loginRes.body.user.password, undefined);

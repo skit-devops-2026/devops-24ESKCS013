@@ -295,7 +295,14 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
         {/* Results list */}
         <div style={{ maxHeight: '360px', overflowY: 'auto', padding: '0.5rem' }}>
           {filtered.length === 0 ? (
-            <div style={{ padding: '2rem 1rem', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+            <div
+              style={{
+                padding: '2rem 1rem',
+                textAlign: 'center',
+                color: 'var(--text-muted)',
+                fontSize: '0.9rem',
+              }}
+            >
               No matching pages found for "{query}".
             </div>
           ) : (
@@ -319,12 +326,18 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <div style={{ color: isSelected ? 'var(--accent-primary)' : 'var(--text-secondary)' }}>
+                    <div
+                      style={{
+                        color: isSelected ? 'var(--accent-primary)' : 'var(--text-secondary)',
+                      }}
+                    >
                       {item.icon}
                     </div>
                     <div>
                       <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{item.label}</div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{item.category}</div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                        {item.category}
+                      </div>
                     </div>
                   </div>
                   {isSelected && <ArrowRight size={16} color="var(--accent-primary)" />}
@@ -354,4 +367,3 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
     </div>
   );
 }
-

@@ -7,8 +7,6 @@ import { createApp } from './app.js';
 import { User } from './models/User.js';
 import { StudentProfile } from './models/StudentProfile.js';
 import { Subject } from './models/Subject.js';
-import { Resource } from './models/Resource.js';
-import { Announcement } from './models/Announcement.js';
 
 let mongod: MongoMemoryServer;
 let app: ReturnType<typeof createApp>;
@@ -40,21 +38,19 @@ describe('Admin Subsystem & Institutional Management Integration Tests', () => {
       .post('/api/auth/login')
       .send({ email: 'admin@college.edu', password: 'AdminPass123!' });
     const rawAdminCookie = adminLoginRes.headers['set-cookie'];
-    adminCookie = (Array.isArray(rawAdminCookie) ? rawAdminCookie : [String(rawAdminCookie)]).find((c) =>
-      c.startsWith('student_hub_token=')
+    adminCookie = (Array.isArray(rawAdminCookie) ? rawAdminCookie : [String(rawAdminCookie)]).find(
+      (c) => c.startsWith('student_hub_token=')
     )!;
 
     // 2. Register Student account (John Doe)
-    const regRes = await request(app)
-      .post('/api/auth/register')
-      .send({
-        name: 'John Doe',
-        email: 'john.doe@college.edu',
-        password: 'Password123!',
-        rollNumber: '24ESKCS099',
-        department: 'Computer Science',
-        semester: 3,
-      });
+    const regRes = await request(app).post('/api/auth/register').send({
+      name: 'John Doe',
+      email: 'john.doe@college.edu',
+      password: 'Password123!',
+      rollNumber: '24ESKCS099',
+      department: 'Computer Science',
+      semester: 3,
+    });
     studentId = regRes.body.user.id;
     // Set John's profile attendance to compliant 85%
     await StudentProfile.findOneAndUpdate(
@@ -62,21 +58,19 @@ describe('Admin Subsystem & Institutional Management Integration Tests', () => {
       { $set: { attendancePercentage: 85 } }
     );
     const rawStudentCookie = regRes.headers['set-cookie'];
-    studentCookie = (Array.isArray(rawStudentCookie) ? rawStudentCookie : [String(rawStudentCookie)]).find((c) =>
-      c.startsWith('student_hub_token=')
-    )!;
+    studentCookie = (
+      Array.isArray(rawStudentCookie) ? rawStudentCookie : [String(rawStudentCookie)]
+    ).find((c) => c.startsWith('student_hub_token='))!;
 
     // 3. Register second student (Jane Smith) with low attendance
-    const janeReg = await request(app)
-      .post('/api/auth/register')
-      .send({
-        name: 'Jane Smith',
-        email: 'jane.smith@college.edu',
-        password: 'Password123!',
-        rollNumber: '24ESKCS100',
-        department: 'Electronics',
-        semester: 4,
-      });
+    const janeReg = await request(app).post('/api/auth/register').send({
+      name: 'Jane Smith',
+      email: 'jane.smith@college.edu',
+      password: 'Password123!',
+      rollNumber: '24ESKCS100',
+      department: 'Electronics',
+      semester: 4,
+    });
     // Set Jane's profile attendance to 65% (< 75%)
     await StudentProfile.findOneAndUpdate(
       { userId: janeReg.body.user.id },
@@ -113,17 +107,13 @@ describe('Admin Subsystem & Institutional Management Integration Tests', () => {
     });
 
     it('denies student access to admin student directory with 403', async () => {
-      const res = await request(app)
-        .get('/api/admin/students')
-        .set('Cookie', studentCookie);
+      const res = await request(app).get('/api/admin/students').set('Cookie', studentCookie);
       assert.equal(res.status, 403);
       assert.match(res.body.message, /Forbidden/i);
     });
 
     it('denies student access to admin system stats with 403', async () => {
-      const res = await request(app)
-        .get('/api/admin/stats')
-        .set('Cookie', studentCookie);
+      const res = await request(app).get('/api/admin/stats').set('Cookie', studentCookie);
       assert.equal(res.status, 403);
     });
 
@@ -136,26 +126,20 @@ describe('Admin Subsystem & Institutional Management Integration Tests', () => {
     });
 
     it('denies student from publishing announcements with 403', async () => {
-      const res = await request(app)
-        .post('/api/announcements')
-        .set('Cookie', studentCookie)
-        .send({
-          title: 'Unauthorized announcement',
-          content: 'This should be blocked.',
-        });
+      const res = await request(app).post('/api/announcements').set('Cookie', studentCookie).send({
+        title: 'Unauthorized announcement',
+        content: 'This should be blocked.',
+      });
       assert.equal(res.status, 403);
     });
 
     it('denies student from creating institutional resources with 403', async () => {
-      const res = await request(app)
-        .post('/api/resources')
-        .set('Cookie', studentCookie)
-        .send({
-          title: 'Unauthorized resource',
-          description: 'This should fail.',
-          resourceType: 'syllabus',
-          url: 'https://college.edu/syllabus.pdf',
-        });
+      const res = await request(app).post('/api/resources').set('Cookie', studentCookie).send({
+        title: 'Unauthorized resource',
+        description: 'This should fail.',
+        resourceType: 'syllabus',
+        url: 'https://college.edu/syllabus.pdf',
+      });
       assert.equal(res.status, 403);
     });
   });
@@ -260,9 +244,7 @@ describe('Admin Subsystem & Institutional Management Integration Tests', () => {
       assert.match(loginRes.body.message, /suspended/i);
 
       // Verify suspended student existing cookie is rejected on authenticated routes
-      const protectedRes = await request(app)
-        .get('/api/auth/me')
-        .set('Cookie', studentCookie);
+      const protectedRes = await request(app).get('/api/auth/me').set('Cookie', studentCookie);
 
       assert.equal(protectedRes.status, 403);
       assert.match(protectedRes.body.message, /suspended/i);
@@ -294,16 +276,13 @@ describe('Admin Subsystem & Institutional Management Integration Tests', () => {
     let draftId: string;
 
     it('allows admin to create a published announcement', async () => {
-      const res = await request(app)
-        .post('/api/announcements')
-        .set('Cookie', adminCookie)
-        .send({
-          title: 'Midterm Examination Schedule 2026',
-          content: 'Midterm exams will commence from November 15, 2026.',
-          priority: 'urgent',
-          targetAudience: 'all',
-          status: 'published',
-        });
+      const res = await request(app).post('/api/announcements').set('Cookie', adminCookie).send({
+        title: 'Midterm Examination Schedule 2026',
+        content: 'Midterm exams will commence from November 15, 2026.',
+        priority: 'urgent',
+        targetAudience: 'all',
+        status: 'published',
+      });
 
       assert.equal(res.status, 201);
       assert.equal(res.body.data.title, 'Midterm Examination Schedule 2026');
@@ -312,16 +291,13 @@ describe('Admin Subsystem & Institutional Management Integration Tests', () => {
     });
 
     it('allows admin to create a draft announcement', async () => {
-      const res = await request(app)
-        .post('/api/announcements')
-        .set('Cookie', adminCookie)
-        .send({
-          title: 'Draft Campus Renovation Notice',
-          content: 'Library third floor renovation plan details.',
-          priority: 'normal',
-          targetAudience: 'students',
-          status: 'draft',
-        });
+      const res = await request(app).post('/api/announcements').set('Cookie', adminCookie).send({
+        title: 'Draft Campus Renovation Notice',
+        content: 'Library third floor renovation plan details.',
+        priority: 'normal',
+        targetAudience: 'students',
+        status: 'draft',
+      });
 
       assert.equal(res.status, 201);
       assert.equal(res.body.data.status, 'draft');
@@ -329,9 +305,7 @@ describe('Admin Subsystem & Institutional Management Integration Tests', () => {
     });
 
     it('allows student to see only published announcements and hides drafts', async () => {
-      const res = await request(app)
-        .get('/api/announcements')
-        .set('Cookie', studentCookie);
+      const res = await request(app).get('/api/announcements').set('Cookie', studentCookie);
 
       assert.equal(res.status, 200);
       const items = res.body.data;
@@ -343,9 +317,7 @@ describe('Admin Subsystem & Institutional Management Integration Tests', () => {
     });
 
     it('allows admin to view all announcements including drafts', async () => {
-      const res = await request(app)
-        .get('/api/announcements')
-        .set('Cookie', adminCookie);
+      const res = await request(app).get('/api/announcements').set('Cookie', adminCookie);
 
       assert.equal(res.status, 200);
       const items = res.body.data;
@@ -376,33 +348,27 @@ describe('Admin Subsystem & Institutional Management Integration Tests', () => {
     let resourceId: string;
 
     it('rejects dangerous and unsafe URL schemes in resources', async () => {
-      const res = await request(app)
-        .post('/api/resources')
-        .set('Cookie', adminCookie)
-        .send({
-          title: 'Unsafe Resource',
-          description: 'XSS or file protocol injection',
-          resourceType: 'syllabus',
-          url: 'javascript:alert(1)',
-        });
+      const res = await request(app).post('/api/resources').set('Cookie', adminCookie).send({
+        title: 'Unsafe Resource',
+        description: 'XSS or file protocol injection',
+        resourceType: 'syllabus',
+        url: 'javascript:alert(1)',
+      });
 
       assert.equal(res.status, 400);
       assert.match(res.body.message, /valid http:\/\/ or https:\/\//i);
     });
 
     it('allows admin to publish a valid resource with https URL', async () => {
-      const res = await request(app)
-        .post('/api/resources')
-        .set('Cookie', adminCookie)
-        .send({
-          title: 'Computer Networks Lab Manual 2026',
-          description: 'Official university lab manual with socket programming examples.',
-          resourceType: 'lab_manual',
-          url: 'https://college.edu/academics/cs/cn-lab-manual.pdf',
-          department: 'Computer Science',
-          semester: 5,
-          status: 'published',
-        });
+      const res = await request(app).post('/api/resources').set('Cookie', adminCookie).send({
+        title: 'Computer Networks Lab Manual 2026',
+        description: 'Official university lab manual with socket programming examples.',
+        resourceType: 'lab_manual',
+        url: 'https://college.edu/academics/cs/cn-lab-manual.pdf',
+        department: 'Computer Science',
+        semester: 5,
+        status: 'published',
+      });
 
       assert.equal(res.status, 201);
       assert.equal(res.body.data.title, 'Computer Networks Lab Manual 2026');
@@ -452,7 +418,11 @@ describe('Admin Subsystem & Institutional Management Integration Tests', () => {
       assert.equal(stats.attendance.overallProfileDefaultersCount, 1, 'Jane has 65% in profile');
       assert.equal(stats.attendance.lowAttendanceSubjectRecordsCount, 1, 'EC301 has 60%');
       assert.equal(stats.attendance.uniqueSubjectDefaultersCount, 1);
-      assert.equal(stats.attendance.uniqueAffectedStudentsCount, 1, 'Jane is the unique affected student');
+      assert.equal(
+        stats.attendance.uniqueAffectedStudentsCount,
+        1,
+        'Jane is the unique affected student'
+      );
     });
   });
 });

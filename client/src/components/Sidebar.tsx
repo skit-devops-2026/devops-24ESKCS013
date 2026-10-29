@@ -1,5 +1,7 @@
+import { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { getStudentAnnouncements } from '../services/student.service';
 import {
   LayoutDashboard,
   CalendarCheck,
@@ -29,6 +31,29 @@ interface SidebarProps {
 
 export function Sidebar({ collapsed, onToggleCollapse, mobileOpen, onCloseMobile }: SidebarProps) {
   const { user } = useAuth();
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    if (user?.role !== 'student') return;
+
+    async function checkUnread() {
+      try {
+        const notices = await getStudentAnnouncements();
+        const raw = localStorage.getItem('read_notice_ids');
+        const readIds: string[] = raw ? JSON.parse(raw) : [];
+        const unread = notices.filter((n) => !readIds.includes(n._id)).length;
+        setUnreadCount(unread);
+      } catch {
+        // Silent catch for background badge
+      }
+    }
+
+    checkUnread();
+
+    const handleRead = () => setUnreadCount(0);
+    window.addEventListener('notices_read', handleRead);
+    return () => window.removeEventListener('notices_read', handleRead);
+  }, [user]);
 
   if (!user) return null;
 
@@ -37,7 +62,9 @@ export function Sidebar({ collapsed, onToggleCollapse, mobileOpen, onCloseMobile
       {/* Mobile backdrop */}
       {mobileOpen && <div className="drawer-backdrop" onClick={onCloseMobile} />}
 
-      <aside className={`app-sidebar ${collapsed ? 'collapsed' : ''} ${mobileOpen ? 'mobile-open' : ''}`}>
+      <aside
+        className={`app-sidebar ${collapsed ? 'collapsed' : ''} ${mobileOpen ? 'mobile-open' : ''}`}
+      >
         {/* Header / Brand */}
         <div className="sidebar-header">
           <div className="sidebar-brand">
@@ -153,8 +180,36 @@ export function Sidebar({ collapsed, onToggleCollapse, mobileOpen, onCloseMobile
                   className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
                   title="Notice Board"
                 >
-                  <Bell size={18} />
+                  <div style={{ position: 'relative', display: 'inline-flex' }}>
+                    <Bell size={18} />
+                    {unreadCount > 0 && (
+                      <span
+                        style={{
+                          position: 'absolute',
+                          top: -2,
+                          right: -2,
+                          width: '7px',
+                          height: '7px',
+                          borderRadius: '50%',
+                          backgroundColor: 'var(--brand-gold)',
+                        }}
+                      />
+                    )}
+                  </div>
                   {!collapsed && <span>Notices</span>}
+                  {!collapsed && unreadCount > 0 && (
+                    <span
+                      className="badge badge-gold"
+                      style={{
+                        fontSize: '0.65rem',
+                        padding: '0.1rem 0.4rem',
+                        marginLeft: 'auto',
+                        fontWeight: 700,
+                      }}
+                    >
+                      {unreadCount}
+                    </span>
+                  )}
                 </NavLink>
                 <NavLink
                   to="/student/resources"
@@ -225,7 +280,16 @@ export function Sidebar({ collapsed, onToggleCollapse, mobileOpen, onCloseMobile
         <div className="sidebar-footer">
           {!collapsed && (
             <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-              <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <span
+                style={{
+                  fontSize: '0.8rem',
+                  fontWeight: 600,
+                  color: 'var(--text-primary)',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                }}
+              >
                 {user.name}
               </span>
               <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>

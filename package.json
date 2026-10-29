@@ -2,6 +2,7 @@
   "name": "student-hub",
   "version": "1.0.0",
   "description": "Student Hub - Academic Management Platform (Full-Stack Monorepo)",
+  "type": "module",
   "main": "server/dist/server.js",
   "scripts": {
     "dev": "concurrently -n \"SERVER,CLIENT\" -c \"blue,magenta\" \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
@@ -10,8 +11,12 @@
     "build": "npm run build --prefix server && npm run build --prefix client",
     "build:server": "npm run build --prefix server",
     "build:client": "npm run build --prefix client",
+    "lint": "eslint \"server/src/**/*.{ts,js}\" \"client/src/**/*.{ts,tsx}\"",
+    "lint:fix": "eslint --fix \"server/src/**/*.{ts,js}\" \"client/src/**/*.{ts,tsx}\"",
+    "format": "prettier --write \"server/src/**/*.{ts,js}\" \"client/src/**/*.{ts,tsx,css}\"",
+    "format:check": "prettier --check \"server/src/**/*.{ts,js}\" \"client/src/**/*.{ts,tsx,css}\"",
     "test:server": "npm test --prefix server",
-    "test:client": "npm run lint --prefix client",
+    "test:client": "npm test --prefix client",
     "test": "npm run test:server && npm run test:client && bash scripts/test.sh",
     "test:legacy": "node legacy-archive/test.js"
   },
@@ -25,6 +30,10 @@
   "author": "Abhimanyu Single Rathore",
   "license": "ISC",
   "devDependencies": {
-    "concurrently": "^9.1.2"
+    "@eslint/js": "^10.0.1",
+    "concurrently": "^9.1.2",
+    "eslint": "^10.13.0",
+    "prettier": "^3.9.10",
+    "typescript-eslint": "^8.72.1"
   }
 }

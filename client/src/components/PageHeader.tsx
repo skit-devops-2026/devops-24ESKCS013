@@ -71,7 +71,14 @@ export function PageHeader({
             {title}
           </h1>
           {description && (
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', margin: 0, maxWidth: '680px' }}>
+            <p
+              style={{
+                color: 'var(--text-secondary)',
+                fontSize: '0.95rem',
+                margin: 0,
+                maxWidth: '680px',
+              }}
+            >
               {description}
             </p>
           )}
@@ -86,4 +93,3 @@ export function PageHeader({
     </div>
   );
 }
-

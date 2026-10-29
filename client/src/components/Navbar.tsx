@@ -58,11 +58,22 @@ export function Navbar() {
               <ArrowRight size={14} />
             </Link>
           ) : (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginLeft: '0.5rem' }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                marginLeft: '0.5rem',
+              }}
+            >
               <Link to="/login" className="btn btn-secondary" style={{ padding: '0.4rem 0.85rem' }}>
                 Sign In
               </Link>
-              <Link to="/register" className="btn btn-primary" style={{ padding: '0.4rem 0.95rem' }}>
+              <Link
+                to="/register"
+                className="btn btn-primary"
+                style={{ padding: '0.4rem 0.95rem' }}
+              >
                 Register
               </Link>
             </div>

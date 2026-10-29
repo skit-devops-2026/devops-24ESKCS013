@@ -47,7 +47,9 @@ export async function getSubjects(): Promise<SubjectItem[]> {
   return res.data;
 }
 
-export async function getSubject(id: string): Promise<SubjectItem & { tasks: TaskItem[]; notes: NoteItem[] }> {
+export async function getSubject(
+  id: string
+): Promise<SubjectItem & { tasks: TaskItem[]; notes: NoteItem[] }> {
   const res = await requestJson<{ data: SubjectItem & { tasks: TaskItem[]; notes: NoteItem[] } }>(
     getApiUrl(`/subjects/${id}`)
   );
@@ -90,7 +92,11 @@ export interface TaskSummary {
   overdue: number;
 }
 
-export async function getTasks(filters?: { status?: string; priority?: string; subjectId?: string }): Promise<TaskItem[]> {
+export async function getTasks(filters?: {
+  status?: string;
+  priority?: string;
+  subjectId?: string;
+}): Promise<TaskItem[]> {
   const params = new URLSearchParams();
   if (filters?.status && filters.status !== 'all') params.append('status', filters.status);
   if (filters?.priority && filters.priority !== 'all') params.append('priority', filters.priority);
@@ -269,7 +275,10 @@ export async function getCurrentStudySession(): Promise<CurrentStudySessionRespo
   return requestJson<CurrentStudySessionResponse>(getApiUrl('/study/current'));
 }
 
-export async function startStudySession(subjectId?: string, title?: string): Promise<CurrentStudySessionResponse> {
+export async function startStudySession(
+  subjectId?: string,
+  title?: string
+): Promise<CurrentStudySessionResponse> {
   return requestJson<CurrentStudySessionResponse>(getApiUrl('/study/start'), {
     method: 'POST',
     body: JSON.stringify({ subjectId, title }),
@@ -334,7 +343,10 @@ export async function getStudentAnnouncements(): Promise<StudentAnnouncement[]> 
   return res.data;
 }
 
-export async function getStudentResources(search?: string, type?: string): Promise<StudentResource[]> {
+export async function getStudentResources(
+  search?: string,
+  type?: string
+): Promise<StudentResource[]> {
   const params = new URLSearchParams();
   if (search) params.append('search', search);
   if (type && type !== 'all') params.append('resourceType', type);

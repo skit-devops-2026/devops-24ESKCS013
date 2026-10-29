@@ -100,5 +100,4 @@ const goalSchema = new Schema<IGoal>(
 goalSchema.index({ userId: 1, status: 1 });
 
 export const Goal =
-  (mongoose.models.Goal as mongoose.Model<IGoal>) ||
-  mongoose.model<IGoal>('Goal', goalSchema);
+  (mongoose.models.Goal as mongoose.Model<IGoal>) || mongoose.model<IGoal>('Goal', goalSchema);

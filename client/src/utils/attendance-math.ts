@@ -72,14 +72,26 @@ export function simulateScenario(
 ): ScenarioProjection {
   const projectedAttended = attended + Math.max(0, Math.floor(additionalAttended));
   const projectedConducted =
-    conducted + Math.max(0, Math.floor(additionalAttended)) + Math.max(0, Math.floor(additionalMissed));
+    conducted +
+    Math.max(0, Math.floor(additionalAttended)) +
+    Math.max(0, Math.floor(additionalMissed));
 
   const projectedPercentage =
-    projectedConducted > 0 ? Number(((projectedAttended / projectedConducted) * 100).toFixed(2)) : 0;
+    projectedConducted > 0
+      ? Number(((projectedAttended / projectedConducted) * 100).toFixed(2))
+      : 0;
 
   const status = projectedPercentage >= thresholdPercent ? 'safe' : 'shortage';
-  const classesNeeded = calculateClassesNeeded(projectedAttended, projectedConducted, thresholdPercent);
-  const classesSkippable = calculateSkippableClasses(projectedAttended, projectedConducted, thresholdPercent);
+  const classesNeeded = calculateClassesNeeded(
+    projectedAttended,
+    projectedConducted,
+    thresholdPercent
+  );
+  const classesSkippable = calculateSkippableClasses(
+    projectedAttended,
+    projectedConducted,
+    thresholdPercent
+  );
 
   return {
     projectedAttended,
@@ -90,4 +102,3 @@ export function simulateScenario(
     classesSkippable,
   };
 }
-

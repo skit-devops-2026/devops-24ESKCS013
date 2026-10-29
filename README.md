@@ -81,13 +81,27 @@
   * Link a goal to **Attendance** to auto-sync with course attendance percentage.
   * Link to **Task Completion** to auto-track completed assignments.
   * Link to **Study Focus** to auto-accumulate focus study hours.
-* **Milestone Achievements**: Automatic completion transition when current progress meets or exceeds the target.
+* **Side-Effect Free In-Memory Evaluation**: `GET /api/goals` and `GET /api/goals/summary` compute live progress dynamically in memory without mutating database records on read.
+* **Drop-Below Reversion Rule**: If linked metrics fall (e.g. attendance drops after missing classes), goal status dynamically reverts from `completed` to `active`.
+* **Explicit Persistent Synchronization**: `POST /api/goals/recompute` allows manual or scheduled persistent updates.
 
 ### 6. Administration & Oversight
 * **Role-Based Access Control (RBAC)**: Secure separation between `student` and `admin` roles.
 * **Student Registry**: Paginated student directory with profile inspection, course rosters, and account status controls.
-* **Institutional Notice Board**: Campus-wide bulletins and examination notifications with draft/publish workflows.
+* **Institutional Notice Board**: Campus-wide bulletins and examination notifications with draft/publish workflows and student unread badges.
 * **Resource Library**: Curated repository for syllabi, lab manuals, and previous year question papers with URL safety validation.
+
+---
+
+## Visual Previews & Screenshots
+
+| View | Description | Preview |
+|---|---|---|
+| **Attendance Intelligence** | Multi-format ERP parser, recovery math calculations, and live what-if simulation sliders | *(docs/screenshots/attendance-intelligence.png)* |
+| **Course Dashboard** | Recharts visual analytics, attendance status, quick tasks, and onboarding checklist | *(docs/screenshots/dashboard.png)* |
+| **Kanban Assignments** | Drag-and-drop workflow across Pending, In Progress, and Completed columns | *(docs/screenshots/kanban.png)* |
+| **Markdown Notebook** | Split-pane markdown editor with live preview and DOMPurify sanitization | *(docs/screenshots/notes.png)* |
+| **Study Focus Timer** | Authoritative Pomodoro tracker with 25/5 and 50/10 presets and weekly focus chart | *(docs/screenshots/study-timer.png)* |
 
 ---
 
@@ -160,25 +174,51 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ---
 
-## Test Suites
+## Database Backup & Safe Backfill Execution
 
-Student Hub maintains test coverage spanning unit, integration, and mathematical parity invariants:
+Before executing subject backfills on existing production accounts, take a verified dump:
 
 ```bash
-# Run server test suite (129 integration & unit tests)
+# Export the database cleanly:
+mongodump --db student-hub --out ./backup-before-backfill
+
+# 1. Run backfill dry-run for a specific user to preview actions safely (creates 0 records):
+npm run --prefix server backfill-subjects -- --user b241105@gmail.com --dry-run
+
+# 2. Run real backfill only after reviewing dry-run counts:
+npm run --prefix server backfill-subjects -- --user b241105@gmail.com
+
+# 3. Confirm idempotency (re-running dry-run creates 0 records):
+npm run --prefix server backfill-subjects -- --user b241105@gmail.com --dry-run
+```
+
+---
+
+## Code Quality & Test Suites
+
+Student Hub maintains exhaustive test coverage spanning unit, integration, and mathematical parity invariants:
+
+```bash
+# Run server test suite (131 integration & unit tests)
 npm test --prefix server
 
 # Run client test suite (11 unit & invariant tests)
 npm test --prefix client
 
-# Run TypeScript compile validation across both projects
-npm run typecheck --prefix server
-npm run lint --prefix client
+# Run ESLint code quality checks across full stack
+npm run lint
+
+# Format code with Prettier
+npm run format
+
+# Run full project test script
+npm test
 ```
 
 ### Verified Test Summary
-* **Server**: 129 tests passing across 32 suites (`Admin Subsystem`, `Attendance Invariants`, `Multi-Tenancy Isolation`, `Task Workflows`, `Goal Auto-Linking`, `Study Timer Sync`, `Cross-Boundary Client/Server Parity`).
+* **Server**: 131 tests passing across 32 suites (`Admin Subsystem`, `Attendance Invariants`, `Multi-Tenancy Isolation`, `Task Workflows`, `Goal Auto-Linking In-Memory Parity`, `Study Timer Sync`, `Notes Partial Word Search`, `Cross-Boundary Client/Server Parity`).
 * **Client**: 11 tests passing across 2 suites (`Attendance Math Engine Proofs`, `Markdown Parsing & XSS Prevention`).
+* **Parity Test**: 1,000+ cross-boundary mathematical permutations verified identical between client slider calculations and server attendance formulas.
 
 ---
 

@@ -4,10 +4,7 @@
  */
 
 export type AttendancePolicy =
-  | 'standard_od'
-  | 'makeup_compensatory'
-  | 'strict_present'
-  | 'erp_direct';
+  'standard_od' | 'makeup_compensatory' | 'strict_present' | 'erp_direct';
 
 export const POLICY_METADATA: Record<
   AttendancePolicy,
@@ -15,12 +12,14 @@ export const POLICY_METADATA: Record<
 > = {
   standard_od: {
     name: 'Standard (Present + OD)',
-    description: 'Counts On Duty (OD) as present. Conducted includes Present, OD, Makeup, and Absent.',
+    description:
+      'Counts On Duty (OD) as present. Conducted includes Present, OD, Makeup, and Absent.',
     formula: 'Attended = Present + OD; Conducted = Present + OD + Makeup + Absent',
   },
   makeup_compensatory: {
     name: 'Compensatory Makeup',
-    description: 'Makeup classes compensate for missed sessions (Net Absent = max(0, Absent - Makeup)).',
+    description:
+      'Makeup classes compensate for missed sessions (Net Absent = max(0, Absent - Makeup)).',
     formula: 'Attended = Present + OD; Conducted = Attended + max(0, Absent - Makeup)',
   },
   strict_present: {
@@ -30,7 +29,8 @@ export const POLICY_METADATA: Record<
   },
   erp_direct: {
     name: 'Official ERP Direct',
-    description: 'Uses the official ERP reported percentage directly without re-derivation (for Training/Projects).',
+    description:
+      'Uses the official ERP reported percentage directly without re-derivation (for Training/Projects).',
     formula: 'Percentage = ERP Reported Percentage',
   },
 };
@@ -76,7 +76,7 @@ export function calculateAttendance(
 
   let attended = 0;
   let conducted = 0;
-  let percentage = 0;
+  let percentage: number;
 
   if (policy === 'erp_direct' && typeof erpPercentage === 'number' && !isNaN(erpPercentage)) {
     conducted = P + OD + M + A;
@@ -116,7 +116,14 @@ export function calculateAttendance(
     discrepancyDelta = Number(Math.abs(percentage - erpPercentage).toFixed(2));
     if (discrepancyDelta > 0.1) {
       isDiscrepancy = true;
-      if (counts.makeup > 0 && Math.abs(Number(((counts.present + counts.od + counts.makeup) / ((conducted - counts.makeup) || 1)) * 100) - erpPercentage) < 0.5) {
+      if (
+        counts.makeup > 0 &&
+        Math.abs(
+          Number(
+            ((counts.present + counts.od + counts.makeup) / (conducted - counts.makeup || 1)) * 100
+          ) - erpPercentage
+        ) < 0.5
+      ) {
         discrepancyNote = `ERP reported ${erpPercentage.toFixed(2)}% vs calculated ${percentage.toFixed(2)}% (${discrepancyDelta}% delta). In ERP, Makeup classes may be credited as attendance credits (e.g. 34/40 = 85.00%). Preserving official ERP reference.`;
       } else if (erpPercentage === 100 && counts.absent > 0) {
         discrepancyNote = `ERP reported 100.00% despite ${counts.absent} recorded absence(s) (Standard: ${percentage.toFixed(2)}%). Module likely evaluated via completion or compensatory waiver. Preserving official ERP reference.`;
@@ -201,14 +208,26 @@ export function simulateScenario(
 } {
   const projectedAttended = attended + Math.max(0, Math.floor(additionalAttended));
   const projectedConducted =
-    conducted + Math.max(0, Math.floor(additionalAttended)) + Math.max(0, Math.floor(additionalMissed));
+    conducted +
+    Math.max(0, Math.floor(additionalAttended)) +
+    Math.max(0, Math.floor(additionalMissed));
 
   const projectedPercentage =
-    projectedConducted > 0 ? Number(((projectedAttended / projectedConducted) * 100).toFixed(2)) : 0;
+    projectedConducted > 0
+      ? Number(((projectedAttended / projectedConducted) * 100).toFixed(2))
+      : 0;
 
   const status = projectedPercentage >= thresholdPercent ? 'safe' : 'shortage';
-  const classesNeeded = calculateClassesNeeded(projectedAttended, projectedConducted, thresholdPercent);
-  const classesSkippable = calculateSkippableClasses(projectedAttended, projectedConducted, thresholdPercent);
+  const classesNeeded = calculateClassesNeeded(
+    projectedAttended,
+    projectedConducted,
+    thresholdPercent
+  );
+  const classesSkippable = calculateSkippableClasses(
+    projectedAttended,
+    projectedConducted,
+    thresholdPercent
+  );
 
   return {
     projectedAttended,
@@ -287,7 +306,14 @@ const HEADER_ALIASES = {
   od: ['od', 'onduty', 'odclasses', 'duty'],
   makeup: ['makeup', 'makeupclasses', 'mu'],
   absent: ['absent', 'a', 'absentclasses', 'missed'],
-  erpPercentage: ['percentage', 'erppercentage', 'percent', 'attendance', 'erp', 'currentpercentage'],
+  erpPercentage: [
+    'percentage',
+    'erppercentage',
+    'percent',
+    'attendance',
+    'erp',
+    'currentpercentage',
+  ],
 };
 
 function matchHeader(headerText: string, candidates: string[]): boolean {
@@ -471,7 +497,7 @@ export function parseErpAttendanceText(
     erpPercentage?: number;
   } = {};
 
-  let dataLines: string[] = [];
+  let dataLines: string[];
 
   if (headerIdx !== -1) {
     const rawHeaders = splitAttendanceLine(lines[headerIdx]);
@@ -556,7 +582,8 @@ export function parseErpAttendanceText(
     const rowNum = rows.length + 1;
     const code = (tokens[colMap.code] || '').trim().toUpperCase();
     const name = (tokens[colMap.name] || '').trim();
-    const type = colMap.type !== undefined && tokens[colMap.type] ? tokens[colMap.type].trim() : 'Lecture';
+    const type =
+      colMap.type !== undefined && tokens[colMap.type] ? tokens[colMap.type].trim() : 'Lecture';
 
     if (!code || !name) {
       rows.push({
@@ -609,7 +636,7 @@ export function parseErpAttendanceText(
     const makeup = colMap.makeup !== undefined ? parseNum(tokens[colMap.makeup]) : 0;
     const absent = colMap.absent !== undefined ? parseNum(tokens[colMap.absent]) : 0;
 
-    let erpPercentage = 0;
+    let erpPercentage: number;
     if (colMap.erpPercentage !== undefined && tokens[colMap.erpPercentage]) {
       erpPercentage = parseNum(tokens[colMap.erpPercentage]);
     } else {
@@ -618,7 +645,14 @@ export function parseErpAttendanceText(
       erpPercentage = total > 0 ? Number((((present + od) / total) * 100).toFixed(2)) : 0;
     }
 
-    if (present < 0 || od < 0 || makeup < 0 || absent < 0 || erpPercentage < 0 || erpPercentage > 100) {
+    if (
+      present < 0 ||
+      od < 0 ||
+      makeup < 0 ||
+      absent < 0 ||
+      erpPercentage < 0 ||
+      erpPercentage > 100
+    ) {
       rows.push({
         rowNumber: rowNum,
         subjectCode: code,

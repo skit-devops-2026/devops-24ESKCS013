@@ -4,12 +4,15 @@ import { renderMarkdown } from './markdown.ts';
 
 describe('Client Markdown Engine - Parsing & XSS Prevention', () => {
   it('converts markdown headers and paragraphs', () => {
-    const input = '# Algorithms\n## Dynamic Programming\nOptimal substructure and overlapping subproblems.';
+    const input =
+      '# Algorithms\n## Dynamic Programming\nOptimal substructure and overlapping subproblems.';
     const html = renderMarkdown(input);
 
     assert.ok(html.includes('<h1 class="md-h1">Algorithms</h1>'));
     assert.ok(html.includes('<h2 class="md-h2">Dynamic Programming</h2>'));
-    assert.ok(html.includes('<p class="md-p">Optimal substructure and overlapping subproblems.</p>'));
+    assert.ok(
+      html.includes('<p class="md-p">Optimal substructure and overlapping subproblems.</p>')
+    );
   });
 
   it('formats inline bold, italic, and code', () => {
@@ -47,6 +50,10 @@ describe('Client Markdown Engine - Parsing & XSS Prevention', () => {
     const code = '```typescript\nconst x: number = 42;\nconsole.log(x);\n```';
     const html = renderMarkdown(code);
 
-    assert.ok(html.includes('<pre class="md-code-block"><code>const x: number = 42;\nconsole.log(x);</code></pre>'));
+    assert.ok(
+      html.includes(
+        '<pre class="md-code-block"><code>const x: number = 42;\nconsole.log(x);</code></pre>'
+      )
+    );
   });
 });

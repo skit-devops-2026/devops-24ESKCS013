@@ -21,7 +21,9 @@ async function createAdmin() {
   }
 
   if (!email || !password) {
-    console.error('Usage: npm run create-admin -- --email <email> --password <password> [--name <name>]');
+    console.error(
+      'Usage: npm run create-admin -- --email <email> --password <password> [--name <name>]'
+    );
     process.exit(1);
   }
 

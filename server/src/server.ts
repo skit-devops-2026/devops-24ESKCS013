@@ -10,13 +10,19 @@ async function startServer() {
     await connectDB();
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
-    console.warn(`[Student Hub API] Warning: Starting server without active DB connection (${msg})`);
+    console.warn(
+      `[Student Hub API] Warning: Starting server without active DB connection (${msg})`
+    );
   }
 
   const server = app.listen(env.PORT, () => {
     console.log(`[Student Hub API] Server running in ${env.NODE_ENV} mode on port ${env.PORT}`);
-    console.log(`[Student Hub API] Health check available at http://localhost:${env.PORT}/api/health`);
-    console.log(`[Student Hub API] Database readiness at http://localhost:${env.PORT}/api/health/db`);
+    console.log(
+      `[Student Hub API] Health check available at http://localhost:${env.PORT}/api/health`
+    );
+    console.log(
+      `[Student Hub API] Database readiness at http://localhost:${env.PORT}/api/health/db`
+    );
   });
 
   // Handle graceful shutdown

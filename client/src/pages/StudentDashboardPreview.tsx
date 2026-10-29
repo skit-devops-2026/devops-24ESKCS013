@@ -110,7 +110,9 @@ export function StudentDashboardPreview() {
       if (subs) setSubjects(subs);
       if (sHist) setStudyHistory(sHist);
       if (tasksRes) {
-        const sorted = [...tasksRes].sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
+        const sorted = [...tasksRes].sort(
+          (a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
+        );
         setUpcomingTasks(sorted.slice(0, 4));
       }
       if (attRes) {
@@ -151,7 +153,8 @@ export function StudentDashboardPreview() {
 
     if (studyHistory?.data) {
       for (const session of studyHistory.data) {
-        const timestamp = session.endTime || (session as unknown as { startTime?: string }).startTime;
+        const timestamp =
+          session.endTime || (session as unknown as { startTime?: string }).startTime;
         if (!timestamp) continue;
         const sessionDate = timestamp.split('T')[0];
         const match = days.find((d) => d.date === sessionDate);
@@ -167,11 +170,11 @@ export function StudentDashboardPreview() {
   })();
 
   // Course average attendance calculation (strictly lectures/labs)
-  const courseAveragePct = attendanceSummary?.overallPercentage ?? (
-    subjects.length > 0
+  const courseAveragePct =
+    attendanceSummary?.overallPercentage ??
+    (subjects.length > 0
       ? Math.round(subjects.reduce((acc, s) => acc + s.attendancePercentage, 0) / subjects.length)
-      : user?.profile?.attendancePercentage ?? 0
-  );
+      : (user?.profile?.attendancePercentage ?? 0));
 
   const isAttendanceCompliant = courseAveragePct >= 75;
 
@@ -194,10 +197,14 @@ export function StudentDashboardPreview() {
           totalConducted: match?.totalConducted,
           classesNeeded: match
             ? match.classesNeeded
-            : (isShortage ? calculateClassesNeeded(percentage, 100, threshold) : 0),
+            : isShortage
+              ? calculateClassesNeeded(percentage, 100, threshold)
+              : 0,
           classesSkippable: match
             ? match.classesSkippable
-            : (!isShortage ? calculateSkippableClasses(percentage, 100, threshold) : 0),
+            : !isShortage
+              ? calculateSkippableClasses(percentage, 100, threshold)
+              : 0,
           isShortage,
         };
       });
@@ -245,12 +252,23 @@ export function StudentDashboardPreview() {
   };
 
   const attendanceDonutData = [
-    { name: 'Attended (Present + OD)', value: totalAttended > 0 ? totalAttended : (isAttendanceCompliant ? 75 : courseAveragePct), color: chartTokens.attendedFill },
-    { name: 'Absent / Missed', value: totalAbsent > 0 ? totalAbsent : (100 - courseAveragePct), color: chartTokens.absentFill },
+    {
+      name: 'Attended (Present + OD)',
+      value: totalAttended > 0 ? totalAttended : isAttendanceCompliant ? 75 : courseAveragePct,
+      color: chartTokens.attendedFill,
+    },
+    {
+      name: 'Absent / Missed',
+      value: totalAbsent > 0 ? totalAbsent : 100 - courseAveragePct,
+      color: chartTokens.absentFill,
+    },
   ];
 
   return (
-    <div className="container" style={{ padding: '2rem 1.5rem', maxWidth: '1280px', margin: '0 auto' }}>
+    <div
+      className="container"
+      style={{ padding: '2rem 1.5rem', maxWidth: '1280px', margin: '0 auto' }}
+    >
       {/* Top Banner / Welcome Chrome */}
       <div
         style={{
@@ -265,35 +283,70 @@ export function StudentDashboardPreview() {
         }}
       >
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.4rem' }}>
-            <span className="badge badge-gold" style={{ fontSize: '0.72rem', letterSpacing: '0.04em' }}>
+          <div
+            style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.4rem' }}
+          >
+            <span
+              className="badge badge-gold"
+              style={{ fontSize: '0.72rem', letterSpacing: '0.04em' }}
+            >
               ACADEMIC COCKPIT
             </span>
             <span style={{ fontSize: '0.8rem', color: 'var(--ink-soft)' }}>
-              {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' })}
+              {new Date().toLocaleDateString('en-US', {
+                weekday: 'long',
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric',
+              })}
             </span>
           </div>
 
-          <h1 style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--ink)', margin: 0, letterSpacing: '-0.02em' }}>
+          <h1
+            style={{
+              fontSize: '2rem',
+              fontWeight: 700,
+              color: 'var(--ink)',
+              margin: 0,
+              letterSpacing: '-0.02em',
+            }}
+          >
             Welcome back, {user?.name || 'Student'}
           </h1>
 
-          <p style={{ color: 'var(--ink-soft)', fontSize: '0.875rem', marginTop: '0.35rem', marginBottom: 0 }}>
+          <p
+            style={{
+              color: 'var(--ink-soft)',
+              fontSize: '0.875rem',
+              marginTop: '0.35rem',
+              marginBottom: 0,
+            }}
+          >
             {user?.profile?.rollNumber ? (
               <>
-                Roll No: <strong style={{ color: 'var(--ink)' }}>{user.profile.rollNumber}</strong> &bull;{' '}
+                Roll No: <strong style={{ color: 'var(--ink)' }}>{user.profile.rollNumber}</strong>{' '}
+                &bull;{' '}
               </>
             ) : null}
-            {user?.profile?.department || 'Computer Science & Engineering'} &bull; Semester {user?.profile?.semester || 5}
+            {user?.profile?.department || 'Computer Science & Engineering'} &bull; Semester{' '}
+            {user?.profile?.semester || 5}
           </p>
         </div>
 
         <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-          <Link to="/student/attendance" className="btn btn-secondary" style={{ gap: '0.4rem', fontSize: '0.85rem' }}>
+          <Link
+            to="/student/attendance"
+            className="btn btn-secondary"
+            style={{ gap: '0.4rem', fontSize: '0.85rem' }}
+          >
             <UploadCloud size={16} />
             <span>Import ERP</span>
           </Link>
-          <Link to="/student/study" className="btn btn-primary" style={{ gap: '0.4rem', fontSize: '0.85rem' }}>
+          <Link
+            to="/student/study"
+            className="btn btn-primary"
+            style={{ gap: '0.4rem', fontSize: '0.85rem' }}
+          >
             <Timer size={16} />
             <span>Start Focus Session</span>
           </Link>
@@ -319,7 +372,8 @@ export function StudentDashboardPreview() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
             <AlertTriangle size={18} color="var(--brand-gold)" />
             <span style={{ fontSize: '0.85rem', color: 'var(--ink)' }}>
-              Some academic services could not be reached ({apiErrors.join(', ')}). Other metrics are displayed from live data.
+              Some academic services could not be reached ({apiErrors.join(', ')}). Other metrics
+              are displayed from live data.
             </span>
           </div>
           <button
@@ -346,21 +400,51 @@ export function StudentDashboardPreview() {
               : 'linear-gradient(135deg, rgba(217, 119, 6, 0.05) 0%, rgba(255, 255, 255, 0.95) 100%)',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.4rem' }}>
+          <div
+            style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.4rem' }}
+          >
             <span className="badge badge-gold">Quick Setup</span>
             <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--ink)', margin: 0 }}>
               Getting Started Checklist
             </h2>
           </div>
           <p style={{ color: 'var(--ink-soft)', fontSize: '0.88rem', margin: '0 0 1.25rem' }}>
-            Welcome to Student Hub! Complete these steps to configure your academic registry, activate attendance shortage detection, and track study time.
+            Welcome to Student Hub! Complete these steps to configure your academic registry,
+            activate attendance shortage detection, and track study time.
           </p>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
-            <div style={{ padding: '1rem', borderRadius: 'var(--radius-md)', backgroundColor: 'var(--surface)', border: '1px solid var(--border)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--brand-gold)' }}>STEP 1</span>
-                <span style={{ fontSize: '0.72rem', color: subjects.length > 0 ? 'var(--emerald)' : 'var(--ink-soft)' }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+              gap: '1rem',
+            }}
+          >
+            <div
+              style={{
+                padding: '1rem',
+                borderRadius: 'var(--radius-md)',
+                backgroundColor: 'var(--surface)',
+                border: '1px solid var(--border)',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginBottom: '0.5rem',
+                }}
+              >
+                <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--brand-gold)' }}>
+                  STEP 1
+                </span>
+                <span
+                  style={{
+                    fontSize: '0.72rem',
+                    color: subjects.length > 0 ? 'var(--emerald)' : 'var(--ink-soft)',
+                  }}
+                >
                   {subjects.length > 0 ? (
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}>
                       <CheckCircle2 size={12} /> Completed
@@ -370,21 +454,53 @@ export function StudentDashboardPreview() {
                   )}
                 </span>
               </div>
-              <div style={{ fontWeight: 600, color: 'var(--ink)', fontSize: '0.9rem', marginBottom: '0.25rem' }}>
+              <div
+                style={{
+                  fontWeight: 600,
+                  color: 'var(--ink)',
+                  fontSize: '0.9rem',
+                  marginBottom: '0.25rem',
+                }}
+              >
                 Import ERP Attendance
               </div>
               <p style={{ fontSize: '0.78rem', color: 'var(--ink-soft)', margin: '0 0 0.75rem' }}>
                 Paste university attendance text to register courses and recovery math.
               </p>
-              <Link to="/student/attendance" className="btn btn-secondary" style={{ fontSize: '0.78rem', width: '100%', justifyContent: 'center' }}>
+              <Link
+                to="/student/attendance"
+                className="btn btn-secondary"
+                style={{ fontSize: '0.78rem', width: '100%', justifyContent: 'center' }}
+              >
                 Import ERP Report
               </Link>
             </div>
 
-            <div style={{ padding: '1rem', borderRadius: 'var(--radius-md)', backgroundColor: 'var(--surface)', border: '1px solid var(--border)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--brand-gold)' }}>STEP 2</span>
-                <span style={{ fontSize: '0.72rem', color: (taskSummary?.total ?? 0) > 0 ? 'var(--emerald)' : 'var(--ink-soft)' }}>
+            <div
+              style={{
+                padding: '1rem',
+                borderRadius: 'var(--radius-md)',
+                backgroundColor: 'var(--surface)',
+                border: '1px solid var(--border)',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginBottom: '0.5rem',
+                }}
+              >
+                <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--brand-gold)' }}>
+                  STEP 2
+                </span>
+                <span
+                  style={{
+                    fontSize: '0.72rem',
+                    color: (taskSummary?.total ?? 0) > 0 ? 'var(--emerald)' : 'var(--ink-soft)',
+                  }}
+                >
                   {(taskSummary?.total ?? 0) > 0 ? (
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}>
                       <CheckCircle2 size={12} /> Completed
@@ -394,21 +510,53 @@ export function StudentDashboardPreview() {
                   )}
                 </span>
               </div>
-              <div style={{ fontWeight: 600, color: 'var(--ink)', fontSize: '0.9rem', marginBottom: '0.25rem' }}>
+              <div
+                style={{
+                  fontWeight: 600,
+                  color: 'var(--ink)',
+                  fontSize: '0.9rem',
+                  marginBottom: '0.25rem',
+                }}
+              >
                 Create First Task
               </div>
               <p style={{ fontSize: '0.78rem', color: 'var(--ink-soft)', margin: '0 0 0.75rem' }}>
                 Organize assignments, lab work, and exams with priority flags.
               </p>
-              <Link to="/student/tasks" className="btn btn-secondary" style={{ fontSize: '0.78rem', width: '100%', justifyContent: 'center' }}>
+              <Link
+                to="/student/tasks"
+                className="btn btn-secondary"
+                style={{ fontSize: '0.78rem', width: '100%', justifyContent: 'center' }}
+              >
                 Add Assignment
               </Link>
             </div>
 
-            <div style={{ padding: '1rem', borderRadius: 'var(--radius-md)', backgroundColor: 'var(--surface)', border: '1px solid var(--border)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--brand-gold)' }}>STEP 3</span>
-                <span style={{ fontSize: '0.72rem', color: (goalSummary?.total ?? 0) > 0 ? 'var(--emerald)' : 'var(--ink-soft)' }}>
+            <div
+              style={{
+                padding: '1rem',
+                borderRadius: 'var(--radius-md)',
+                backgroundColor: 'var(--surface)',
+                border: '1px solid var(--border)',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginBottom: '0.5rem',
+                }}
+              >
+                <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--brand-gold)' }}>
+                  STEP 3
+                </span>
+                <span
+                  style={{
+                    fontSize: '0.72rem',
+                    color: (goalSummary?.total ?? 0) > 0 ? 'var(--emerald)' : 'var(--ink-soft)',
+                  }}
+                >
                   {(goalSummary?.total ?? 0) > 0 ? (
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}>
                       <CheckCircle2 size={12} /> Completed
@@ -418,21 +566,56 @@ export function StudentDashboardPreview() {
                   )}
                 </span>
               </div>
-              <div style={{ fontWeight: 600, color: 'var(--ink)', fontSize: '0.9rem', marginBottom: '0.25rem' }}>
+              <div
+                style={{
+                  fontWeight: 600,
+                  color: 'var(--ink)',
+                  fontSize: '0.9rem',
+                  marginBottom: '0.25rem',
+                }}
+              >
                 Set Semester Goal
               </div>
               <p style={{ fontSize: '0.78rem', color: 'var(--ink-soft)', margin: '0 0 0.75rem' }}>
                 Define quantitative targets (SGPA, chapters, DSA problems).
               </p>
-              <Link to="/student/goals" className="btn btn-secondary" style={{ fontSize: '0.78rem', width: '100%', justifyContent: 'center' }}>
+              <Link
+                to="/student/goals"
+                className="btn btn-secondary"
+                style={{ fontSize: '0.78rem', width: '100%', justifyContent: 'center' }}
+              >
                 Define Goal
               </Link>
             </div>
 
-            <div style={{ padding: '1rem', borderRadius: 'var(--radius-md)', backgroundColor: 'var(--surface)', border: '1px solid var(--border)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--brand-gold)' }}>STEP 4</span>
-                <span style={{ fontSize: '0.72rem', color: (studyHistory?.summary.totalSessions ?? 0) > 0 ? 'var(--emerald)' : 'var(--ink-soft)' }}>
+            <div
+              style={{
+                padding: '1rem',
+                borderRadius: 'var(--radius-md)',
+                backgroundColor: 'var(--surface)',
+                border: '1px solid var(--border)',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginBottom: '0.5rem',
+                }}
+              >
+                <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--brand-gold)' }}>
+                  STEP 4
+                </span>
+                <span
+                  style={{
+                    fontSize: '0.72rem',
+                    color:
+                      (studyHistory?.summary.totalSessions ?? 0) > 0
+                        ? 'var(--emerald)'
+                        : 'var(--ink-soft)',
+                  }}
+                >
                   {(studyHistory?.summary.totalSessions ?? 0) > 0 ? (
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}>
                       <CheckCircle2 size={12} /> Completed
@@ -442,13 +625,24 @@ export function StudentDashboardPreview() {
                   )}
                 </span>
               </div>
-              <div style={{ fontWeight: 600, color: 'var(--ink)', fontSize: '0.9rem', marginBottom: '0.25rem' }}>
+              <div
+                style={{
+                  fontWeight: 600,
+                  color: 'var(--ink)',
+                  fontSize: '0.9rem',
+                  marginBottom: '0.25rem',
+                }}
+              >
                 Launch Focus Timer
               </div>
               <p style={{ fontSize: '0.78rem', color: 'var(--ink-soft)', margin: '0 0 0.75rem' }}>
                 Start an authoritative Pomodoro focus block to log your study hours.
               </p>
-              <Link to="/student/study" className="btn btn-primary" style={{ fontSize: '0.78rem', width: '100%', justifyContent: 'center' }}>
+              <Link
+                to="/student/study"
+                className="btn btn-primary"
+                style={{ fontSize: '0.78rem', width: '100%', justifyContent: 'center' }}
+              >
                 Start Timer
               </Link>
             </div>
@@ -470,22 +664,63 @@ export function StudentDashboardPreview() {
           <SkeletonCard />
         ) : (
           <div className="card" style={{ padding: '1.25rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
-              <span style={{ color: 'var(--ink-soft)', fontSize: '0.8rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-start',
+                marginBottom: '0.5rem',
+              }}
+            >
+              <span
+                style={{
+                  color: 'var(--ink-soft)',
+                  fontSize: '0.8rem',
+                  fontWeight: 600,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
+                }}
+              >
                 Enrolled Courses
               </span>
-              <div style={{ padding: '0.4rem', borderRadius: 'var(--radius-md)', backgroundColor: 'var(--surface-muted)', color: 'var(--brand-gold)' }}>
+              <div
+                style={{
+                  padding: '0.4rem',
+                  borderRadius: 'var(--radius-md)',
+                  backgroundColor: 'var(--surface-muted)',
+                  color: 'var(--brand-gold)',
+                }}
+              >
                 <BookOpen size={18} />
               </div>
             </div>
-            <div style={{ fontSize: '2.1rem', fontWeight: 700, color: 'var(--ink)', lineHeight: 1.1 }}>
+            <div
+              style={{ fontSize: '2.1rem', fontWeight: 700, color: 'var(--ink)', lineHeight: 1.1 }}
+            >
               {subjects.length}
             </div>
-            <div style={{ marginTop: '0.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div
+              style={{
+                marginTop: '0.5rem',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
               <span style={{ fontSize: '0.78rem', color: 'var(--ink-soft)' }}>
-                {attendanceSummary?.totalSubjects ? `${attendanceSummary.totalSubjects} in ERP` : 'Active curriculum'}
+                {attendanceSummary?.totalSubjects
+                  ? `${attendanceSummary.totalSubjects} in ERP`
+                  : 'Active curriculum'}
               </span>
-              <Link to="/student/subjects" style={{ fontSize: '0.78rem', color: 'var(--brand-gold)', fontWeight: 600, textDecoration: 'none' }}>
+              <Link
+                to="/student/subjects"
+                style={{
+                  fontSize: '0.78rem',
+                  color: 'var(--brand-gold)',
+                  fontWeight: 600,
+                  textDecoration: 'none',
+                }}
+              >
                 View →
               </Link>
             </div>
@@ -497,16 +732,35 @@ export function StudentDashboardPreview() {
           <SkeletonCard />
         ) : (
           <div className="card" style={{ padding: '1.25rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.35rem' }}>
-              <span style={{ color: 'var(--ink-soft)', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-start',
+                marginBottom: '0.35rem',
+              }}
+            >
+              <span
+                style={{
+                  color: 'var(--ink-soft)',
+                  fontSize: '0.75rem',
+                  fontWeight: 600,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
+                }}
+              >
                 Course Average (Lectures/Labs)
               </span>
               <div
                 style={{
                   padding: '0.4rem',
                   borderRadius: 'var(--radius-md)',
-                  backgroundColor: isAttendanceCompliant ? 'var(--emerald-soft, rgba(16,185,129,0.1))' : 'var(--crimson-soft, rgba(239,68,68,0.1))',
-                  color: isAttendanceCompliant ? 'var(--emerald, #10b981)' : 'var(--crimson, #ef4444)',
+                  backgroundColor: isAttendanceCompliant
+                    ? 'var(--emerald-soft, rgba(16,185,129,0.1))'
+                    : 'var(--crimson-soft, rgba(239,68,68,0.1))',
+                  color: isAttendanceCompliant
+                    ? 'var(--emerald, #10b981)'
+                    : 'var(--crimson, #ef4444)',
                 }}
               >
                 <CalendarCheck size={18} />
@@ -516,7 +770,9 @@ export function StudentDashboardPreview() {
               style={{
                 fontSize: '2.1rem',
                 fontWeight: 700,
-                color: isAttendanceCompliant ? 'var(--emerald, #10b981)' : 'var(--crimson, #ef4444)',
+                color: isAttendanceCompliant
+                  ? 'var(--emerald, #10b981)'
+                  : 'var(--crimson, #ef4444)',
                 lineHeight: 1.1,
               }}
             >
@@ -524,15 +780,27 @@ export function StudentDashboardPreview() {
             </div>
             {attendanceSummary?.erpAggregatePercentage !== undefined && (
               <div style={{ fontSize: '0.73rem', color: 'var(--ink-soft)', marginTop: '0.2rem' }}>
-                ERP aggregate (incl. event hours): <strong style={{ color: 'var(--ink)' }}>{attendanceSummary.erpAggregatePercentage}%</strong>
+                ERP aggregate (incl. event hours):{' '}
+                <strong style={{ color: 'var(--ink)' }}>
+                  {attendanceSummary.erpAggregatePercentage}%
+                </strong>
               </div>
             )}
-            <div style={{ marginTop: '0.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div
+              style={{
+                marginTop: '0.5rem',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
               <span
                 style={{
                   fontSize: '0.76rem',
                   fontWeight: 600,
-                  color: isAttendanceCompliant ? 'var(--emerald, #10b981)' : 'var(--crimson, #ef4444)',
+                  color: isAttendanceCompliant
+                    ? 'var(--emerald, #10b981)'
+                    : 'var(--crimson, #ef4444)',
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '0.3rem',
@@ -550,7 +818,18 @@ export function StudentDashboardPreview() {
                   </>
                 )}
               </span>
-              <Link to="/student/attendance" style={{ fontSize: '0.78rem', color: 'var(--brand-gold)', fontWeight: 600, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}>
+              <Link
+                to="/student/attendance"
+                style={{
+                  fontSize: '0.78rem',
+                  color: 'var(--brand-gold)',
+                  fontWeight: 600,
+                  textDecoration: 'none',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.2rem',
+                }}
+              >
                 <span>Details</span>
                 <ArrowRight size={13} />
               </Link>
@@ -563,28 +842,72 @@ export function StudentDashboardPreview() {
           <SkeletonCard />
         ) : (
           <div className="card" style={{ padding: '1.25rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
-              <span style={{ color: 'var(--ink-soft)', fontSize: '0.8rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-start',
+                marginBottom: '0.5rem',
+              }}
+            >
+              <span
+                style={{
+                  color: 'var(--ink-soft)',
+                  fontSize: '0.8rem',
+                  fontWeight: 600,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
+                }}
+              >
                 Pending Tasks
               </span>
-              <div style={{ padding: '0.4rem', borderRadius: 'var(--radius-md)', backgroundColor: 'var(--surface-muted)', color: 'var(--brand-gold)' }}>
+              <div
+                style={{
+                  padding: '0.4rem',
+                  borderRadius: 'var(--radius-md)',
+                  backgroundColor: 'var(--surface-muted)',
+                  color: 'var(--brand-gold)',
+                }}
+              >
                 <CheckSquare size={18} />
               </div>
             </div>
-            <div style={{ fontSize: '2.1rem', fontWeight: 700, color: 'var(--ink)', lineHeight: 1.1 }}>
+            <div
+              style={{ fontSize: '2.1rem', fontWeight: 700, color: 'var(--ink)', lineHeight: 1.1 }}
+            >
               {taskSummary?.pending ?? 0}
             </div>
-            <div style={{ marginTop: '0.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div
+              style={{
+                marginTop: '0.5rem',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
               <span
                 style={{
                   fontSize: '0.78rem',
                   fontWeight: 600,
-                  color: (taskSummary?.overdue ?? 0) > 0 ? 'var(--crimson, #ef4444)' : 'var(--emerald, #10b981)',
+                  color:
+                    (taskSummary?.overdue ?? 0) > 0
+                      ? 'var(--crimson, #ef4444)'
+                      : 'var(--emerald, #10b981)',
                 }}
               >
-                {(taskSummary?.overdue ?? 0) > 0 ? `${taskSummary?.overdue} overdue` : 'All deadlines on track'}
+                {(taskSummary?.overdue ?? 0) > 0
+                  ? `${taskSummary?.overdue} overdue`
+                  : 'All deadlines on track'}
               </span>
-              <Link to="/student/tasks" style={{ fontSize: '0.78rem', color: 'var(--brand-gold)', fontWeight: 600, textDecoration: 'none' }}>
+              <Link
+                to="/student/tasks"
+                style={{
+                  fontSize: '0.78rem',
+                  color: 'var(--brand-gold)',
+                  fontWeight: 600,
+                  textDecoration: 'none',
+                }}
+              >
                 Tasks →
               </Link>
             </div>
@@ -596,23 +919,69 @@ export function StudentDashboardPreview() {
           <SkeletonCard />
         ) : (
           <div className="card" style={{ padding: '1.25rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
-              <span style={{ color: 'var(--ink-soft)', fontSize: '0.8rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-start',
+                marginBottom: '0.5rem',
+              }}
+            >
+              <span
+                style={{
+                  color: 'var(--ink-soft)',
+                  fontSize: '0.8rem',
+                  fontWeight: 600,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
+                }}
+              >
                 Semester Goals
               </span>
-              <div style={{ padding: '0.4rem', borderRadius: 'var(--radius-md)', backgroundColor: 'var(--surface-muted)', color: 'var(--brand-gold)' }}>
+              <div
+                style={{
+                  padding: '0.4rem',
+                  borderRadius: 'var(--radius-md)',
+                  backgroundColor: 'var(--surface-muted)',
+                  color: 'var(--brand-gold)',
+                }}
+              >
                 <Target size={18} />
               </div>
             </div>
-            <div style={{ fontSize: '2.1rem', fontWeight: 700, color: 'var(--ink)', lineHeight: 1.1 }}>
+            <div
+              style={{ fontSize: '2.1rem', fontWeight: 700, color: 'var(--ink)', lineHeight: 1.1 }}
+            >
               {goalSummary?.completed ?? 0}
-              <span style={{ fontSize: '1.1rem', fontWeight: 500, color: 'var(--ink-soft)' }}> / {goalSummary?.total ?? 0}</span>
-            </div>
-            <div style={{ marginTop: '0.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: '0.78rem', color: 'var(--emerald, #10b981)', fontWeight: 600 }}>
-                {goalSummary?.averageProgress ? `${goalSummary.averageProgress}% completed` : 'No active milestones'}
+              <span style={{ fontSize: '1.1rem', fontWeight: 500, color: 'var(--ink-soft)' }}>
+                {' '}
+                / {goalSummary?.total ?? 0}
               </span>
-              <Link to="/student/goals" style={{ fontSize: '0.78rem', color: 'var(--brand-gold)', fontWeight: 600, textDecoration: 'none' }}>
+            </div>
+            <div
+              style={{
+                marginTop: '0.5rem',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <span
+                style={{ fontSize: '0.78rem', color: 'var(--emerald, #10b981)', fontWeight: 600 }}
+              >
+                {goalSummary?.averageProgress
+                  ? `${goalSummary.averageProgress}% completed`
+                  : 'No active milestones'}
+              </span>
+              <Link
+                to="/student/goals"
+                style={{
+                  fontSize: '0.78rem',
+                  color: 'var(--brand-gold)',
+                  fontWeight: 600,
+                  textDecoration: 'none',
+                }}
+              >
                 Goals →
               </Link>
             </div>
@@ -624,23 +993,64 @@ export function StudentDashboardPreview() {
           <SkeletonCard />
         ) : (
           <div className="card" style={{ padding: '1.25rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
-              <span style={{ color: 'var(--ink-soft)', fontSize: '0.8rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-start',
+                marginBottom: '0.5rem',
+              }}
+            >
+              <span
+                style={{
+                  color: 'var(--ink-soft)',
+                  fontSize: '0.8rem',
+                  fontWeight: 600,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
+                }}
+              >
                 Study Focus
               </span>
-              <div style={{ padding: '0.4rem', borderRadius: 'var(--radius-md)', backgroundColor: 'var(--surface-muted)', color: 'var(--brand-gold)' }}>
+              <div
+                style={{
+                  padding: '0.4rem',
+                  borderRadius: 'var(--radius-md)',
+                  backgroundColor: 'var(--surface-muted)',
+                  color: 'var(--brand-gold)',
+                }}
+              >
                 <Clock size={18} />
               </div>
             </div>
-            <div style={{ fontSize: '2.1rem', fontWeight: 700, color: 'var(--ink)', lineHeight: 1.1 }}>
+            <div
+              style={{ fontSize: '2.1rem', fontWeight: 700, color: 'var(--ink)', lineHeight: 1.1 }}
+            >
               {studyHistory?.summary.totalHoursFormatted ?? '0.0'}
-              <span style={{ fontSize: '1.1rem', fontWeight: 500, color: 'var(--ink-soft)' }}>h</span>
+              <span style={{ fontSize: '1.1rem', fontWeight: 500, color: 'var(--ink-soft)' }}>
+                h
+              </span>
             </div>
-            <div style={{ marginTop: '0.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div
+              style={{
+                marginTop: '0.5rem',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
               <span style={{ fontSize: '0.78rem', color: 'var(--ink-soft)' }}>
                 {studyHistory?.summary.totalSessions ?? 0} sessions recorded
               </span>
-              <Link to="/student/study" style={{ fontSize: '0.78rem', color: 'var(--brand-gold)', fontWeight: 600, textDecoration: 'none' }}>
+              <Link
+                to="/student/study"
+                style={{
+                  fontSize: '0.78rem',
+                  color: 'var(--brand-gold)',
+                  fontWeight: 600,
+                  textDecoration: 'none',
+                }}
+              >
                 Timer →
               </Link>
             </div>
@@ -664,7 +1074,14 @@ export function StudentDashboardPreview() {
             gap: '1rem',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.875rem', maxWidth: '850px' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: '0.875rem',
+              maxWidth: '850px',
+            }}
+          >
             <div
               style={{
                 backgroundColor: 'var(--crimson, #ef4444)',
@@ -677,9 +1094,19 @@ export function StudentDashboardPreview() {
               <AlertTriangle size={20} />
             </div>
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
-                <strong style={{ color: 'var(--crimson, #ef4444)', fontSize: '1.05rem', fontWeight: 700 }}>
-                  Attendance Shortage Alert ({attendanceShortages.length} Subject{attendanceShortages.length > 1 ? 's' : ''} Below 75%)
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  marginBottom: '0.25rem',
+                }}
+              >
+                <strong
+                  style={{ color: 'var(--crimson, #ef4444)', fontSize: '1.05rem', fontWeight: 700 }}
+                >
+                  Attendance Shortage Alert ({attendanceShortages.length} Subject
+                  {attendanceShortages.length > 1 ? 's' : ''} Below 75%)
                 </strong>
                 <span
                   style={{
@@ -695,11 +1122,16 @@ export function StudentDashboardPreview() {
                 </span>
               </div>
               <p style={{ margin: 0, color: 'var(--ink)', fontSize: '0.9rem', lineHeight: 1.5 }}>
-                Course <strong style={{ color: 'var(--crimson, #ef4444)' }}>{attendanceShortages[0].subjectCode} ({attendanceShortages[0].subjectName})</strong> is currently at{' '}
-                <strong>{attendanceShortages[0].calculatedPercentage}%</strong>.{' '}
+                Course{' '}
+                <strong style={{ color: 'var(--crimson, #ef4444)' }}>
+                  {attendanceShortages[0].subjectCode} ({attendanceShortages[0].subjectName})
+                </strong>{' '}
+                is currently at <strong>{attendanceShortages[0].calculatedPercentage}%</strong>.{' '}
                 {attendanceShortages[0].classesNeeded > 0 ? (
                   <>
-                    Recovery Math requires attending <strong>{attendanceShortages[0].classesNeeded} consecutive classes</strong> without absence to restore minimum 75% exam eligibility.
+                    Recovery Math requires attending{' '}
+                    <strong>{attendanceShortages[0].classesNeeded} consecutive classes</strong>{' '}
+                    without absence to restore minimum 75% exam eligibility.
                   </>
                 ) : (
                   'Immediate attendance compliance required.'
@@ -736,8 +1168,18 @@ export function StudentDashboardPreview() {
         }}
       >
         {/* Chart 1: Course Attendance Intelligence Composition */}
-        <div className="card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+        <div
+          className="card"
+          style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column' }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '1.25rem',
+            }}
+          >
             <div>
               <h2 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--ink)', margin: 0 }}>
                 Course Attendance Composition (Lectures &amp; Labs)
@@ -746,17 +1188,41 @@ export function StudentDashboardPreview() {
                 Course average (lectures/labs) vs 75% institutional requirement
               </p>
             </div>
-            <Link to="/student/attendance" style={{ fontSize: '0.8rem', color: 'var(--brand-gold)', fontWeight: 600, textDecoration: 'none' }}>
+            <Link
+              to="/student/attendance"
+              style={{
+                fontSize: '0.8rem',
+                color: 'var(--brand-gold)',
+                fontWeight: 600,
+                textDecoration: 'none',
+              }}
+            >
               Simulator →
             </Link>
           </div>
 
           {loading ? (
-            <div style={{ height: 220, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div
+              style={{
+                height: 220,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
               <Skeleton width="180px" height="180px" borderRadius="50%" />
             </div>
           ) : (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around', flexWrap: 'wrap', gap: '1rem', flex: 1 }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-around',
+                flexWrap: 'wrap',
+                gap: '1rem',
+                flex: 1,
+              }}
+            >
               <div style={{ position: 'relative', width: 190, height: 190 }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
@@ -803,52 +1269,125 @@ export function StudentDashboardPreview() {
                     style={{
                       fontSize: '1.5rem',
                       fontWeight: 800,
-                      color: isAttendanceCompliant ? 'var(--emerald, #10b981)' : 'var(--crimson, #ef4444)',
+                      color: isAttendanceCompliant
+                        ? 'var(--emerald, #10b981)'
+                        : 'var(--crimson, #ef4444)',
                       lineHeight: 1,
                     }}
                   >
                     {courseAveragePct}%
                   </div>
-                  <div style={{ fontSize: '0.65rem', color: 'var(--ink-soft)', textTransform: 'uppercase', fontWeight: 600, marginTop: '0.2rem' }}>
+                  <div
+                    style={{
+                      fontSize: '0.65rem',
+                      color: 'var(--ink-soft)',
+                      textTransform: 'uppercase',
+                      fontWeight: 600,
+                      marginTop: '0.2rem',
+                    }}
+                  >
                     Course Average
                   </div>
                 </div>
               </div>
 
               {/* Attendance Breakdown Column */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', minWidth: '180px' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.65rem',
+                  minWidth: '180px',
+                }}
+              >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                  <div style={{ width: 12, height: 12, borderRadius: 3, backgroundColor: chartTokens.attendedFill }} />
+                  <div
+                    style={{
+                      width: 12,
+                      height: 12,
+                      borderRadius: 3,
+                      backgroundColor: chartTokens.attendedFill,
+                    }}
+                  />
                   <div>
-                    <div style={{ fontSize: '0.78rem', color: 'var(--ink-soft)' }}>Attended (Present + OD)</div>
+                    <div style={{ fontSize: '0.78rem', color: 'var(--ink-soft)' }}>
+                      Attended (Present + OD)
+                    </div>
                     <div style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--ink)' }}>
-                      {totalAttended} <span style={{ fontSize: '0.75rem', fontWeight: 400, color: 'var(--ink-soft)' }}>classes</span>
+                      {totalAttended}{' '}
+                      <span
+                        style={{ fontSize: '0.75rem', fontWeight: 400, color: 'var(--ink-soft)' }}
+                      >
+                        classes
+                      </span>
                     </div>
                   </div>
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                  <div style={{ width: 12, height: 12, borderRadius: 3, backgroundColor: chartTokens.absentFill }} />
+                  <div
+                    style={{
+                      width: 12,
+                      height: 12,
+                      borderRadius: 3,
+                      backgroundColor: chartTokens.absentFill,
+                    }}
+                  />
                   <div>
-                    <div style={{ fontSize: '0.78rem', color: 'var(--ink-soft)' }}>Absent / Missed</div>
+                    <div style={{ fontSize: '0.78rem', color: 'var(--ink-soft)' }}>
+                      Absent / Missed
+                    </div>
                     <div style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--ink)' }}>
-                      {totalAbsent} <span style={{ fontSize: '0.75rem', fontWeight: 400, color: 'var(--ink-soft)' }}>classes</span>
+                      {totalAbsent}{' '}
+                      <span
+                        style={{ fontSize: '0.75rem', fontWeight: 400, color: 'var(--ink-soft)' }}
+                      >
+                        classes
+                      </span>
                     </div>
                   </div>
                 </div>
 
-                <div style={{ borderTop: '1px solid var(--border)', paddingTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                  <div style={{ width: 12, height: 12, borderRadius: 3, backgroundColor: chartTokens.barFill }} />
+                <div
+                  style={{
+                    borderTop: '1px solid var(--border)',
+                    paddingTop: '0.5rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.6rem',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: 12,
+                      height: 12,
+                      borderRadius: 3,
+                      backgroundColor: chartTokens.barFill,
+                    }}
+                  />
                   <div>
-                    <div style={{ fontSize: '0.78rem', color: 'var(--ink-soft)' }}>Total Conducted</div>
+                    <div style={{ fontSize: '0.78rem', color: 'var(--ink-soft)' }}>
+                      Total Conducted
+                    </div>
                     <div style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--ink)' }}>
-                      {totalConducted || (totalAttended + totalAbsent)} <span style={{ fontSize: '0.75rem', fontWeight: 400, color: 'var(--ink-soft)' }}>classes</span>
+                      {totalConducted || totalAttended + totalAbsent}{' '}
+                      <span
+                        style={{ fontSize: '0.75rem', fontWeight: 400, color: 'var(--ink-soft)' }}
+                      >
+                        classes
+                      </span>
                     </div>
                   </div>
                 </div>
 
                 {attendanceSummary?.erpAggregatePercentage !== undefined && (
-                  <div style={{ borderTop: '1px dashed var(--border)', paddingTop: '0.5rem', marginTop: '0.2rem' }}>
+                  <div
+                    style={{
+                      borderTop: '1px dashed var(--border)',
+                      paddingTop: '0.5rem',
+                      marginTop: '0.2rem',
+                    }}
+                  >
                     <div style={{ fontSize: '0.72rem', color: 'var(--ink-soft)' }}>
                       ERP aggregate (incl. event hours):
                     </div>
@@ -863,8 +1402,18 @@ export function StudentDashboardPreview() {
         </div>
 
         {/* Chart 2: Weekly Study Focus Bar Chart */}
-        <div className="card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+        <div
+          className="card"
+          style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column' }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '1.25rem',
+            }}
+          >
             <div>
               <h2 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--ink)', margin: 0 }}>
                 Weekly Study Focus
@@ -873,20 +1422,43 @@ export function StudentDashboardPreview() {
                 Daily focus hours over the past 7 days
               </p>
             </div>
-            <Link to="/student/study" style={{ fontSize: '0.8rem', color: 'var(--brand-gold)', fontWeight: 600, textDecoration: 'none' }}>
+            <Link
+              to="/student/study"
+              style={{
+                fontSize: '0.8rem',
+                color: 'var(--brand-gold)',
+                fontWeight: 600,
+                textDecoration: 'none',
+              }}
+            >
               Open Timer →
             </Link>
           </div>
 
           {loading ? (
-            <div style={{ height: 220, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div
+              style={{
+                height: 220,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
               <Skeleton width="100%" height="180px" />
             </div>
           ) : (
             <div style={{ width: '100%', height: 210 }}>
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={weeklyStudyData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={chartTokens.grid} opacity={0.8} />
+                <BarChart
+                  data={weeklyStudyData}
+                  margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                >
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    vertical={false}
+                    stroke={chartTokens.grid}
+                    opacity={0.8}
+                  />
                   <XAxis
                     dataKey="day"
                     stroke={chartTokens.axisText}
@@ -919,7 +1491,13 @@ export function StudentDashboardPreview() {
                               fontSize: '0.78rem',
                             }}
                           >
-                            <div style={{ fontWeight: 600, color: chartTokens.tooltipSubtext, marginBottom: '0.2rem' }}>
+                            <div
+                              style={{
+                                fontWeight: 600,
+                                color: chartTokens.tooltipSubtext,
+                                marginBottom: '0.2rem',
+                              }}
+                            >
                               {data.fullDate} ({data.day})
                             </div>
                             <div style={{ fontWeight: 700, color: chartTokens.barFill }}>
@@ -955,16 +1533,38 @@ export function StudentDashboardPreview() {
       >
         {/* Left Column: Upcoming Tasks & Deadlines */}
         <div className="card" style={{ padding: '1.5rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '1.25rem',
+            }}
+          >
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <div style={{ padding: '0.35rem', borderRadius: 'var(--radius-md)', backgroundColor: 'var(--surface-muted)', color: 'var(--brand-gold)' }}>
+              <div
+                style={{
+                  padding: '0.35rem',
+                  borderRadius: 'var(--radius-md)',
+                  backgroundColor: 'var(--surface-muted)',
+                  color: 'var(--brand-gold)',
+                }}
+              >
                 <CheckSquare size={16} />
               </div>
               <h2 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--ink)', margin: 0 }}>
                 Upcoming Academic Deadlines
               </h2>
             </div>
-            <Link to="/student/tasks" style={{ fontSize: '0.8rem', color: 'var(--brand-gold)', fontWeight: 600, textDecoration: 'none' }}>
+            <Link
+              to="/student/tasks"
+              style={{
+                fontSize: '0.8rem',
+                color: 'var(--brand-gold)',
+                fontWeight: 600,
+                textDecoration: 'none',
+              }}
+            >
               View All ({taskSummary?.pending ?? 0}) →
             </Link>
           </div>
@@ -985,10 +1585,22 @@ export function StudentDashboardPreview() {
                 color: 'var(--ink-soft)',
               }}
             >
-              <CheckCircle2 size={32} color="var(--emerald, #10b981)" style={{ margin: '0 auto 0.75rem' }} />
-              <div style={{ fontWeight: 600, color: 'var(--ink)', fontSize: '0.95rem' }}>All Caught Up!</div>
-              <p style={{ fontSize: '0.82rem', margin: '0.25rem 0 1rem' }}>You have no pending assignments or deadlines right now.</p>
-              <Link to="/student/tasks" className="btn btn-secondary" style={{ fontSize: '0.8rem' }}>
+              <CheckCircle2
+                size={32}
+                color="var(--emerald, #10b981)"
+                style={{ margin: '0 auto 0.75rem' }}
+              />
+              <div style={{ fontWeight: 600, color: 'var(--ink)', fontSize: '0.95rem' }}>
+                All Caught Up!
+              </div>
+              <p style={{ fontSize: '0.82rem', margin: '0.25rem 0 1rem' }}>
+                You have no pending assignments or deadlines right now.
+              </p>
+              <Link
+                to="/student/tasks"
+                className="btn btn-secondary"
+                style={{ fontSize: '0.8rem' }}
+              >
                 Create New Task
               </Link>
             </div>
@@ -1015,7 +1627,14 @@ export function StudentDashboardPreview() {
                       gap: '0.75rem',
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', overflow: 'hidden' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.75rem',
+                        overflow: 'hidden',
+                      }}
+                    >
                       <div
                         style={{
                           width: 8,
@@ -1025,8 +1644,8 @@ export function StudentDashboardPreview() {
                             t.priority === 'high'
                               ? 'var(--crimson, #ef4444)'
                               : t.priority === 'medium'
-                              ? 'var(--brand-gold)'
-                              : 'var(--ink-soft)',
+                                ? 'var(--brand-gold)'
+                                : 'var(--ink-soft)',
                           flexShrink: 0,
                         }}
                       />
@@ -1043,14 +1662,33 @@ export function StudentDashboardPreview() {
                         >
                           {t.title}
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.75rem', color: 'var(--ink-soft)' }}>
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.5rem',
+                            fontSize: '0.75rem',
+                            color: 'var(--ink-soft)',
+                          }}
+                        >
                           {t.subjectCode && (
-                            <span style={{ fontWeight: 600, color: 'var(--brand-gold)' }}>{t.subjectCode}</span>
+                            <span style={{ fontWeight: 600, color: 'var(--brand-gold)' }}>
+                              {t.subjectCode}
+                            </span>
                           )}
                           <span>&bull;</span>
-                          <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: isOverdue ? 'var(--crimson, #ef4444)' : 'var(--ink-soft)' }}>
+                          <span
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '0.25rem',
+                              color: isOverdue ? 'var(--crimson, #ef4444)' : 'var(--ink-soft)',
+                            }}
+                          >
                             <Calendar size={12} />
-                            {isOverdue ? `Overdue (${dueDateFormatted})` : `Due ${dueDateFormatted}`}
+                            {isOverdue
+                              ? `Overdue (${dueDateFormatted})`
+                              : `Due ${dueDateFormatted}`}
                           </span>
                         </div>
                       </div>
@@ -1067,14 +1705,14 @@ export function StudentDashboardPreview() {
                           t.priority === 'high'
                             ? 'rgba(239, 68, 68, 0.12)'
                             : t.priority === 'medium'
-                            ? 'rgba(217, 119, 6, 0.12)'
-                            : 'var(--surface)',
+                              ? 'rgba(217, 119, 6, 0.12)'
+                              : 'var(--surface)',
                         color:
                           t.priority === 'high'
                             ? 'var(--crimson, #ef4444)'
                             : t.priority === 'medium'
-                            ? 'var(--brand-gold)'
-                            : 'var(--ink-soft)',
+                              ? 'var(--brand-gold)'
+                              : 'var(--ink-soft)',
                         flexShrink: 0,
                       }}
                     >
@@ -1089,16 +1727,38 @@ export function StudentDashboardPreview() {
 
         {/* Right Column: Joined Course Attendance Health */}
         <div className="card" style={{ padding: '1.5rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '1.25rem',
+            }}
+          >
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <div style={{ padding: '0.35rem', borderRadius: 'var(--radius-md)', backgroundColor: 'var(--surface-muted)', color: 'var(--brand-gold)' }}>
+              <div
+                style={{
+                  padding: '0.35rem',
+                  borderRadius: 'var(--radius-md)',
+                  backgroundColor: 'var(--surface-muted)',
+                  color: 'var(--brand-gold)',
+                }}
+              >
                 <CalendarCheck size={16} />
               </div>
               <h2 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--ink)', margin: 0 }}>
                 Course Attendance Health
               </h2>
             </div>
-            <Link to="/student/attendance" style={{ fontSize: '0.8rem', color: 'var(--brand-gold)', fontWeight: 600, textDecoration: 'none' }}>
+            <Link
+              to="/student/attendance"
+              style={{
+                fontSize: '0.8rem',
+                color: 'var(--brand-gold)',
+                fontWeight: 600,
+                textDecoration: 'none',
+              }}
+            >
               Intelligence →
             </Link>
           </div>
@@ -1119,10 +1779,22 @@ export function StudentDashboardPreview() {
                 color: 'var(--ink-soft)',
               }}
             >
-              <AlertCircle size={32} color="var(--brand-gold)" style={{ margin: '0 auto 0.75rem' }} />
-              <div style={{ fontWeight: 600, color: 'var(--ink)', fontSize: '0.95rem' }}>No Courses Enrolled</div>
-              <p style={{ fontSize: '0.82rem', margin: '0.25rem 0 1rem' }}>Paste your university ERP attendance text or add courses to track attendance.</p>
-              <Link to="/student/attendance" className="btn btn-secondary" style={{ fontSize: '0.8rem' }}>
+              <AlertCircle
+                size={32}
+                color="var(--brand-gold)"
+                style={{ margin: '0 auto 0.75rem' }}
+              />
+              <div style={{ fontWeight: 600, color: 'var(--ink)', fontSize: '0.95rem' }}>
+                No Courses Enrolled
+              </div>
+              <p style={{ fontSize: '0.82rem', margin: '0.25rem 0 1rem' }}>
+                Paste your university ERP attendance text or add courses to track attendance.
+              </p>
+              <Link
+                to="/student/attendance"
+                className="btn btn-secondary"
+                style={{ fontSize: '0.8rem' }}
+              >
                 Import ERP Report
               </Link>
             </div>
@@ -1139,12 +1811,28 @@ export function StudentDashboardPreview() {
                       border: '1px solid var(--border)',
                     }}
                   >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginBottom: '0.35rem',
+                      }}
+                    >
                       <div style={{ overflow: 'hidden', paddingRight: '0.5rem' }}>
                         <span style={{ fontWeight: 700, color: 'var(--ink)', fontSize: '0.88rem' }}>
                           {course.code}
                         </span>
-                        <span style={{ color: 'var(--ink-soft)', fontSize: '0.8rem', marginLeft: '0.4rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        <span
+                          style={{
+                            color: 'var(--ink-soft)',
+                            fontSize: '0.8rem',
+                            marginLeft: '0.4rem',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                          }}
+                        >
                           {course.name}
                         </span>
                       </div>
@@ -1152,7 +1840,9 @@ export function StudentDashboardPreview() {
                         style={{
                           fontSize: '0.88rem',
                           fontWeight: 700,
-                          color: course.isShortage ? 'var(--crimson, #ef4444)' : 'var(--emerald, #10b981)',
+                          color: course.isShortage
+                            ? 'var(--crimson, #ef4444)'
+                            : 'var(--emerald, #10b981)',
                         }}
                       >
                         {course.percentage}%
@@ -1174,14 +1864,25 @@ export function StudentDashboardPreview() {
                         style={{
                           height: '100%',
                           width: `${Math.min(100, course.percentage)}%`,
-                          backgroundColor: course.isShortage ? 'var(--crimson, #ef4444)' : 'var(--emerald, #10b981)',
+                          backgroundColor: course.isShortage
+                            ? 'var(--crimson, #ef4444)'
+                            : 'var(--emerald, #10b981)',
                           borderRadius: 3,
                           transition: 'width 0.4s ease',
                         }}
                       />
                     </div>
 
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.35rem', fontSize: '0.74rem', color: 'var(--ink-soft)' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginTop: '0.35rem',
+                        fontSize: '0.74rem',
+                        color: 'var(--ink-soft)',
+                      }}
+                    >
                       <span>
                         {course.totalAttended !== undefined && course.totalConducted !== undefined
                           ? `Attended: ${course.totalAttended} / ${course.totalConducted} classes`
@@ -1207,10 +1908,23 @@ export function StudentDashboardPreview() {
 
       {/* Quick Access Academic Modules Strip */}
       <div style={{ marginBottom: '1.5rem' }}>
-        <h2 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--ink)', marginBottom: '0.875rem' }}>
+        <h2
+          style={{
+            fontSize: '1.05rem',
+            fontWeight: 700,
+            color: 'var(--ink)',
+            marginBottom: '0.875rem',
+          }}
+        >
           Explore Student Workspace
         </h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: '1rem',
+          }}
+        >
           <Link
             to="/student/notes"
             className="card card-interactive"
@@ -1222,12 +1936,23 @@ export function StudentDashboardPreview() {
               gap: '0.75rem',
             }}
           >
-            <div style={{ padding: '0.5rem', borderRadius: 'var(--radius-md)', backgroundColor: 'var(--surface-muted)', color: 'var(--brand-gold)' }}>
+            <div
+              style={{
+                padding: '0.5rem',
+                borderRadius: 'var(--radius-md)',
+                backgroundColor: 'var(--surface-muted)',
+                color: 'var(--brand-gold)',
+              }}
+            >
               <FileText size={18} />
             </div>
             <div>
-              <div style={{ fontWeight: 600, color: 'var(--ink)', fontSize: '0.88rem' }}>Lecture Notes</div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--ink-soft)' }}>Markdown &amp; tags</div>
+              <div style={{ fontWeight: 600, color: 'var(--ink)', fontSize: '0.88rem' }}>
+                Lecture Notes
+              </div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--ink-soft)' }}>
+                Markdown &amp; tags
+              </div>
             </div>
           </Link>
 
@@ -1242,12 +1967,23 @@ export function StudentDashboardPreview() {
               gap: '0.75rem',
             }}
           >
-            <div style={{ padding: '0.5rem', borderRadius: 'var(--radius-md)', backgroundColor: 'var(--surface-muted)', color: 'var(--brand-gold)' }}>
+            <div
+              style={{
+                padding: '0.5rem',
+                borderRadius: 'var(--radius-md)',
+                backgroundColor: 'var(--surface-muted)',
+                color: 'var(--brand-gold)',
+              }}
+            >
               <Bell size={18} />
             </div>
             <div>
-              <div style={{ fontWeight: 600, color: 'var(--ink)', fontSize: '0.88rem' }}>Campus Notices</div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--ink-soft)' }}>Circulars &amp; exams</div>
+              <div style={{ fontWeight: 600, color: 'var(--ink)', fontSize: '0.88rem' }}>
+                Campus Notices
+              </div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--ink-soft)' }}>
+                Circulars &amp; exams
+              </div>
             </div>
           </Link>
 
@@ -1262,12 +1998,23 @@ export function StudentDashboardPreview() {
               gap: '0.75rem',
             }}
           >
-            <div style={{ padding: '0.5rem', borderRadius: 'var(--radius-md)', backgroundColor: 'var(--surface-muted)', color: 'var(--brand-gold)' }}>
+            <div
+              style={{
+                padding: '0.5rem',
+                borderRadius: 'var(--radius-md)',
+                backgroundColor: 'var(--surface-muted)',
+                color: 'var(--brand-gold)',
+              }}
+            >
               <Library size={18} />
             </div>
             <div>
-              <div style={{ fontWeight: 600, color: 'var(--ink)', fontSize: '0.88rem' }}>Curriculum Library</div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--ink-soft)' }}>PYQs &amp; Syllabi</div>
+              <div style={{ fontWeight: 600, color: 'var(--ink)', fontSize: '0.88rem' }}>
+                Curriculum Library
+              </div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--ink-soft)' }}>
+                PYQs &amp; Syllabi
+              </div>
             </div>
           </Link>
         </div>

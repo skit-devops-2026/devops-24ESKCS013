@@ -21,7 +21,8 @@ export function Skeleton({
         height,
         borderRadius,
         backgroundColor: 'var(--bg-muted)',
-        backgroundImage: 'linear-gradient(90deg, var(--bg-muted) 0%, var(--bg-surface-hover) 50%, var(--bg-muted) 100%)',
+        backgroundImage:
+          'linear-gradient(90deg, var(--bg-muted) 0%, var(--bg-surface-hover) 50%, var(--bg-muted) 100%)',
         backgroundSize: '200% 100%',
         animation: 'shimmer 1.5s infinite linear',
         ...style,
@@ -51,4 +52,3 @@ export function SkeletonTableRow({ columns = 5 }: { columns?: number }) {
     </tr>
   );
 }
-

@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "tsc --noEmit",
+    "lint": "npx eslint \"src/**/*.{ts,tsx}\" && tsc --noEmit",
+    "format": "npx prettier --write \"src/**/*.{ts,tsx,css}\"",
     "test": "node --test --experimental-strip-types src/**/*.test.ts",
     "preview": "vite preview"
   },

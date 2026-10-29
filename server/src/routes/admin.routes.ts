@@ -45,7 +45,10 @@ adminRouter.get('/students', async (req: AuthenticatedRequest, res: Response): P
     if (search) {
       const searchRegex = new RegExp(escapeRegExp(search), 'i');
       // Check if search matches roll numbers
-      const matchingProfiles = await StudentProfile.find({ rollNumber: searchRegex }, { userId: 1 });
+      const matchingProfiles = await StudentProfile.find(
+        { rollNumber: searchRegex },
+        { userId: 1 }
+      );
       const matchingUserIds = matchingProfiles.map((p) => p.userId);
 
       userMatch.$or = [
@@ -137,155 +140,172 @@ adminRouter.get('/students', async (req: AuthenticatedRequest, res: Response): P
  * GET /api/admin/students/:id
  * Detailed student inspection with enrolled subjects and task stats
  */
-adminRouter.get('/students/:id', async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  try {
-    const { id } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      res.status(400).json({ status: 'error', statusCode: 400, message: 'Invalid student ID format.' });
-      return;
-    }
-
-    const student = await User.findOne({ _id: id, role: 'student' }, {
-      _id: 1,
-      name: 1,
-      email: 1,
-      role: 1,
-      status: 1,
-      createdAt: 1,
-      updatedAt: 1,
-    }).lean();
-
-    if (!student) {
-      res.status(404).json({ status: 'error', statusCode: 404, message: 'Student record not found.' });
-      return;
-    }
-
-    const [profile, subjects, taskCounts] = await Promise.all([
-      StudentProfile.findOne({ userId: id }).lean(),
-      Subject.find({ userId: id }).sort({ code: 1 }).lean(),
-      Task.aggregate([
-        { $match: { userId: new mongoose.Types.ObjectId(id) } },
-        { $group: { _id: '$status', count: { $sum: 1 } } },
-      ]),
-    ]);
-
-    const taskStats = {
-      total: 0,
-      pending: 0,
-      in_progress: 0,
-      completed: 0,
-    };
-    taskCounts.forEach((tc) => {
-      if (tc._id in taskStats) {
-        taskStats[tc._id as keyof typeof taskStats] = tc.count;
+adminRouter.get(
+  '/students/:id',
+  async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+      const { id } = req.params;
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        res
+          .status(400)
+          .json({ status: 'error', statusCode: 400, message: 'Invalid student ID format.' });
+        return;
       }
-      taskStats.total += tc.count;
-    });
 
-    res.status(200).json({
-      status: 'ok',
-      data: {
-        student: {
-          id: student._id,
-          name: student.name,
-          email: student.email,
-          role: student.role,
-          status: student.status,
-          createdAt: student.createdAt,
-          updatedAt: student.updatedAt,
+      const student = await User.findOne(
+        { _id: id, role: 'student' },
+        {
+          _id: 1,
+          name: 1,
+          email: 1,
+          role: 1,
+          status: 1,
+          createdAt: 1,
+          updatedAt: 1,
+        }
+      ).lean();
+
+      if (!student) {
+        res
+          .status(404)
+          .json({ status: 'error', statusCode: 404, message: 'Student record not found.' });
+        return;
+      }
+
+      const [profile, subjects, taskCounts] = await Promise.all([
+        StudentProfile.findOne({ userId: id }).lean(),
+        Subject.find({ userId: id }).sort({ code: 1 }).lean(),
+        Task.aggregate([
+          { $match: { userId: new mongoose.Types.ObjectId(id) } },
+          { $group: { _id: '$status', count: { $sum: 1 } } },
+        ]),
+      ]);
+
+      const taskStats = {
+        total: 0,
+        pending: 0,
+        in_progress: 0,
+        completed: 0,
+      };
+      taskCounts.forEach((tc) => {
+        if (tc._id in taskStats) {
+          taskStats[tc._id as keyof typeof taskStats] = tc.count;
+        }
+        taskStats.total += tc.count;
+      });
+
+      res.status(200).json({
+        status: 'ok',
+        data: {
+          student: {
+            id: student._id,
+            name: student.name,
+            email: student.email,
+            role: student.role,
+            status: student.status,
+            createdAt: student.createdAt,
+            updatedAt: student.updatedAt,
+          },
+          profile: profile
+            ? {
+                rollNumber: profile.rollNumber,
+                department: profile.department,
+                semester: profile.semester,
+                currentGpa: profile.currentGpa,
+                attendancePercentage: profile.attendancePercentage,
+              }
+            : null,
+          subjects: subjects.map((s) => ({
+            id: s._id,
+            code: s.code,
+            name: s.name,
+            credits: s.credits,
+            facultyName: s.facultyName,
+            attendancePercentage: s.attendancePercentage,
+            syllabusProgress: s.syllabusProgress,
+          })),
+          taskStats,
         },
-        profile: profile
-          ? {
-              rollNumber: profile.rollNumber,
-              department: profile.department,
-              semester: profile.semester,
-              currentGpa: profile.currentGpa,
-              attendancePercentage: profile.attendancePercentage,
-            }
-          : null,
-        subjects: subjects.map((s) => ({
-          id: s._id,
-          code: s.code,
-          name: s.name,
-          credits: s.credits,
-          facultyName: s.facultyName,
-          attendancePercentage: s.attendancePercentage,
-          syllabusProgress: s.syllabusProgress,
-        })),
-        taskStats,
-      },
-    });
-  } catch (error: unknown) {
-    res.status(500).json({
-      status: 'error',
-      statusCode: 500,
-      message: error instanceof Error ? error.message : 'Failed to retrieve student details',
-    });
+      });
+    } catch (error: unknown) {
+      res.status(500).json({
+        status: 'error',
+        statusCode: 500,
+        message: error instanceof Error ? error.message : 'Failed to retrieve student details',
+      });
+    }
   }
-});
+);
 
 /**
  * PATCH /api/admin/students/:id/status
  * Activate or suspend student accounts
  */
-adminRouter.patch('/students/:id/status', async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  try {
-    const { id } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      res.status(400).json({ status: 'error', statusCode: 400, message: 'Invalid student ID format.' });
-      return;
-    }
+adminRouter.patch(
+  '/students/:id/status',
+  async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+      const { id } = req.params;
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        res
+          .status(400)
+          .json({ status: 'error', statusCode: 400, message: 'Invalid student ID format.' });
+        return;
+      }
 
-    const parseResult = statusUpdateSchema.safeParse(req.body);
-    if (!parseResult.success) {
-      res.status(400).json({
-        status: 'error',
-        statusCode: 400,
-        message: parseResult.error.errors[0]?.message || 'Invalid status data.',
+      const parseResult = statusUpdateSchema.safeParse(req.body);
+      if (!parseResult.success) {
+        res.status(400).json({
+          status: 'error',
+          statusCode: 400,
+          message: parseResult.error.errors[0]?.message || 'Invalid status data.',
+        });
+        return;
+      }
+
+      const { status } = parseResult.data;
+
+      // Prevent administrator from locking themselves out
+      if (req.user!._id.toString() === id) {
+        res.status(400).json({
+          status: 'error',
+          statusCode: 400,
+          message: 'Administrators cannot alter their own account status to prevent lockout.',
+        });
+        return;
+      }
+
+      const targetUser = await User.findById(id);
+      if (!targetUser) {
+        res
+          .status(404)
+          .json({ status: 'error', statusCode: 404, message: 'Target user record not found.' });
+        return;
+      }
+
+      targetUser.status = status;
+      await targetUser.save();
+
+      res.status(200).json({
+        status: 'ok',
+        message: `User account successfully ${status === 'active' ? 'activated' : 'suspended'}.`,
+        data: {
+          id: targetUser._id,
+          name: targetUser.name,
+          email: targetUser.email,
+          role: targetUser.role,
+          status: targetUser.status,
+        },
       });
-      return;
-    }
-
-    const { status } = parseResult.data;
-
-    // Prevent administrator from locking themselves out
-    if (req.user!._id.toString() === id) {
-      res.status(400).json({
+    } catch (error: unknown) {
+      res.status(500).json({
         status: 'error',
-        statusCode: 400,
-        message: 'Administrators cannot alter their own account status to prevent lockout.',
+        statusCode: 500,
+        message: error instanceof Error ? error.message : 'Failed to update student status',
       });
-      return;
     }
-
-    const targetUser = await User.findById(id);
-    if (!targetUser) {
-      res.status(404).json({ status: 'error', statusCode: 404, message: 'Target user record not found.' });
-      return;
-    }
-
-    targetUser.status = status;
-    await targetUser.save();
-
-    res.status(200).json({
-      status: 'ok',
-      message: `User account successfully ${status === 'active' ? 'activated' : 'suspended'}.`,
-      data: {
-        id: targetUser._id,
-        name: targetUser.name,
-        email: targetUser.email,
-        role: targetUser.role,
-        status: targetUser.status,
-      },
-    });
-  } catch (error: unknown) {
-    res.status(500).json({
-      status: 'error',
-      statusCode: 500,
-      message: error instanceof Error ? error.message : 'Failed to update student status',
-    });
   }
-});
+);
 
 /**
  * GET /api/admin/stats
@@ -295,9 +315,8 @@ adminRouter.get('/stats', async (req: AuthenticatedRequest, res: Response): Prom
   try {
     // Configurable attendance threshold with default 75%
     const thresholdParam = parseInt(req.query.threshold as string, 10);
-    const attendanceThreshold = !isNaN(thresholdParam) && thresholdParam >= 0 && thresholdParam <= 100
-      ? thresholdParam
-      : 75;
+    const attendanceThreshold =
+      !isNaN(thresholdParam) && thresholdParam >= 0 && thresholdParam <= 100 ? thresholdParam : 75;
 
     const [
       totalStudents,
@@ -319,7 +338,10 @@ adminRouter.get('/stats', async (req: AuthenticatedRequest, res: Response): Prom
       Announcement.countDocuments({ status: 'published' }),
       Announcement.countDocuments(),
       // Unique students with overall attendance below threshold in StudentProfile
-      StudentProfile.find({ attendancePercentage: { $lt: attendanceThreshold } }, { userId: 1 }).lean(),
+      StudentProfile.find(
+        { attendancePercentage: { $lt: attendanceThreshold } },
+        { userId: 1 }
+      ).lean(),
       // Total course records with attendance below threshold in Subject
       Subject.countDocuments({ attendancePercentage: { $lt: attendanceThreshold } }),
       // Unique students with at least one course below threshold in Subject

@@ -1,7 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { AlertTriangle } from 'lucide-react';
-import { getAnnouncements, createAnnouncement, deleteAnnouncement, AnnouncementItem } from '../../services/admin.service';
+import {
+  getAnnouncements,
+  createAnnouncement,
+  deleteAnnouncement,
+  AnnouncementItem,
+} from '../../services/admin.service';
 import { useToast } from '../../context/ToastContext';
 
 export function AdminAnnouncementsPage() {
@@ -80,12 +85,24 @@ export function AdminAnnouncementsPage() {
 
   return (
     <div className="container" style={{ padding: '2.5rem 1rem' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '2rem',
+          flexWrap: 'wrap',
+          gap: '1rem',
+        }}
+      >
         <div>
-          <span className="badge badge-gold" style={{ marginBottom: '0.5rem' }}>Campus Communications</span>
+          <span className="badge badge-gold" style={{ marginBottom: '0.5rem' }}>
+            Campus Communications
+          </span>
           <h1 style={{ fontSize: '2.25rem', color: 'var(--ink)' }}>Institutional Announcements</h1>
           <p style={{ color: 'var(--ink-soft)' }}>
-            Broadcast academic bulletins, exam schedules, and holiday notifications to students and faculty.
+            Broadcast academic bulletins, exam schedules, and holiday notifications to students and
+            faculty.
           </p>
         </div>
         <div style={{ display: 'flex', gap: '0.75rem' }}>
@@ -99,7 +116,19 @@ export function AdminAnnouncementsPage() {
       </div>
 
       {error && (
-        <div style={{ background: 'var(--red-light)', color: 'var(--red)', padding: '1rem', borderRadius: '6px', marginBottom: '1.5rem', border: '1px solid var(--red)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <div
+          style={{
+            background: 'var(--red-light)',
+            color: 'var(--red)',
+            padding: '1rem',
+            borderRadius: '6px',
+            marginBottom: '1.5rem',
+            border: '1px solid var(--red)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+          }}
+        >
           <AlertTriangle size={16} />
           <span>{error}</span>
         </div>
@@ -132,7 +161,10 @@ export function AdminAnnouncementsPage() {
 
       {/* Announcements Feed */}
       {loading ? (
-        <div className="card" style={{ padding: '3rem', textAlign: 'center', color: 'var(--ink-soft)' }}>
+        <div
+          className="card"
+          style={{ padding: '3rem', textAlign: 'center', color: 'var(--ink-soft)' }}
+        >
           Loading announcements...
         </div>
       ) : announcements.length === 0 ? (
@@ -152,19 +184,37 @@ export function AdminAnnouncementsPage() {
               key={item._id}
               className="card"
               style={{
-                borderLeft: item.priority === 'urgent' ? '4px solid var(--red)' : '4px solid var(--blue)',
+                borderLeft:
+                  item.priority === 'urgent' ? '4px solid var(--red)' : '4px solid var(--blue)',
                 padding: '1.5rem',
               }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.75rem' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-start',
+                  flexWrap: 'wrap',
+                  gap: '0.5rem',
+                  marginBottom: '0.75rem',
+                }}
+              >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <span className={`badge ${item.priority === 'urgent' ? 'badge-gold' : 'badge-green'}`} style={{ textTransform: 'uppercase' }}>
+                  <span
+                    className={`badge ${item.priority === 'urgent' ? 'badge-gold' : 'badge-green'}`}
+                    style={{ textTransform: 'uppercase' }}
+                  >
                     {item.priority}
                   </span>
-                  <span className="badge" style={{ background: 'var(--bg-muted)', color: 'var(--text-muted)' }}>
+                  <span
+                    className="badge"
+                    style={{ background: 'var(--bg-muted)', color: 'var(--text-muted)' }}
+                  >
                     Audience: {item.targetAudience.toUpperCase()}
                   </span>
-                  <span className={`badge ${item.status === 'published' ? 'badge-green' : 'badge-gold'}`}>
+                  <span
+                    className={`badge ${item.status === 'published' ? 'badge-green' : 'badge-gold'}`}
+                  >
                     {item.status.toUpperCase()}
                   </span>
                 </div>
@@ -177,12 +227,28 @@ export function AdminAnnouncementsPage() {
                 </button>
               </div>
 
-              <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem', color: 'var(--ink)' }}>{item.title}</h3>
-              <p style={{ color: 'var(--ink-soft)', lineHeight: 1.6, whiteSpace: 'pre-wrap', marginBottom: '1rem' }}>
+              <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem', color: 'var(--ink)' }}>
+                {item.title}
+              </h3>
+              <p
+                style={{
+                  color: 'var(--ink-soft)',
+                  lineHeight: 1.6,
+                  whiteSpace: 'pre-wrap',
+                  marginBottom: '1rem',
+                }}
+              >
                 {item.content}
               </p>
 
-              <div style={{ fontSize: '0.8rem', color: 'var(--ink-soft)', borderTop: '1px solid var(--rule)', paddingTop: '0.75rem' }}>
+              <div
+                style={{
+                  fontSize: '0.8rem',
+                  color: 'var(--ink-soft)',
+                  borderTop: '1px solid var(--rule)',
+                  paddingTop: '0.75rem',
+                }}
+              >
                 Published by <strong>{item.authorId?.name || 'Administrator'}</strong> on{' '}
                 {new Date(item.createdAt).toLocaleDateString()}
               </div>
@@ -193,12 +259,32 @@ export function AdminAnnouncementsPage() {
 
       {/* Create Announcement Modal */}
       {showModal && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100, padding: '1rem' }}>
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 100,
+            padding: '1rem',
+          }}
+        >
           <div className="card" style={{ maxWidth: '520px', width: '100%', padding: '2rem' }}>
-            <h3 style={{ fontSize: '1.5rem', marginBottom: '1.25rem' }}>Post Campus Announcement</h3>
+            <h3 style={{ fontSize: '1.5rem', marginBottom: '1.25rem' }}>
+              Post Campus Announcement
+            </h3>
             <form onSubmit={handleCreate}>
               <div style={{ marginBottom: '1rem' }}>
-                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.35rem' }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '0.875rem',
+                    fontWeight: 600,
+                    marginBottom: '0.35rem',
+                  }}
+                >
                   Title
                 </label>
                 <input
@@ -207,12 +293,24 @@ export function AdminAnnouncementsPage() {
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="e.g. Schedule for Final Exam Form Submission"
-                  style={{ width: '100%', padding: '0.5rem 0.75rem', borderRadius: '4px', border: '1px solid var(--rule-strong)' }}
+                  style={{
+                    width: '100%',
+                    padding: '0.5rem 0.75rem',
+                    borderRadius: '4px',
+                    border: '1px solid var(--rule-strong)',
+                  }}
                 />
               </div>
 
               <div style={{ marginBottom: '1rem' }}>
-                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.35rem' }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '0.875rem',
+                    fontWeight: 600,
+                    marginBottom: '0.35rem',
+                  }}
+                >
                   Content
                 </label>
                 <textarea
@@ -221,19 +319,44 @@ export function AdminAnnouncementsPage() {
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
                   placeholder="Enter detailed announcement message..."
-                  style={{ width: '100%', padding: '0.5rem 0.75rem', borderRadius: '4px', border: '1px solid var(--rule-strong)', resize: 'vertical' }}
+                  style={{
+                    width: '100%',
+                    padding: '0.5rem 0.75rem',
+                    borderRadius: '4px',
+                    border: '1px solid var(--rule-strong)',
+                    resize: 'vertical',
+                  }}
                 />
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem', marginBottom: '1.5rem' }}>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(3, 1fr)',
+                  gap: '0.75rem',
+                  marginBottom: '1.5rem',
+                }}
+              >
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.35rem' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '0.85rem',
+                      fontWeight: 600,
+                      marginBottom: '0.35rem',
+                    }}
+                  >
                     Priority
                   </label>
                   <select
                     value={priority}
                     onChange={(e) => setPriority(e.target.value as 'normal' | 'urgent')}
-                    style={{ width: '100%', padding: '0.45rem', borderRadius: '4px', border: '1px solid var(--rule-strong)' }}
+                    style={{
+                      width: '100%',
+                      padding: '0.45rem',
+                      borderRadius: '4px',
+                      border: '1px solid var(--rule-strong)',
+                    }}
                   >
                     <option value="normal">Normal</option>
                     <option value="urgent">Urgent</option>
@@ -241,13 +364,27 @@ export function AdminAnnouncementsPage() {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.35rem' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '0.85rem',
+                      fontWeight: 600,
+                      marginBottom: '0.35rem',
+                    }}
+                  >
                     Audience
                   </label>
                   <select
                     value={targetAudience}
-                    onChange={(e) => setTargetAudience(e.target.value as 'all' | 'students' | 'faculty')}
-                    style={{ width: '100%', padding: '0.45rem', borderRadius: '4px', border: '1px solid var(--rule-strong)' }}
+                    onChange={(e) =>
+                      setTargetAudience(e.target.value as 'all' | 'students' | 'faculty')
+                    }
+                    style={{
+                      width: '100%',
+                      padding: '0.45rem',
+                      borderRadius: '4px',
+                      border: '1px solid var(--rule-strong)',
+                    }}
                   >
                     <option value="all">All Campus</option>
                     <option value="students">Students</option>
@@ -256,13 +393,25 @@ export function AdminAnnouncementsPage() {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.35rem' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '0.85rem',
+                      fontWeight: 600,
+                      marginBottom: '0.35rem',
+                    }}
+                  >
                     Status
                   </label>
                   <select
                     value={status}
                     onChange={(e) => setStatus(e.target.value as 'draft' | 'published')}
-                    style={{ width: '100%', padding: '0.45rem', borderRadius: '4px', border: '1px solid var(--rule-strong)' }}
+                    style={{
+                      width: '100%',
+                      padding: '0.45rem',
+                      borderRadius: '4px',
+                      border: '1px solid var(--rule-strong)',
+                    }}
                   >
                     <option value="published">Publish Now</option>
                     <option value="draft">Save Draft</option>

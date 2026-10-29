@@ -7,7 +7,6 @@ import { Subject } from '../models/Subject.js';
 import { StudentProfile } from '../models/StudentProfile.js';
 import { requireAuth, AuthenticatedRequest } from '../middleware/auth.middleware.js';
 import {
-  AttendancePolicy,
   POLICY_METADATA,
   calculateAttendance,
   calculateClassesNeeded,
@@ -86,208 +85,218 @@ const simulateSchema = z.object({
  * POST /api/attendance/parse-preview
  * Parses pasted TSV or uploaded CSV and returns validation & discrepancy preview without saving
  */
-attendanceRouter.post('/parse-preview', async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  const parseResult = parsePreviewSchema.safeParse(req.body);
-  if (!parseResult.success) {
-    res.status(400).json({
-      status: 'error',
-      statusCode: 400,
-      message: parseResult.error.issues.map((i) => i.message).join('. '),
+attendanceRouter.post(
+  '/parse-preview',
+  async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    const parseResult = parsePreviewSchema.safeParse(req.body);
+    if (!parseResult.success) {
+      res.status(400).json({
+        status: 'error',
+        statusCode: 400,
+        message: parseResult.error.issues.map((i) => i.message).join('. '),
+      });
+      return;
+    }
+
+    const { rawData, policy } = parseResult.data;
+    const userId = req.user!._id;
+
+    // Retrieve student's existing attendance records for change/diff detection
+    const existingRecords = await AttendanceRecord.find({ userId });
+    const parsed = parseErpAttendanceText(rawData, policy, existingRecords);
+
+    if (!parsed.success && parsed.rows.length === 0) {
+      res.status(400).json({
+        status: 'error',
+        statusCode: 400,
+        message: parsed.errors.join(' ') || 'Failed to parse attendance data.',
+        errors: parsed.errors,
+      });
+      return;
+    }
+
+    // Cross-reference parsed rows with existing student subjects
+    const studentSubjects = await Subject.find({ userId }).select('_id code name');
+    const subjectMap = new Map(studentSubjects.map((s) => [s.code.toUpperCase(), s]));
+
+    // Retrieve student's existing overview metadata if available
+    const existingOverview = await AttendanceOverview.findOne({ userId });
+
+    const metadata = {
+      erpAggregatePercentage:
+        parsed.metadata?.erpAggregatePercentage ?? existingOverview?.erpAggregatePercentage ?? 80.1,
+      overallOdCount: parsed.metadata?.overallOdCount ?? existingOverview?.overallOdCount ?? 17,
+      eventAttendance: parsed.metadata?.eventAttendance ??
+        existingOverview?.eventAttendance ?? {
+          eventName: 'Techpravah 2026',
+          eventDates: '12–15 October 2026',
+          presentHours: 8,
+          absentHours: 16,
+          totalHours: 24,
+          remarks:
+            'Event hours are included in aggregate attendance but are not assigned to individual lectures, labs, or days.',
+        },
+    };
+
+    const enrichedRows = parsed.rows.map((row) => {
+      const matched = subjectMap.get(row.subjectCode);
+      return {
+        ...row,
+        matchedSubjectId: matched ? matched._id.toString() : null,
+        matchedSubjectName: matched ? matched.name : null,
+      };
     });
-    return;
-  }
 
-  const { rawData, policy } = parseResult.data;
-  const userId = req.user!._id;
-
-  // Retrieve student's existing attendance records for change/diff detection
-  const existingRecords = await AttendanceRecord.find({ userId });
-  const parsed = parseErpAttendanceText(rawData, policy, existingRecords);
-
-  if (!parsed.success && parsed.rows.length === 0) {
-    res.status(400).json({
-      status: 'error',
-      statusCode: 400,
-      message: parsed.errors.join(' ') || 'Failed to parse attendance data.',
+    res.status(200).json({
+      status: 'ok',
+      policy,
+      policyMeta: POLICY_METADATA[policy],
+      totalRows: enrichedRows.length,
+      validRows: enrichedRows.filter((r) => r.isValid).length,
+      invalidRows: enrichedRows.filter((r) => !r.isValid).length,
+      duplicateRows: enrichedRows.filter((r) => r.error?.includes('Duplicate')).length,
+      discrepancyCount: enrichedRows.filter((r) => r.isDiscrepancy).length,
+      changedRows: enrichedRows.filter((r) => r.isChanged).length,
+      newRows: enrichedRows.filter((r) => r.isNew).length,
+      metadata,
+      rows: enrichedRows,
       errors: parsed.errors,
     });
-    return;
   }
-
-  // Cross-reference parsed rows with existing student subjects
-  const studentSubjects = await Subject.find({ userId }).select('_id code name');
-  const subjectMap = new Map(studentSubjects.map((s) => [s.code.toUpperCase(), s]));
-
-  // Retrieve student's existing overview metadata if available
-  const existingOverview = await AttendanceOverview.findOne({ userId });
-
-  const metadata = {
-    erpAggregatePercentage:
-      parsed.metadata?.erpAggregatePercentage ?? existingOverview?.erpAggregatePercentage ?? 80.1,
-    overallOdCount: parsed.metadata?.overallOdCount ?? existingOverview?.overallOdCount ?? 17,
-    eventAttendance: parsed.metadata?.eventAttendance ?? existingOverview?.eventAttendance ?? {
-      eventName: 'Techpravah 2026',
-      eventDates: '12–15 October 2026',
-      presentHours: 8,
-      absentHours: 16,
-      totalHours: 24,
-      remarks:
-        'Event hours are included in aggregate attendance but are not assigned to individual lectures, labs, or days.',
-    },
-  };
-
-  const enrichedRows = parsed.rows.map((row) => {
-    const matched = subjectMap.get(row.subjectCode);
-    return {
-      ...row,
-      matchedSubjectId: matched ? matched._id.toString() : null,
-      matchedSubjectName: matched ? matched.name : null,
-    };
-  });
-
-  res.status(200).json({
-    status: 'ok',
-    policy,
-    policyMeta: POLICY_METADATA[policy],
-    totalRows: enrichedRows.length,
-    validRows: enrichedRows.filter((r) => r.isValid).length,
-    invalidRows: enrichedRows.filter((r) => !r.isValid).length,
-    duplicateRows: enrichedRows.filter((r) => r.error?.includes('Duplicate')).length,
-    discrepancyCount: enrichedRows.filter((r) => r.isDiscrepancy).length,
-    changedRows: enrichedRows.filter((r) => r.isChanged).length,
-    newRows: enrichedRows.filter((r) => r.isNew).length,
-    metadata,
-    rows: enrichedRows,
-    errors: parsed.errors,
-  });
-});
+);
 
 /**
  * POST /api/attendance/import
  * Persists validated attendance records with the confirmed counting policy.
  * Repeatable import: upserts based on { userId, subjectCode }.
  */
-attendanceRouter.post('/import', async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  const parseResult = importPayloadSchema.safeParse(req.body);
-  if (!parseResult.success) {
-    res.status(400).json({
-      status: 'error',
-      statusCode: 400,
-      message: parseResult.error.issues.map((i) => i.message).join('. '),
-    });
-    return;
-  }
-
-  const { policy, records, erpAggregatePercentage, overallOdCount, eventAttendance } = parseResult.data;
-  const userId = req.user!._id;
-
-  // Retrieve student profile for default semester
-  const studentProfile = await StudentProfile.findOne({ userId });
-  const defaultSemester = studentProfile?.semester || 1;
-
-  // Retrieve student's existing subjects for linking
-  const studentSubjects = await Subject.find({ userId });
-  const subjectMap = new Map(studentSubjects.map((s) => [s.code.toUpperCase(), s]));
-
-  const savedRecords = [];
-
-  for (const item of records) {
-    const calc = calculateAttendance(
-      {
-        present: item.present,
-        od: item.od,
-        makeup: item.makeup,
-        absent: item.absent,
-        subjectType: item.subjectType,
-      },
-      policy,
-      item.erpPercentage
-    );
-
-    // Auto-upsert Subject so Attendance and Subject always share a single source of truth
-    let subject = subjectMap.get(item.subjectCode);
-    const isLab = item.subjectType?.toLowerCase().includes('lab') || item.subjectName.toLowerCase().includes('lab');
-
-    if (!subject) {
-      subject = await Subject.findOneAndUpdate(
-        { userId, code: item.subjectCode },
-        {
-          $setOnInsert: {
-            credits: isLab ? 2 : 3,
-            semester: defaultSemester,
-            facultyName: '',
-            syllabusProgress: 0,
-            color: '#D69A2D',
-          },
-          $set: {
-            name: item.subjectName,
-            attendancePercentage: calc.percentage,
-          },
-        },
-        { upsert: true, returnDocument: 'after', runValidators: true }
-      );
-      if (subject) {
-        subjectMap.set(item.subjectCode, subject);
-      }
-    } else {
-      subject.name = item.subjectName;
-      subject.attendancePercentage = calc.percentage;
-      await subject.save();
+attendanceRouter.post(
+  '/import',
+  async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    const parseResult = importPayloadSchema.safeParse(req.body);
+    if (!parseResult.success) {
+      res.status(400).json({
+        status: 'error',
+        statusCode: 400,
+        message: parseResult.error.issues.map((i) => i.message).join('. '),
+      });
+      return;
     }
 
-    const subjectId = subject ? subject._id : null;
+    const { policy, records, erpAggregatePercentage, overallOdCount, eventAttendance } =
+      parseResult.data;
+    const userId = req.user!._id;
 
-    // Upsert attendance record
-    const record = await AttendanceRecord.findOneAndUpdate(
-      { userId, subjectCode: item.subjectCode },
-      {
-        $set: {
-          subjectName: item.subjectName,
-          subjectType: item.subjectType,
-          subjectId,
+    // Retrieve student profile for default semester
+    const studentProfile = await StudentProfile.findOne({ userId });
+    const defaultSemester = studentProfile?.semester || 1;
+
+    // Retrieve student's existing subjects for linking
+    const studentSubjects = await Subject.find({ userId });
+    const subjectMap = new Map(studentSubjects.map((s) => [s.code.toUpperCase(), s]));
+
+    const savedRecords = [];
+
+    for (const item of records) {
+      const calc = calculateAttendance(
+        {
           present: item.present,
           od: item.od,
           makeup: item.makeup,
           absent: item.absent,
-          totalConducted: calc.conducted,
-          totalAttended: calc.attended,
-          erpPercentage: item.erpPercentage !== undefined ? item.erpPercentage : calc.percentage,
-          calculatedPercentage: calc.percentage,
-          policyUsed: policy,
-          threshold: item.threshold || 75,
-          discrepancyNote: calc.discrepancyNote || item.discrepancyNote || null,
-          lastImportedAt: new Date(),
+          subjectType: item.subjectType,
+        },
+        policy,
+        item.erpPercentage
+      );
+
+      // Auto-upsert Subject so Attendance and Subject always share a single source of truth
+      let subject = subjectMap.get(item.subjectCode);
+      const isLab =
+        item.subjectType?.toLowerCase().includes('lab') ||
+        item.subjectName.toLowerCase().includes('lab');
+
+      if (!subject) {
+        subject = await Subject.findOneAndUpdate(
+          { userId, code: item.subjectCode },
+          {
+            $setOnInsert: {
+              credits: isLab ? 2 : 3,
+              semester: defaultSemester,
+              facultyName: '',
+              syllabusProgress: 0,
+              color: '#D69A2D',
+            },
+            $set: {
+              name: item.subjectName,
+              attendancePercentage: calc.percentage,
+            },
+          },
+          { upsert: true, returnDocument: 'after', runValidators: true }
+        );
+        if (subject) {
+          subjectMap.set(item.subjectCode, subject);
+        }
+      } else {
+        subject.name = item.subjectName;
+        subject.attendancePercentage = calc.percentage;
+        await subject.save();
+      }
+
+      const subjectId = subject ? subject._id : null;
+
+      // Upsert attendance record
+      const record = await AttendanceRecord.findOneAndUpdate(
+        { userId, subjectCode: item.subjectCode },
+        {
+          $set: {
+            subjectName: item.subjectName,
+            subjectType: item.subjectType,
+            subjectId,
+            present: item.present,
+            od: item.od,
+            makeup: item.makeup,
+            absent: item.absent,
+            totalConducted: calc.conducted,
+            totalAttended: calc.attended,
+            erpPercentage: item.erpPercentage !== undefined ? item.erpPercentage : calc.percentage,
+            calculatedPercentage: calc.percentage,
+            policyUsed: policy,
+            threshold: item.threshold || 75,
+            discrepancyNote: calc.discrepancyNote || item.discrepancyNote || null,
+            lastImportedAt: new Date(),
+          },
+        },
+        { upsert: true, returnDocument: 'after', runValidators: true }
+      );
+
+      savedRecords.push(record);
+    }
+
+    // Upsert AttendanceOverview metadata
+    await AttendanceOverview.findOneAndUpdate(
+      { userId },
+      {
+        $set: {
+          ...(erpAggregatePercentage !== undefined && { erpAggregatePercentage }),
+          ...(overallOdCount !== undefined && { overallOdCount }),
+          ...(eventAttendance && { eventAttendance }),
+          lastReportDate: new Date(),
         },
       },
-      { upsert: true, returnDocument: 'after', runValidators: true }
+      { upsert: true, returnDocument: 'after' }
     );
 
-    savedRecords.push(record);
+    res.status(201).json({
+      status: 'ok',
+      message: `Successfully imported ${savedRecords.length} attendance records.`,
+      policy,
+      policyMeta: POLICY_METADATA[policy],
+      count: savedRecords.length,
+      data: savedRecords,
+    });
   }
-
-  // Upsert AttendanceOverview metadata
-  await AttendanceOverview.findOneAndUpdate(
-    { userId },
-    {
-      $set: {
-        ...(erpAggregatePercentage !== undefined && { erpAggregatePercentage }),
-        ...(overallOdCount !== undefined && { overallOdCount }),
-        ...(eventAttendance && { eventAttendance }),
-        lastReportDate: new Date(),
-      },
-    },
-    { upsert: true, returnDocument: 'after' }
-  );
-
-  res.status(201).json({
-    status: 'ok',
-    message: `Successfully imported ${savedRecords.length} attendance records.`,
-    policy,
-    policyMeta: POLICY_METADATA[policy],
-    count: savedRecords.length,
-    data: savedRecords,
-  });
-});
+);
 
 /**
  * GET /api/attendance
@@ -319,7 +328,13 @@ attendanceRouter.get('/', async (req: AuthenticatedRequest, res: Response): Prom
     const discrepancyDelta = Number(Math.abs(r.calculatedPercentage - r.erpPercentage).toFixed(2));
     let discrepancyNote = r.discrepancyNote;
     if (isDiscrepancy && !discrepancyNote) {
-      if (r.makeup > 0 && Math.abs(Number(((r.present + r.od + r.makeup) / ((r.totalConducted - r.makeup) || 1)) * 100) - r.erpPercentage) < 0.5) {
+      if (
+        r.makeup > 0 &&
+        Math.abs(
+          Number(((r.present + r.od + r.makeup) / (r.totalConducted - r.makeup || 1)) * 100) -
+            r.erpPercentage
+        ) < 0.5
+      ) {
         discrepancyNote = `ERP reported ${r.erpPercentage}% vs calculated ${r.calculatedPercentage}% (${discrepancyDelta}% delta). In ERP, Makeup classes may be credited as attendance credits (34/40 = 85.00%). Preserving official ERP reference.`;
       } else if (r.erpPercentage === 100 && r.absent > 0) {
         discrepancyNote = `ERP reported 100.00% despite ${r.absent} recorded absence(s) (Standard: ${r.calculatedPercentage}%). Module likely evaluated via completion or compensatory waiver. Preserving official ERP reference.`;
@@ -388,45 +403,48 @@ attendanceRouter.get('/', async (req: AuthenticatedRequest, res: Response): Prom
  * PUT /api/attendance/overview
  * Directly updates student's ERP aggregate percentage, overall OD count, or event hours metadata
  */
-attendanceRouter.put('/overview', async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  const userId = req.user!._id;
-  const updateOverviewSchema = z.object({
-    erpAggregatePercentage: z.coerce.number().min(0).max(100).optional(),
-    overallOdCount: z.coerce.number().min(0).optional(),
-    eventAttendance: eventAttendanceSchema,
-  });
-
-  const parseResult = updateOverviewSchema.safeParse(req.body);
-  if (!parseResult.success) {
-    res.status(400).json({
-      status: 'error',
-      statusCode: 400,
-      message: parseResult.error.issues.map((i) => i.message).join('. '),
+attendanceRouter.put(
+  '/overview',
+  async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    const userId = req.user!._id;
+    const updateOverviewSchema = z.object({
+      erpAggregatePercentage: z.coerce.number().min(0).max(100).optional(),
+      overallOdCount: z.coerce.number().min(0).optional(),
+      eventAttendance: eventAttendanceSchema,
     });
-    return;
-  }
 
-  const overview = await AttendanceOverview.findOneAndUpdate(
-    { userId },
-    {
-      $set: {
-        ...(parseResult.data.erpAggregatePercentage !== undefined && {
-          erpAggregatePercentage: parseResult.data.erpAggregatePercentage,
-        }),
-        ...(parseResult.data.overallOdCount !== undefined && {
-          overallOdCount: parseResult.data.overallOdCount,
-        }),
-        ...(parseResult.data.eventAttendance && {
-          eventAttendance: parseResult.data.eventAttendance,
-        }),
-        lastReportDate: new Date(),
+    const parseResult = updateOverviewSchema.safeParse(req.body);
+    if (!parseResult.success) {
+      res.status(400).json({
+        status: 'error',
+        statusCode: 400,
+        message: parseResult.error.issues.map((i) => i.message).join('. '),
+      });
+      return;
+    }
+
+    const overview = await AttendanceOverview.findOneAndUpdate(
+      { userId },
+      {
+        $set: {
+          ...(parseResult.data.erpAggregatePercentage !== undefined && {
+            erpAggregatePercentage: parseResult.data.erpAggregatePercentage,
+          }),
+          ...(parseResult.data.overallOdCount !== undefined && {
+            overallOdCount: parseResult.data.overallOdCount,
+          }),
+          ...(parseResult.data.eventAttendance && {
+            eventAttendance: parseResult.data.eventAttendance,
+          }),
+          lastReportDate: new Date(),
+        },
       },
-    },
-    { upsert: true, returnDocument: 'after' }
-  );
+      { upsert: true, returnDocument: 'after' }
+    );
 
-  res.status(200).json({ status: 'ok', data: overview });
-});
+    res.status(200).json({ status: 'ok', data: overview });
+  }
+);
 
 /**
  * PATCH /api/attendance/:id
@@ -434,7 +452,9 @@ attendanceRouter.put('/overview', async (req: AuthenticatedRequest, res: Respons
  */
 attendanceRouter.patch('/:id', async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   if (!Types.ObjectId.isValid(req.params.id)) {
-    res.status(400).json({ status: 'error', statusCode: 400, message: 'Invalid attendance record ID' });
+    res
+      .status(400)
+      .json({ status: 'error', statusCode: 400, message: 'Invalid attendance record ID' });
     return;
   }
 
@@ -454,7 +474,9 @@ attendanceRouter.patch('/:id', async (req: AuthenticatedRequest, res: Response):
   });
 
   if (!existing) {
-    res.status(404).json({ status: 'error', statusCode: 404, message: 'Attendance record not found' });
+    res
+      .status(404)
+      .json({ status: 'error', statusCode: 404, message: 'Attendance record not found' });
     return;
   }
 
@@ -504,7 +526,9 @@ attendanceRouter.patch('/:id', async (req: AuthenticatedRequest, res: Response):
  */
 attendanceRouter.delete('/:id', async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   if (!Types.ObjectId.isValid(req.params.id)) {
-    res.status(400).json({ status: 'error', statusCode: 400, message: 'Invalid attendance record ID' });
+    res
+      .status(400)
+      .json({ status: 'error', statusCode: 400, message: 'Invalid attendance record ID' });
     return;
   }
 
@@ -514,7 +538,9 @@ attendanceRouter.delete('/:id', async (req: AuthenticatedRequest, res: Response)
   });
 
   if (!deleted) {
-    res.status(404).json({ status: 'error', statusCode: 404, message: 'Attendance record not found' });
+    res
+      .status(404)
+      .json({ status: 'error', statusCode: 404, message: 'Attendance record not found' });
     return;
   }
 
@@ -525,61 +551,67 @@ attendanceRouter.delete('/:id', async (req: AuthenticatedRequest, res: Response)
  * POST /api/attendance/simulate
  * Simulates future scenarios (+N attended, +M missed)
  */
-attendanceRouter.post('/simulate', async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  const parseResult = simulateSchema.safeParse(req.body);
-  if (!parseResult.success) {
-    res.status(400).json({
-      status: 'error',
-      statusCode: 400,
-      message: parseResult.error.issues.map((i) => i.message).join('. '),
+attendanceRouter.post(
+  '/simulate',
+  async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    const parseResult = simulateSchema.safeParse(req.body);
+    if (!parseResult.success) {
+      res.status(400).json({
+        status: 'error',
+        statusCode: 400,
+        message: parseResult.error.issues.map((i) => i.message).join('. '),
+      });
+      return;
+    }
+
+    const { recordId, attended, conducted, additionalAttended, additionalMissed, threshold } =
+      parseResult.data;
+
+    let baseAttended = attended || 0;
+    let baseConducted = conducted || 0;
+    let subjectCode = 'SCENARIO';
+    let subjectName = 'Custom Scenario';
+
+    if (recordId) {
+      if (!Types.ObjectId.isValid(recordId)) {
+        res.status(400).json({ status: 'error', statusCode: 400, message: 'Invalid record ID' });
+        return;
+      }
+      const record = await AttendanceRecord.findOne({ _id: recordId, userId: req.user!._id });
+      if (!record) {
+        res
+          .status(404)
+          .json({ status: 'error', statusCode: 404, message: 'Attendance record not found' });
+        return;
+      }
+      baseAttended = record.totalAttended;
+      baseConducted = record.totalConducted;
+      subjectCode = record.subjectCode;
+      subjectName = record.subjectName;
+    }
+
+    const projection = simulateScenario(
+      baseAttended,
+      baseConducted,
+      additionalAttended,
+      additionalMissed,
+      threshold
+    );
+
+    res.status(200).json({
+      status: 'ok',
+      subjectCode,
+      subjectName,
+      current: {
+        attended: baseAttended,
+        conducted: baseConducted,
+        percentage:
+          baseConducted > 0 ? Number(((baseAttended / baseConducted) * 100).toFixed(2)) : 0,
+      },
+      projection,
+      additionalAttended,
+      additionalMissed,
+      threshold,
     });
-    return;
   }
-
-  const { recordId, attended, conducted, additionalAttended, additionalMissed, threshold } =
-    parseResult.data;
-
-  let baseAttended = attended || 0;
-  let baseConducted = conducted || 0;
-  let subjectCode = 'SCENARIO';
-  let subjectName = 'Custom Scenario';
-
-  if (recordId) {
-    if (!Types.ObjectId.isValid(recordId)) {
-      res.status(400).json({ status: 'error', statusCode: 400, message: 'Invalid record ID' });
-      return;
-    }
-    const record = await AttendanceRecord.findOne({ _id: recordId, userId: req.user!._id });
-    if (!record) {
-      res.status(404).json({ status: 'error', statusCode: 404, message: 'Attendance record not found' });
-      return;
-    }
-    baseAttended = record.totalAttended;
-    baseConducted = record.totalConducted;
-    subjectCode = record.subjectCode;
-    subjectName = record.subjectName;
-  }
-
-  const projection = simulateScenario(
-    baseAttended,
-    baseConducted,
-    additionalAttended,
-    additionalMissed,
-    threshold
-  );
-
-  res.status(200).json({
-    status: 'ok',
-    subjectCode,
-    subjectName,
-    current: {
-      attended: baseAttended,
-      conducted: baseConducted,
-      percentage: baseConducted > 0 ? Number(((baseAttended / baseConducted) * 100).toFixed(2)) : 0,
-    },
-    projection,
-    additionalAttended,
-    additionalMissed,
-    threshold,
-  });
-});
+);

@@ -120,7 +120,10 @@ export function NotesPage() {
     // Restore cursor position
     setTimeout(() => {
       textarea.focus();
-      textarea.setSelectionRange(start + prefix.length, start + prefix.length + selectedText.length);
+      textarea.setSelectionRange(
+        start + prefix.length,
+        start + prefix.length + selectedText.length
+      );
     }, 0);
   }
 
@@ -230,11 +233,25 @@ export function NotesPage() {
 
       {/* Search and Filters Toolbar */}
       <div className="card" style={{ padding: '1rem 1.25rem', marginBottom: '1.5rem' }}>
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap', marginBottom: allTags.length > 0 ? '0.75rem' : '0' }}>
+        <div
+          style={{
+            display: 'flex',
+            gap: '1rem',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            marginBottom: allTags.length > 0 ? '0.75rem' : '0',
+          }}
+        >
           <div style={{ position: 'relative', flex: '1 1 240px' }}>
             <Search
               size={16}
-              style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--ink-soft)' }}
+              style={{
+                position: 'absolute',
+                left: '0.75rem',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                color: 'var(--ink-soft)',
+              }}
             />
             <input
               type="text"
@@ -247,7 +264,9 @@ export function NotesPage() {
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--ink)' }}>Course:</span>
+            <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--ink)' }}>
+              Course:
+            </span>
             <select
               value={selectedSubjectFilter}
               onChange={(e) => setSelectedSubjectFilter(e.target.value)}
@@ -276,8 +295,26 @@ export function NotesPage() {
 
         {/* Tag pills bar */}
         {allTags.length > 0 && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap', borderTop: '1px solid var(--border)', paddingTop: '0.75rem' }}>
-            <span style={{ fontSize: '0.78rem', color: 'var(--ink-soft)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              flexWrap: 'wrap',
+              borderTop: '1px solid var(--border)',
+              paddingTop: '0.75rem',
+            }}
+          >
+            <span
+              style={{
+                fontSize: '0.78rem',
+                color: 'var(--ink-soft)',
+                fontWeight: 600,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.25rem',
+              }}
+            >
               <Tag size={13} /> Tags:
             </span>
             <button
@@ -307,16 +344,33 @@ export function NotesPage() {
           Loading your lecture notes...
         </div>
       ) : error ? (
-        <div style={{ background: 'var(--crimson-soft)', color: 'var(--crimson)', padding: '1rem', borderRadius: '6px' }}>
+        <div
+          style={{
+            background: 'var(--crimson-soft)',
+            color: 'var(--crimson)',
+            padding: '1rem',
+            borderRadius: '6px',
+          }}
+        >
           {error}
         </div>
       ) : displayedNotes.length === 0 ? (
         <div className="card" style={{ textAlign: 'center', padding: '4rem 1rem' }}>
-          <BookOpen size={40} style={{ color: 'var(--brand-gold)', margin: '0 auto 1rem', opacity: 0.8 }} />
+          <BookOpen
+            size={40}
+            style={{ color: 'var(--brand-gold)', margin: '0 auto 1rem', opacity: 0.8 }}
+          />
           <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem', color: 'var(--ink)' }}>
             No lecture notes found
           </h3>
-          <p style={{ color: 'var(--ink-soft)', marginBottom: '1.5rem', maxWidth: '400px', margin: '0 auto 1.5rem' }}>
+          <p
+            style={{
+              color: 'var(--ink-soft)',
+              marginBottom: '1.5rem',
+              maxWidth: '400px',
+              margin: '0 auto 1.5rem',
+            }}
+          >
             Write lecture notes with markdown support, formula cheatsheets, and concept revisions.
           </p>
           <button onClick={handleOpenCreate} className="btn btn-secondary">
@@ -339,13 +393,22 @@ export function NotesPage() {
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
-                borderTop: note.isPinned ? '3px solid var(--brand-gold)' : '1px solid var(--border)',
+                borderTop: note.isPinned
+                  ? '3px solid var(--brand-gold)'
+                  : '1px solid var(--border)',
                 boxShadow: note.isPinned ? 'var(--shadow-md)' : 'var(--shadow-sm)',
                 padding: '1.25rem',
               }}
             >
               <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '0.5rem',
+                  }}
+                >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                     {note.subjectCode ? (
                       <span className="badge badge-gold" style={{ fontSize: '0.72rem' }}>
@@ -372,7 +435,14 @@ export function NotesPage() {
                   </button>
                 </div>
 
-                <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: '0.5rem', color: 'var(--ink)' }}>
+                <h3
+                  style={{
+                    fontSize: '1.15rem',
+                    fontWeight: 700,
+                    marginBottom: '0.5rem',
+                    color: 'var(--ink)',
+                  }}
+                >
                   {note.title}
                 </h3>
 
@@ -394,7 +464,14 @@ export function NotesPage() {
 
                 {/* Tags */}
                 {note.tags.length > 0 && (
-                  <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      gap: '0.35rem',
+                      flexWrap: 'wrap',
+                      marginBottom: '0.75rem',
+                    }}
+                  >
                     {note.tags.map((t) => (
                       <span
                         key={t}
@@ -479,7 +556,14 @@ export function NotesPage() {
               boxShadow: 'var(--shadow-xl)',
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '1.25rem',
+              }}
+            >
               <div>
                 <span className="badge badge-gold" style={{ marginBottom: '0.25rem' }}>
                   Markdown Editor
@@ -498,10 +582,21 @@ export function NotesPage() {
               </button>
             </div>
 
-            <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <form
+              onSubmit={handleSave}
+              style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
+            >
               {/* Note Title */}
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.35rem', color: 'var(--ink)' }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '0.85rem',
+                    fontWeight: 600,
+                    marginBottom: '0.35rem',
+                    color: 'var(--ink)',
+                  }}
+                >
                   Note Title
                 </label>
                 <input
@@ -516,9 +611,23 @@ export function NotesPage() {
               </div>
 
               {/* Course & Tags row */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                  gap: '1rem',
+                }}
+              >
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.35rem', color: 'var(--ink)' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '0.85rem',
+                      fontWeight: 600,
+                      marginBottom: '0.35rem',
+                      color: 'var(--ink)',
+                    }}
+                  >
                     Associated Course
                   </label>
                   <select
@@ -537,7 +646,15 @@ export function NotesPage() {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.35rem', color: 'var(--ink)' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '0.85rem',
+                      fontWeight: 600,
+                      marginBottom: '0.35rem',
+                      color: 'var(--ink)',
+                    }}
+                  >
                     Tags (Comma separated)
                   </label>
                   <input
@@ -552,7 +669,10 @@ export function NotesPage() {
               </div>
 
               {/* Mobile Tab Toggle for Edit vs Preview (visible on small screens) */}
-              <div className="show-on-mobile-only" style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.25rem' }}>
+              <div
+                className="show-on-mobile-only"
+                style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.25rem' }}
+              >
                 <button
                   type="button"
                   onClick={() => setActiveEditorTab('edit')}
@@ -738,14 +858,23 @@ export function NotesPage() {
                   <div
                     style={{ fontSize: '0.875rem', color: 'var(--ink)' }}
                     dangerouslySetInnerHTML={{
-                      __html: renderMarkdown(content || '*(Live preview will appear here as you write markdown)*'),
+                      __html: renderMarkdown(
+                        content || '*(Live preview will appear here as you write markdown)*'
+                      ),
                     }}
                   />
                 </div>
               </div>
 
               {/* Pin Checkbox */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.25rem' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  marginTop: '0.25rem',
+                }}
+              >
                 <input
                   id="pinNote"
                   type="checkbox"
@@ -753,14 +882,31 @@ export function NotesPage() {
                   onChange={(e) => setIsPinned(e.target.checked)}
                   style={{ accentColor: 'var(--brand-gold)', width: '1.1rem', height: '1.1rem' }}
                 />
-                <label htmlFor="pinNote" style={{ fontSize: '0.85rem', cursor: 'pointer', color: 'var(--ink)', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                <label
+                  htmlFor="pinNote"
+                  style={{
+                    fontSize: '0.85rem',
+                    cursor: 'pointer',
+                    color: 'var(--ink)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                  }}
+                >
                   <Pin size={14} />
                   <span>Pin this note to the top of my notebook</span>
                 </label>
               </div>
 
               {/* Actions */}
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  gap: '0.75rem',
+                  marginTop: '0.5rem',
+                }}
+              >
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
@@ -768,11 +914,7 @@ export function NotesPage() {
                 >
                   Cancel
                 </button>
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="btn btn-primary"
-                >
+                <button type="submit" disabled={submitting} className="btn btn-primary">
                   {submitting ? 'Saving...' : 'Save Note'}
                 </button>
               </div>

@@ -27,10 +27,7 @@ async function requestJson<T>(url: string, options: RequestInit = {}): Promise<T
 }
 
 export type AttendancePolicy =
-  | 'standard_od'
-  | 'makeup_compensatory'
-  | 'strict_present'
-  | 'erp_direct';
+  'standard_od' | 'makeup_compensatory' | 'strict_present' | 'erp_direct';
 
 export interface PolicyMetadata {
   name: string;
@@ -41,7 +38,8 @@ export interface PolicyMetadata {
 export const CLIENT_POLICY_METADATA: Record<AttendancePolicy, PolicyMetadata> = {
   standard_od: {
     name: 'Standard (Present + OD)',
-    description: 'Counts On Duty (OD) as attended. Total conducted = Present + OD + Makeup + Absent.',
+    description:
+      'Counts On Duty (OD) as attended. Total conducted = Present + OD + Makeup + Absent.',
     formula: 'Attended = Present + OD; Conducted = Present + OD + Makeup + Absent',
   },
   makeup_compensatory: {
@@ -56,7 +54,8 @@ export const CLIENT_POLICY_METADATA: Record<AttendancePolicy, PolicyMetadata> = 
   },
   erp_direct: {
     name: 'Official ERP Direct',
-    description: 'Uses the official ERP reported percentage directly without re-derivation (for Training/Projects).',
+    description:
+      'Uses the official ERP reported percentage directly without re-derivation (for Training/Projects).',
     formula: 'Percentage = ERP Reported Percentage',
   },
 };

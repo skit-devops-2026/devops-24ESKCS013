@@ -79,7 +79,12 @@ export function LoginPage() {
           <div style={{ marginBottom: '1.25rem' }}>
             <label
               htmlFor="email"
-              style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.35rem' }}
+              style={{
+                display: 'block',
+                fontSize: '0.875rem',
+                fontWeight: 600,
+                marginBottom: '0.35rem',
+              }}
             >
               Email Address
             </label>
@@ -102,11 +107,10 @@ export function LoginPage() {
           </div>
 
           <div style={{ marginBottom: '1.5rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.35rem' }}>
-              <label
-                htmlFor="password"
-                style={{ fontSize: '0.875rem', fontWeight: 600 }}
-              >
+            <div
+              style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.35rem' }}
+            >
+              <label htmlFor="password" style={{ fontSize: '0.875rem', fontWeight: 600 }}>
                 Password
               </label>
               <button
@@ -145,7 +149,14 @@ export function LoginPage() {
           </button>
         </form>
 
-        <div style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '0.875rem', color: 'var(--ink-soft)' }}>
+        <div
+          style={{
+            marginTop: '1.5rem',
+            textAlign: 'center',
+            fontSize: '0.875rem',
+            color: 'var(--ink-soft)',
+          }}
+        >
           Don't have an account?{' '}
           <Link to="/register" style={{ color: 'var(--gold-ink)', fontWeight: 600 }}>
             Register as Student

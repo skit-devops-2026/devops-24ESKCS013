@@ -1,0 +1,8 @@
+node_modules/
+dist/
+client/dist/
+server/dist/
+legacy-archive/
+package-lock.json
+backup-before-backfill/
+.vite/

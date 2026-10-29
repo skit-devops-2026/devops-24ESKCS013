@@ -4,6 +4,7 @@ import {
   Calendar,
   AlertTriangle,
   CheckCircle2,
+  CheckSquare,
   Clock,
   LayoutGrid,
   List,
@@ -24,11 +25,7 @@ import {
   DragEndEvent,
   useDroppable,
 } from '@dnd-kit/core';
-import {
-  SortableContext,
-  verticalListSortingStrategy,
-  useSortable,
-} from '@dnd-kit/sortable';
+import { SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useToast } from '../../context/ToastContext';
 import { PageHeader } from '../../components/PageHeader';
@@ -54,9 +51,24 @@ interface ColumnDef {
 }
 
 const COLUMNS: ColumnDef[] = [
-  { id: 'pending', title: 'To Do', badgeClass: 'badge-gold', accentColor: 'var(--brand-gold, #f59e0b)' },
-  { id: 'in_progress', title: 'In Progress', badgeClass: 'badge-blue', accentColor: 'var(--primary, #6366f1)' },
-  { id: 'completed', title: 'Completed', badgeClass: 'badge-green', accentColor: 'var(--emerald, #10b981)' },
+  {
+    id: 'pending',
+    title: 'To Do',
+    badgeClass: 'badge-gold',
+    accentColor: 'var(--brand-gold, #f59e0b)',
+  },
+  {
+    id: 'in_progress',
+    title: 'In Progress',
+    badgeClass: 'badge-blue',
+    accentColor: 'var(--primary, #6366f1)',
+  },
+  {
+    id: 'completed',
+    title: 'Completed',
+    badgeClass: 'badge-green',
+    accentColor: 'var(--emerald, #10b981)',
+  },
 ];
 
 export function TasksPage() {
@@ -148,9 +160,7 @@ export function TasksPage() {
     const previousStatus = targetTask.status;
 
     // Optimistic update
-    setTasks((prev) =>
-      prev.map((t) => (t._id === taskId ? { ...t, status: nextStatus } : t))
-    );
+    setTasks((prev) => prev.map((t) => (t._id === taskId ? { ...t, status: nextStatus } : t)));
 
     try {
       await updateTask(taskId, { status: nextStatus });
@@ -372,7 +382,13 @@ export function TasksPage() {
         <div style={{ position: 'relative', flex: '1 1 220px' }}>
           <Search
             size={16}
-            style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--ink-soft)' }}
+            style={{
+              position: 'absolute',
+              left: '0.75rem',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              color: 'var(--ink-soft)',
+            }}
           />
           <input
             type="text"
@@ -385,7 +401,9 @@ export function TasksPage() {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--ink)' }}>Priority:</span>
+          <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--ink)' }}>
+            Priority:
+          </span>
           <select
             value={priorityFilter}
             onChange={(e) => setPriorityFilter(e.target.value)}
@@ -423,7 +441,14 @@ export function TasksPage() {
           Loading academic assignments...
         </div>
       ) : error ? (
-        <div style={{ background: 'var(--crimson-soft)', color: 'var(--crimson)', padding: '1rem', borderRadius: '6px' }}>
+        <div
+          style={{
+            background: 'var(--crimson-soft)',
+            color: 'var(--crimson)',
+            padding: '1rem',
+            borderRadius: '6px',
+          }}
+        >
           {error}
         </div>
       ) : viewMode === 'kanban' ? (
@@ -470,8 +495,28 @@ export function TasksPage() {
         /* List View */
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
           {filteredTasks.length === 0 ? (
-            <div className="card" style={{ textAlign: 'center', padding: '3rem 1rem' }}>
-              <p style={{ color: 'var(--ink-soft)' }}>No tasks match your filters.</p>
+            <div className="card" style={{ textAlign: 'center', padding: '3.5rem 1rem' }}>
+              <div
+                style={{
+                  width: '48px',
+                  height: '48px',
+                  borderRadius: '50%',
+                  background: 'var(--gold-soft)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  margin: '0 auto 1rem',
+                  color: 'var(--brand-gold)',
+                }}
+              >
+                <CheckSquare size={24} />
+              </div>
+              <h4 style={{ fontSize: '1.15rem', marginBottom: '0.35rem', color: 'var(--ink)' }}>
+                No tasks found
+              </h4>
+              <p style={{ color: 'var(--ink-soft)', fontSize: '0.9rem' }}>
+                No assignments or tasks match your current filter settings.
+              </p>
             </div>
           ) : (
             filteredTasks.map((task) => (
@@ -506,7 +551,15 @@ export function TasksPage() {
             </h3>
             <form onSubmit={handleCreate}>
               <div style={{ marginBottom: '1rem' }}>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.35rem', color: 'var(--ink)' }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '0.85rem',
+                    fontWeight: 600,
+                    marginBottom: '0.35rem',
+                    color: 'var(--ink)',
+                  }}
+                >
                   Title
                 </label>
                 <input
@@ -521,7 +574,15 @@ export function TasksPage() {
               </div>
 
               <div style={{ marginBottom: '1rem' }}>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.35rem', color: 'var(--ink)' }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '0.85rem',
+                    fontWeight: 600,
+                    marginBottom: '0.35rem',
+                    color: 'var(--ink)',
+                  }}
+                >
                   Description (Optional)
                 </label>
                 <textarea
@@ -534,9 +595,24 @@ export function TasksPage() {
                 />
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '1rem',
+                  marginBottom: '1rem',
+                }}
+              >
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.35rem', color: 'var(--ink)' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '0.85rem',
+                      fontWeight: 600,
+                      marginBottom: '0.35rem',
+                      color: 'var(--ink)',
+                    }}
+                  >
                     Priority
                   </label>
                   <select
@@ -552,7 +628,15 @@ export function TasksPage() {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.35rem', color: 'var(--ink)' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '0.85rem',
+                      fontWeight: 600,
+                      marginBottom: '0.35rem',
+                      color: 'var(--ink)',
+                    }}
+                  >
                     Due Date
                   </label>
                   <input
@@ -567,7 +651,15 @@ export function TasksPage() {
               </div>
 
               <div style={{ marginBottom: '1.5rem' }}>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.35rem', color: 'var(--ink)' }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '0.85rem',
+                    fontWeight: 600,
+                    marginBottom: '0.35rem',
+                    color: 'var(--ink)',
+                  }}
+                >
                   Course Association
                 </label>
                 <select
@@ -593,11 +685,7 @@ export function TasksPage() {
                 >
                   Cancel
                 </button>
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="btn btn-primary"
-                >
+                <button type="submit" disabled={submitting} className="btn btn-primary">
                   {submitting ? 'Creating...' : 'Save Task'}
                 </button>
               </div>
@@ -711,14 +799,9 @@ interface SortableTaskCardProps {
 }
 
 function SortableTaskCard({ task, onStatusChange, onDelete }: SortableTaskCardProps) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: task._id });
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: task._id,
+  });
 
   const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
@@ -741,13 +824,20 @@ function SortableTaskCard({ task, onStatusChange, onDelete }: SortableTaskCardPr
         borderLeft: isOverdue
           ? '4px solid var(--crimson)'
           : isCompleted
-          ? '4px solid var(--emerald)'
-          : '4px solid var(--brand-gold)',
+            ? '4px solid var(--emerald)'
+            : '4px solid var(--brand-gold)',
         padding: '0.85rem 1rem',
         boxShadow: 'var(--shadow-sm)',
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.5rem' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          justifyContent: 'space-between',
+          gap: '0.5rem',
+        }}
+      >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
           {task.subjectCode && (
             <span className="badge badge-gold" style={{ fontSize: '0.7rem' }}>
@@ -759,8 +849,8 @@ function SortableTaskCard({ task, onStatusChange, onDelete }: SortableTaskCardPr
               task.priority === 'high'
                 ? 'badge-red'
                 : task.priority === 'medium'
-                ? 'badge-gold'
-                : 'badge-green'
+                  ? 'badge-gold'
+                  : 'badge-green'
             }`}
             style={{ fontSize: '0.7rem' }}
           >
@@ -948,10 +1038,18 @@ function TaskCardContent({ task }: { task: TaskItem }) {
       }}
     >
       <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '0.4rem' }}>
-        {task.subjectCode && <span className="badge badge-gold" style={{ fontSize: '0.7rem' }}>{task.subjectCode}</span>}
-        <span className="badge badge-blue" style={{ fontSize: '0.7rem' }}>{task.priority}</span>
+        {task.subjectCode && (
+          <span className="badge badge-gold" style={{ fontSize: '0.7rem' }}>
+            {task.subjectCode}
+          </span>
+        )}
+        <span className="badge badge-blue" style={{ fontSize: '0.7rem' }}>
+          {task.priority}
+        </span>
       </div>
-      <h5 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 600, color: 'var(--ink)' }}>{task.title}</h5>
+      <h5 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 600, color: 'var(--ink)' }}>
+        {task.title}
+      </h5>
     </div>
   );
 }
@@ -979,8 +1077,8 @@ function TaskListItem({ task, onStatusChange, onDelete }: TaskListItemProps) {
         borderLeft: isOverdue
           ? '4px solid var(--crimson)'
           : isCompleted
-          ? '4px solid var(--emerald)'
-          : '4px solid var(--brand-gold)',
+            ? '4px solid var(--emerald)'
+            : '4px solid var(--brand-gold)',
         gap: '1rem',
         flexWrap: 'wrap',
       }}
@@ -990,10 +1088,23 @@ function TaskListItem({ task, onStatusChange, onDelete }: TaskListItemProps) {
           type="checkbox"
           checked={isCompleted}
           onChange={() => onStatusChange(task._id, isCompleted ? 'pending' : 'completed')}
-          style={{ width: '1.2rem', height: '1.2rem', cursor: 'pointer', accentColor: 'var(--emerald)' }}
+          style={{
+            width: '1.2rem',
+            height: '1.2rem',
+            cursor: 'pointer',
+            accentColor: 'var(--emerald)',
+          }}
         />
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap', marginBottom: '0.2rem' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.6rem',
+              flexWrap: 'wrap',
+              marginBottom: '0.2rem',
+            }}
+          >
             <span
               style={{
                 fontSize: '1rem',
@@ -1010,8 +1121,8 @@ function TaskListItem({ task, onStatusChange, onDelete }: TaskListItemProps) {
                 task.priority === 'high'
                   ? 'badge-red'
                   : task.priority === 'medium'
-                  ? 'badge-gold'
-                  : 'badge-green'
+                    ? 'badge-gold'
+                    : 'badge-green'
               }`}
             >
               {task.priority}
@@ -1021,8 +1132,8 @@ function TaskListItem({ task, onStatusChange, onDelete }: TaskListItemProps) {
                 task.status === 'completed'
                   ? 'badge-green'
                   : task.status === 'in_progress'
-                  ? 'badge-blue'
-                  : 'badge-gold'
+                    ? 'badge-blue'
+                    : 'badge-gold'
               }`}
             >
               {task.status.replace('_', ' ')}
@@ -1030,13 +1141,22 @@ function TaskListItem({ task, onStatusChange, onDelete }: TaskListItemProps) {
             {isOverdue && (
               <span
                 className="badge badge-red"
-                style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', fontWeight: 700 }}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.25rem',
+                  fontWeight: 700,
+                }}
               >
                 <AlertTriangle size={12} /> Overdue
               </span>
             )}
           </div>
-          {task.description && <p style={{ fontSize: '0.85rem', color: 'var(--ink-soft)', margin: 0 }}>{task.description}</p>}
+          {task.description && (
+            <p style={{ fontSize: '0.85rem', color: 'var(--ink-soft)', margin: 0 }}>
+              {task.description}
+            </p>
+          )}
         </div>
       </div>
 
@@ -1048,7 +1168,12 @@ function TaskListItem({ task, onStatusChange, onDelete }: TaskListItemProps) {
             fontWeight: isOverdue ? 700 : 400,
           }}
         >
-          Due {new Date(task.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+          Due{' '}
+          {new Date(task.dueDate).toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+          })}
         </span>
 
         <select

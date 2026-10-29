@@ -63,5 +63,4 @@ noteSchema.index(
 );
 
 export const Note =
-  (mongoose.models.Note as mongoose.Model<INote>) ||
-  mongoose.model<INote>('Note', noteSchema);
+  (mongoose.models.Note as mongoose.Model<INote>) || mongoose.model<INote>('Note', noteSchema);

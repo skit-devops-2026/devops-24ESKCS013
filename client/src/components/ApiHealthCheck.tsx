@@ -31,41 +31,95 @@ export function ApiHealthCheck() {
 
   return (
     <div className="card" style={{ maxWidth: '640px', margin: '2rem auto' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: '1rem',
+        }}
+      >
         <h3 style={{ fontSize: '1.25rem', fontWeight: 600 }}>System Health & API Connection</h3>
-        <button className="btn btn-secondary" onClick={checkServices} disabled={loading} style={{ fontSize: '0.8rem', padding: '0.4rem 0.8rem' }}>
+        <button
+          className="btn btn-secondary"
+          onClick={checkServices}
+          disabled={loading}
+          style={{ fontSize: '0.8rem', padding: '0.4rem 0.8rem' }}
+        >
           {loading ? 'Pinging...' : 'Refresh'}
         </button>
       </div>
 
       {loading && (
-        <p style={{ color: 'var(--ink-soft)' }}>Connecting to backend service at <code>{import.meta.env.VITE_API_BASE_URL || '/api'}</code>...</p>
+        <p style={{ color: 'var(--ink-soft)' }}>
+          Connecting to backend service at{' '}
+          <code>{import.meta.env.VITE_API_BASE_URL || '/api'}</code>...
+        </p>
       )}
 
       {error && (
-        <div style={{ background: 'var(--red-soft)', color: 'var(--red)', padding: '1rem', borderRadius: '6px', fontSize: '0.9rem' }}>
+        <div
+          style={{
+            background: 'var(--red-soft)',
+            color: 'var(--red)',
+            padding: '1rem',
+            borderRadius: '6px',
+            fontSize: '0.9rem',
+          }}
+        >
           <strong>Connection Failed:</strong> {error}
           <div style={{ marginTop: '0.5rem', fontSize: '0.8rem', color: 'var(--ink-soft)' }}>
-            Ensure the Express backend is running on port 5000: <code>npm run dev</code> inside <code>server/</code>.
+            Ensure the Express backend is running on port 5000: <code>npm run dev</code> inside{' '}
+            <code>server/</code>.
           </div>
         </div>
       )}
 
       {!loading && !error && health && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.9rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--rule)', paddingBottom: '0.5rem' }}>
+        <div
+          style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.9rem' }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              borderBottom: '1px solid var(--rule)',
+              paddingBottom: '0.5rem',
+            }}
+          >
             <span style={{ color: 'var(--ink-soft)' }}>API Status:</span>
             <span className="badge badge-green">Connected ({health.status})</span>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--rule)', paddingBottom: '0.5rem' }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              borderBottom: '1px solid var(--rule)',
+              paddingBottom: '0.5rem',
+            }}
+          >
             <span style={{ color: 'var(--ink-soft)' }}>Service:</span>
             <strong>{health.service}</strong>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--rule)', paddingBottom: '0.5rem' }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              borderBottom: '1px solid var(--rule)',
+              paddingBottom: '0.5rem',
+            }}
+          >
             <span style={{ color: 'var(--ink-soft)' }}>Environment:</span>
             <code>{health.environment}</code>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--rule)', paddingBottom: '0.5rem' }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              borderBottom: '1px solid var(--rule)',
+              paddingBottom: '0.5rem',
+            }}
+          >
             <span style={{ color: 'var(--ink-soft)' }}>Database Layer:</span>
             <span className="badge badge-green">
               {dbHealth?.database.driver.toUpperCase()} (Connected)

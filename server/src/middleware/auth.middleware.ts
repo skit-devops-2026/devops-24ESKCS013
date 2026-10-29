@@ -52,7 +52,7 @@ export async function requireAuth(
 
     req.user = user;
     next();
-  } catch (error: unknown) {
+  } catch (_error: unknown) {
     res.status(401).json({
       status: 'error',
       statusCode: 401,

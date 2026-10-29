@@ -42,21 +42,19 @@ describe('Phase 7: Security Hardening & Data Isolation Test Suite', () => {
       .post('/api/auth/login')
       .send({ email: 'admin.sec@college.edu', password: 'AdminSecPass123!' });
     const rawAdminCookie = adminLogin.headers['set-cookie'];
-    adminCookie = (Array.isArray(rawAdminCookie) ? rawAdminCookie : [String(rawAdminCookie)]).find((c) =>
-      c.startsWith('student_hub_token=')
+    adminCookie = (Array.isArray(rawAdminCookie) ? rawAdminCookie : [String(rawAdminCookie)]).find(
+      (c) => c.startsWith('student_hub_token=')
     )!;
 
     // 2. Register Student A (Alice)
-    const resA = await request(app)
-      .post('/api/auth/register')
-      .send({
-        name: 'Alice Sec',
-        email: 'alice.sec@college.edu',
-        password: 'Password123!',
-        rollNumber: '24ESKCS201',
-        department: 'Computer Science',
-        semester: 4,
-      });
+    const resA = await request(app).post('/api/auth/register').send({
+      name: 'Alice Sec',
+      email: 'alice.sec@college.edu',
+      password: 'Password123!',
+      rollNumber: '24ESKCS201',
+      department: 'Computer Science',
+      semester: 4,
+    });
     studentAId = resA.body.user.id;
     const rawACookie = resA.headers['set-cookie'];
     studentACookie = (Array.isArray(rawACookie) ? rawACookie : [String(rawACookie)]).find((c) =>
@@ -64,16 +62,14 @@ describe('Phase 7: Security Hardening & Data Isolation Test Suite', () => {
     )!;
 
     // 3. Register Student B (Bob)
-    const resB = await request(app)
-      .post('/api/auth/register')
-      .send({
-        name: 'Bob Sec',
-        email: 'bob.sec@college.edu',
-        password: 'Password123!',
-        rollNumber: '24ESKCS202',
-        department: 'Information Tech',
-        semester: 4,
-      });
+    const resB = await request(app).post('/api/auth/register').send({
+      name: 'Bob Sec',
+      email: 'bob.sec@college.edu',
+      password: 'Password123!',
+      rollNumber: '24ESKCS202',
+      department: 'Information Tech',
+      semester: 4,
+    });
     studentBId = resB.body.user.id;
     const rawBCookie = resB.headers['set-cookie'];
     studentBCookie = (Array.isArray(rawBCookie) ? rawBCookie : [String(rawBCookie)]).find((c) =>
@@ -139,9 +135,7 @@ describe('Phase 7: Security Hardening & Data Isolation Test Suite', () => {
   // ==========================================
   describe('Cross-User Data Isolation', () => {
     it('prevents Student B from viewing Student A private note by ID', async () => {
-      const res = await request(app)
-        .get(`/api/notes/${noteAId}`)
-        .set('Cookie', studentBCookie);
+      const res = await request(app).get(`/api/notes/${noteAId}`).set('Cookie', studentBCookie);
       assert.equal(res.status, 404, 'Should return 404 to avoid leaking record existence');
     });
 
@@ -158,9 +152,7 @@ describe('Phase 7: Security Hardening & Data Isolation Test Suite', () => {
     });
 
     it('prevents Student B from deleting Student A private note', async () => {
-      const res = await request(app)
-        .delete(`/api/notes/${noteAId}`)
-        .set('Cookie', studentBCookie);
+      const res = await request(app).delete(`/api/notes/${noteAId}`).set('Cookie', studentBCookie);
       assert.equal(res.status, 404);
 
       const checkNote = await Note.findById(noteAId);
@@ -168,9 +160,7 @@ describe('Phase 7: Security Hardening & Data Isolation Test Suite', () => {
     });
 
     it('prevents Student B from viewing Student A private goal by ID', async () => {
-      const res = await request(app)
-        .get(`/api/goals/${goalAId}`)
-        .set('Cookie', studentBCookie);
+      const res = await request(app).get(`/api/goals/${goalAId}`).set('Cookie', studentBCookie);
       assert.equal(res.status, 404);
     });
 
@@ -186,9 +176,7 @@ describe('Phase 7: Security Hardening & Data Isolation Test Suite', () => {
     });
 
     it('prevents Student B from deleting Student A goal', async () => {
-      const res = await request(app)
-        .delete(`/api/goals/${goalAId}`)
-        .set('Cookie', studentBCookie);
+      const res = await request(app).delete(`/api/goals/${goalAId}`).set('Cookie', studentBCookie);
       assert.equal(res.status, 404);
 
       const checkGoal = await Goal.findById(goalAId);
@@ -196,9 +184,7 @@ describe('Phase 7: Security Hardening & Data Isolation Test Suite', () => {
     });
 
     it('prevents Student B from viewing Student A task by ID', async () => {
-      const res = await request(app)
-        .get(`/api/tasks/${taskAId}`)
-        .set('Cookie', studentBCookie);
+      const res = await request(app).get(`/api/tasks/${taskAId}`).set('Cookie', studentBCookie);
       assert.equal(res.status, 404);
     });
 
@@ -211,9 +197,7 @@ describe('Phase 7: Security Hardening & Data Isolation Test Suite', () => {
     });
 
     it('prevents Student B from deleting Student A task', async () => {
-      const res = await request(app)
-        .delete(`/api/tasks/${taskAId}`)
-        .set('Cookie', studentBCookie);
+      const res = await request(app).delete(`/api/tasks/${taskAId}`).set('Cookie', studentBCookie);
       assert.equal(res.status, 404);
     });
 
@@ -235,19 +219,21 @@ describe('Phase 7: Security Hardening & Data Isolation Test Suite', () => {
   // ==========================================
   describe('Privilege Escalation & Mass Assignment Prevention', () => {
     it('prevents registering as an admin through registration payload', async () => {
-      const res = await request(app)
-        .post('/api/auth/register')
-        .send({
-          name: 'Attacker Eve',
-          email: 'eve.attacker@college.edu',
-          password: 'Password123!',
-          rollNumber: '24ESKCS999',
-          department: 'Computer Science',
-          role: 'admin', // Malicious attempt to escalate role
-        });
+      const res = await request(app).post('/api/auth/register').send({
+        name: 'Attacker Eve',
+        email: 'eve.attacker@college.edu',
+        password: 'Password123!',
+        rollNumber: '24ESKCS999',
+        department: 'Computer Science',
+        role: 'admin', // Malicious attempt to escalate role
+      });
 
       assert.equal(res.status, 201);
-      assert.equal(res.body.user.role, 'student', 'Registration must ignore role injection and force student');
+      assert.equal(
+        res.body.user.role,
+        'student',
+        'Registration must ignore role injection and force student'
+      );
 
       // Verify in database directly
       const userInDb = await User.findOne({ email: 'eve.attacker@college.edu' });

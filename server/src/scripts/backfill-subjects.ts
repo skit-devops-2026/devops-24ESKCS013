@@ -27,7 +27,8 @@ export async function runBackfill() {
   const args = process.argv.slice(2);
   const isDryRun = args.includes('--dry-run');
   const userIdx = args.indexOf('--user');
-  const targetEmail = userIdx !== -1 && args[userIdx + 1] ? args[userIdx + 1].trim().toLowerCase() : null;
+  const targetEmail =
+    userIdx !== -1 && args[userIdx + 1] ? args[userIdx + 1].trim().toLowerCase() : null;
 
   console.log(`\n======================================================`);
   console.log(`   ACADEMIC REGISTRY BACKFILL: ATTENDANCE -> SUBJECTS`);
@@ -48,7 +49,9 @@ export async function runBackfill() {
       await disconnectDB();
       process.exit(1);
     }
-    console.log(`[Filter] Targeting single account: ${targetUser.name} (${targetUser.email}) [ID: ${targetUser._id}]`);
+    console.log(
+      `[Filter] Targeting single account: ${targetUser.name} (${targetUser.email}) [ID: ${targetUser._id}]`
+    );
     targetUserIds = [targetUser._id.toString()];
   } else {
     console.log(`[Filter] Targeting all users in the database.`);
@@ -91,13 +94,18 @@ export async function runBackfill() {
         });
       }
       createdSubjects++;
-      console.log(`  ➕ [${isDryRun ? 'WOULD CREATE' : 'CREATED'}] Subject ${record.subjectCode} (${record.subjectName}) for user ${record.userId}`);
+      console.log(
+        `  ➕ [${isDryRun ? 'WOULD CREATE' : 'CREATED'}] Subject ${record.subjectCode} (${record.subjectName}) for user ${record.userId}`
+      );
     } else {
       skippedExistingSubjects++;
-      console.log(`  ✓ [SKIPPED - ALREADY EXISTS] Subject ${record.subjectCode} (${record.subjectName}) for user ${record.userId}`);
+      console.log(
+        `  ✓ [SKIPPED - ALREADY EXISTS] Subject ${record.subjectCode} (${record.subjectName}) for user ${record.userId}`
+      );
       if (!isDryRun) {
         // Keep attendance percentage synced
-        const nextPct = record.calculatedPercentage || record.erpPercentage || subject.attendancePercentage;
+        const nextPct =
+          record.calculatedPercentage || record.erpPercentage || subject.attendancePercentage;
         if (subject.attendancePercentage !== nextPct) {
           subject.attendancePercentage = nextPct;
           await subject.save();
@@ -128,7 +136,10 @@ export async function runBackfill() {
 }
 
 // Allow direct CLI execution
-if (process.argv[1]?.endsWith('backfill-subjects.ts') || process.argv[1]?.endsWith('backfill-subjects.js')) {
+if (
+  process.argv[1]?.endsWith('backfill-subjects.ts') ||
+  process.argv[1]?.endsWith('backfill-subjects.js')
+) {
   runBackfill()
     .then(() => process.exit(0))
     .catch((err) => {

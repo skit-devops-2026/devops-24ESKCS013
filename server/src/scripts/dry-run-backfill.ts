@@ -10,7 +10,8 @@ async function main() {
   // Parse --user <email> argument if provided
   const args = process.argv.slice(2);
   const userIdx = args.indexOf('--user');
-  const targetEmail = userIdx !== -1 && args[userIdx + 1] ? args[userIdx + 1].trim().toLowerCase() : null;
+  const targetEmail =
+    userIdx !== -1 && args[userIdx + 1] ? args[userIdx + 1].trim().toLowerCase() : null;
 
   console.log(`\n========================================`);
   console.log(`   DRY RUN: SUBJECTS BACKFILL AUDIT`);
@@ -76,7 +77,9 @@ async function main() {
       candidatesRun1.add(key);
     }
   }
-  console.log(`Run 1 (Initial dry run): Would create ${candidatesRun1.size} new Subject record(s).`);
+  console.log(
+    `Run 1 (Initial dry run): Would create ${candidatesRun1.size} new Subject record(s).`
+  );
 
   // Run 2: assuming Run 1 created those subjects
   const simulatedSubjects = [
@@ -91,8 +94,12 @@ async function main() {
       candidatesRun2.add(key);
     }
   }
-  console.log(`Run 2 (Second run with simulated subjects): Would create ${candidatesRun2.size} new Subject record(s).`);
-  console.log(`Idempotency Verified: ${candidatesRun2.size === 0 ? 'PASS (0 subjects created on run 2)' : 'FAIL'}`);
+  console.log(
+    `Run 2 (Second run with simulated subjects): Would create ${candidatesRun2.size} new Subject record(s).`
+  );
+  console.log(
+    `Idempotency Verified: ${candidatesRun2.size === 0 ? 'PASS (0 subjects created on run 2)' : 'FAIL'}`
+  );
 
   await disconnectDB();
 }

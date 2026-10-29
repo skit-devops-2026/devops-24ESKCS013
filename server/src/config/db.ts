@@ -9,6 +9,12 @@ export async function connectDB(uri: string = env.MONGODB_URI): Promise<typeof m
     const host = conn.connection.host;
     const dbName = conn.connection.name;
     console.log(`[Database] MongoDB connected successfully to ${host}/${dbName}`);
+    if (env.NODE_ENV === 'development') {
+      console.log(`[Database Tip] Active Database: "${dbName}"`);
+      console.log(
+        `[Database Tip] Backup command: mongodump --db ${dbName} --out ./backup-before-backfill`
+      );
+    }
     return conn;
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Unknown connection error';

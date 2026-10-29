@@ -10,8 +10,16 @@ export const announcementRouter = Router();
 announcementRouter.use(requireAuth);
 
 const createAnnouncementSchema = z.object({
-  title: z.string().trim().min(3, 'Title must be at least 3 characters').max(200, 'Title cannot exceed 200 characters'),
-  content: z.string().trim().min(5, 'Content must be at least 5 characters').max(5000, 'Content cannot exceed 5000 characters'),
+  title: z
+    .string()
+    .trim()
+    .min(3, 'Title must be at least 3 characters')
+    .max(200, 'Title cannot exceed 200 characters'),
+  content: z
+    .string()
+    .trim()
+    .min(5, 'Content must be at least 5 characters')
+    .max(5000, 'Content cannot exceed 5000 characters'),
   priority: z.enum(['normal', 'urgent'] as const).default('normal'),
   targetAudience: z.enum(['all', 'students', 'faculty'] as const).default('all'),
   status: z.enum(['draft', 'published'] as const).default('published'),
@@ -22,44 +30,48 @@ const createAnnouncementSchema = z.object({
  * POST /api/announcements
  * Admin only: Create campus announcement
  */
-announcementRouter.post('/', requireRole('admin'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  try {
-    const parseResult = createAnnouncementSchema.safeParse(req.body);
-    if (!parseResult.success) {
-      res.status(400).json({
-        status: 'error',
-        statusCode: 400,
-        message: parseResult.error.errors[0]?.message || 'Invalid announcement data.',
+announcementRouter.post(
+  '/',
+  requireRole('admin'),
+  async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+      const parseResult = createAnnouncementSchema.safeParse(req.body);
+      if (!parseResult.success) {
+        res.status(400).json({
+          status: 'error',
+          statusCode: 400,
+          message: parseResult.error.errors[0]?.message || 'Invalid announcement data.',
+        });
+        return;
+      }
+
+      const { title, content, priority, targetAudience, status, expiresAt } = parseResult.data;
+
+      const announcement = await Announcement.create({
+        title,
+        content,
+        priority,
+        targetAudience,
+        status,
+        authorId: req.user!._id,
+        publishedAt: status === 'published' ? new Date() : null,
+        expiresAt: expiresAt ? new Date(expiresAt) : null,
       });
-      return;
+
+      res.status(201).json({
+        status: 'ok',
+        message: 'Announcement created successfully.',
+        data: announcement,
+      });
+    } catch (error: unknown) {
+      res.status(500).json({
+        status: 'error',
+        statusCode: 500,
+        message: error instanceof Error ? error.message : 'Failed to create announcement',
+      });
     }
-
-    const { title, content, priority, targetAudience, status, expiresAt } = parseResult.data;
-
-    const announcement = await Announcement.create({
-      title,
-      content,
-      priority,
-      targetAudience,
-      status,
-      authorId: req.user!._id,
-      publishedAt: status === 'published' ? new Date() : null,
-      expiresAt: expiresAt ? new Date(expiresAt) : null,
-    });
-
-    res.status(201).json({
-      status: 'ok',
-      message: 'Announcement created successfully.',
-      data: announcement,
-    });
-  } catch (error: unknown) {
-    res.status(500).json({
-      status: 'error',
-      statusCode: 500,
-      message: error instanceof Error ? error.message : 'Failed to create announcement',
-    });
   }
-});
+);
 
 /**
  * GET /api/announcements
@@ -77,10 +89,7 @@ announcementRouter.get('/', async (req: AuthenticatedRequest, res: Response): Pr
     if (req.user!.role === 'student') {
       filter.status = 'published';
       filter.targetAudience = { $in: ['all', 'students'] };
-      filter.$or = [
-        { expiresAt: null },
-        { expiresAt: { $gt: new Date() } },
-      ];
+      filter.$or = [{ expiresAt: null }, { expiresAt: { $gt: new Date() } }];
     } else {
       // Admins can filter by status, priority, or targetAudience
       const status = req.query.status as string;
@@ -129,29 +138,37 @@ announcementRouter.get('/', async (req: AuthenticatedRequest, res: Response): Pr
  * DELETE /api/announcements/:id
  * Admin only: Delete an announcement
  */
-announcementRouter.delete('/:id', requireRole('admin'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  try {
-    const { id } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      res.status(400).json({ status: 'error', statusCode: 400, message: 'Invalid announcement ID format.' });
-      return;
-    }
+announcementRouter.delete(
+  '/:id',
+  requireRole('admin'),
+  async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+      const { id } = req.params;
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        res
+          .status(400)
+          .json({ status: 'error', statusCode: 400, message: 'Invalid announcement ID format.' });
+        return;
+      }
 
-    const deleted = await Announcement.findByIdAndDelete(id);
-    if (!deleted) {
-      res.status(404).json({ status: 'error', statusCode: 404, message: 'Announcement record not found.' });
-      return;
-    }
+      const deleted = await Announcement.findByIdAndDelete(id);
+      if (!deleted) {
+        res
+          .status(404)
+          .json({ status: 'error', statusCode: 404, message: 'Announcement record not found.' });
+        return;
+      }
 
-    res.status(200).json({
-      status: 'ok',
-      message: 'Announcement deleted successfully.',
-    });
-  } catch (error: unknown) {
-    res.status(500).json({
-      status: 'error',
-      statusCode: 500,
-      message: error instanceof Error ? error.message : 'Failed to delete announcement',
-    });
+      res.status(200).json({
+        status: 'ok',
+        message: 'Announcement deleted successfully.',
+      });
+    } catch (error: unknown) {
+      res.status(500).json({
+        status: 'error',
+        statusCode: 500,
+        message: error instanceof Error ? error.message : 'Failed to delete announcement',
+      });
+    }
   }
-});
+);

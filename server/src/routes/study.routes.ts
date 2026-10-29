@@ -76,7 +76,8 @@ studyRouter.post('/start', async (req: AuthenticatedRequest, res: Response): Pro
     res.status(409).json({
       status: 'error',
       statusCode: 409,
-      message: 'You already have an active study session in progress. Please complete or cancel it first.',
+      message:
+        'You already have an active study session in progress. Please complete or cancel it first.',
       session: existing,
     });
     return;
@@ -121,7 +122,9 @@ studyRouter.post('/pause', async (req: AuthenticatedRequest, res: Response): Pro
   });
 
   if (!session) {
-    res.status(400).json({ status: 'error', statusCode: 400, message: 'No active session found to pause.' });
+    res
+      .status(400)
+      .json({ status: 'error', statusCode: 400, message: 'No active session found to pause.' });
     return;
   }
 
@@ -148,12 +151,17 @@ studyRouter.post('/resume', async (req: AuthenticatedRequest, res: Response): Pr
   });
 
   if (!session) {
-    res.status(400).json({ status: 'error', statusCode: 400, message: 'No paused session found to resume.' });
+    res
+      .status(400)
+      .json({ status: 'error', statusCode: 400, message: 'No paused session found to resume.' });
     return;
   }
 
   if (session.lastPauseTime) {
-    const pauseDuration = Math.max(0, Math.floor((Date.now() - new Date(session.lastPauseTime).getTime()) / 1000));
+    const pauseDuration = Math.max(
+      0,
+      Math.floor((Date.now() - new Date(session.lastPauseTime).getTime()) / 1000)
+    );
     session.pausedSeconds += pauseDuration;
   }
 
@@ -180,7 +188,11 @@ studyRouter.post('/finish', async (req: AuthenticatedRequest, res: Response): Pr
   });
 
   if (!session) {
-    res.status(400).json({ status: 'error', statusCode: 400, message: 'No active or paused session to finish.' });
+    res.status(400).json({
+      status: 'error',
+      statusCode: 400,
+      message: 'No active or paused session to finish.',
+    });
     return;
   }
 
@@ -206,7 +218,9 @@ studyRouter.post('/cancel', async (req: AuthenticatedRequest, res: Response): Pr
   });
 
   if (!session) {
-    res.status(400).json({ status: 'error', statusCode: 400, message: 'No active session to cancel.' });
+    res
+      .status(400)
+      .json({ status: 'error', statusCode: 400, message: 'No active session to cancel.' });
     return;
   }
 

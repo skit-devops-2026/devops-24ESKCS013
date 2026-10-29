@@ -33,10 +33,14 @@ async function seedDemoStudent() {
 
     // STRICT SAFETY CHECK: Never touch any account other than demo student
     if (demoUser.email !== DEMO_EMAIL) {
-      throw new Error(`FATAL: Target user email '${demoUser.email}' is NOT the demo account! Aborting.`);
+      throw new Error(
+        `FATAL: Target user email '${demoUser.email}' is NOT the demo account! Aborting.`
+      );
     }
 
-    console.log(`[Seed] Purging previous demo data for ${demoUser.email} (UserId: ${demoUser._id})...`);
+    console.log(
+      `[Seed] Purging previous demo data for ${demoUser.email} (UserId: ${demoUser._id})...`
+    );
     await Task.deleteMany({ userId: demoUser._id });
     await Goal.deleteMany({ userId: demoUser._id });
     await Note.deleteMany({ userId: demoUser._id });
@@ -44,17 +48,127 @@ async function seedDemoStudent() {
 
     // 1. Seed Real ERP Subjects & Attendance Records
     const ERP_COURSES = [
-      { code: 'CEUL560.1', name: 'Climate Change Science', type: 'Lecture', credits: 3, p: 30, od: 3, m: 0, a: 3, erp: 91.67 },
-      { code: 'CRT', name: 'Campus Recruitment Training', type: 'Lab', credits: 2, p: 58, od: 0, m: 0, a: 14, erp: 80.56 },
-      { code: 'CSUL501', name: 'Design and Analysis of Algorithms', type: 'Lecture', credits: 4, p: 26, od: 1, m: 0, a: 11, erp: 71.05 },
-      { code: 'CSUL502', name: 'Machine Learning', type: 'Lecture', credits: 4, p: 26, od: 2, m: 0, a: 9, erp: 75.68 },
-      { code: 'CSUL503', name: 'Cryptography and Network Security', type: 'Lecture', credits: 3, p: 32, od: 0, m: 0, a: 8, erp: 80.00 },
-      { code: 'CSUL504', name: 'Full Stack Development', type: 'Lecture', credits: 3, p: 17, od: 2, m: 0, a: 5, erp: 79.17 },
-      { code: 'CSUL511', name: 'DevOps Practices and Principles', type: 'Lecture', credits: 3, p: 30, od: 3, m: 1, a: 7, erp: 85.00 },
-      { code: 'CSUP520', name: 'Design and Analysis of Algorithms Lab', type: 'Lab', credits: 2, p: 22, od: 0, m: 0, a: 4, erp: 84.62 },
-      { code: 'CSUP521', name: 'Machine Learning Lab', type: 'Lab', credits: 2, p: 22, od: 0, m: 0, a: 2, erp: 91.67 },
-      { code: 'CSUP522', name: 'Full Stack Development Lab', type: 'Lab', credits: 2, p: 18, od: 6, m: 0, a: 2, erp: 92.31 },
-      { code: 'CSUT530', name: 'Industrial Training', type: 'Lab', credits: 2, p: 14, od: 0, m: 2, a: 1, erp: 100.00 },
+      {
+        code: 'CEUL560.1',
+        name: 'Climate Change Science',
+        type: 'Lecture',
+        credits: 3,
+        p: 30,
+        od: 3,
+        m: 0,
+        a: 3,
+        erp: 91.67,
+      },
+      {
+        code: 'CRT',
+        name: 'Campus Recruitment Training',
+        type: 'Lab',
+        credits: 2,
+        p: 58,
+        od: 0,
+        m: 0,
+        a: 14,
+        erp: 80.56,
+      },
+      {
+        code: 'CSUL501',
+        name: 'Design and Analysis of Algorithms',
+        type: 'Lecture',
+        credits: 4,
+        p: 26,
+        od: 1,
+        m: 0,
+        a: 11,
+        erp: 71.05,
+      },
+      {
+        code: 'CSUL502',
+        name: 'Machine Learning',
+        type: 'Lecture',
+        credits: 4,
+        p: 26,
+        od: 2,
+        m: 0,
+        a: 9,
+        erp: 75.68,
+      },
+      {
+        code: 'CSUL503',
+        name: 'Cryptography and Network Security',
+        type: 'Lecture',
+        credits: 3,
+        p: 32,
+        od: 0,
+        m: 0,
+        a: 8,
+        erp: 80.0,
+      },
+      {
+        code: 'CSUL504',
+        name: 'Full Stack Development',
+        type: 'Lecture',
+        credits: 3,
+        p: 17,
+        od: 2,
+        m: 0,
+        a: 5,
+        erp: 79.17,
+      },
+      {
+        code: 'CSUL511',
+        name: 'DevOps Practices and Principles',
+        type: 'Lecture',
+        credits: 3,
+        p: 30,
+        od: 3,
+        m: 1,
+        a: 7,
+        erp: 85.0,
+      },
+      {
+        code: 'CSUP520',
+        name: 'Design and Analysis of Algorithms Lab',
+        type: 'Lab',
+        credits: 2,
+        p: 22,
+        od: 0,
+        m: 0,
+        a: 4,
+        erp: 84.62,
+      },
+      {
+        code: 'CSUP521',
+        name: 'Machine Learning Lab',
+        type: 'Lab',
+        credits: 2,
+        p: 22,
+        od: 0,
+        m: 0,
+        a: 2,
+        erp: 91.67,
+      },
+      {
+        code: 'CSUP522',
+        name: 'Full Stack Development Lab',
+        type: 'Lab',
+        credits: 2,
+        p: 18,
+        od: 6,
+        m: 0,
+        a: 2,
+        erp: 92.31,
+      },
+      {
+        code: 'CSUT530',
+        name: 'Industrial Training',
+        type: 'Lab',
+        credits: 2,
+        p: 14,
+        od: 0,
+        m: 2,
+        a: 1,
+        erp: 100.0,
+      },
     ];
 
     console.log(`[Seed] Upserting 11 university courses for demo student...`);
@@ -112,7 +226,8 @@ async function seedDemoStudent() {
       {
         userId: demoUser._id,
         title: 'Complete Dynamic Programming Problem Set',
-        description: 'Implement bottom-up DP solution for 0/1 Knapsack and Matrix Chain Multiplication in C++.',
+        description:
+          'Implement bottom-up DP solution for 0/1 Knapsack and Matrix Chain Multiplication in C++.',
         priority: 'high',
         status: 'pending',
         dueDate: new Date(Date.now() + 2 * 86400000),
@@ -122,7 +237,8 @@ async function seedDemoStudent() {
       {
         userId: demoUser._id,
         title: 'Review Dockerfile & Kubernetes Manifests',
-        description: 'Configure multi-stage Docker build and Helm chart for microservices assignment.',
+        description:
+          'Configure multi-stage Docker build and Helm chart for microservices assignment.',
         priority: 'medium',
         status: 'pending',
         dueDate: new Date(Date.now() + 5 * 86400000),
@@ -132,7 +248,8 @@ async function seedDemoStudent() {
       {
         userId: demoUser._id,
         title: 'Train CNN Model on CIFAR-10',
-        description: 'Fine-tune ResNet-18 with data augmentation techniques to hit 88% test accuracy.',
+        description:
+          'Fine-tune ResNet-18 with data augmentation techniques to hit 88% test accuracy.',
         priority: 'high',
         status: 'in_progress',
         dueDate: new Date(Date.now() + 3 * 86400000),
@@ -177,7 +294,8 @@ async function seedDemoStudent() {
       {
         userId: demoUser._id,
         title: 'Restore CSUL501 Attendance above 75%',
-        description: 'Auto-tracking Algorithm course attendance to resolve exam eligibility shortfall.',
+        description:
+          'Auto-tracking Algorithm course attendance to resolve exam eligibility shortfall.',
         targetValue: 75,
         currentValue: 71.05,
         unit: '%',
@@ -215,7 +333,8 @@ async function seedDemoStudent() {
       {
         userId: demoUser._id,
         title: 'Achieve 8.8+ SGPA in Semester 5',
-        description: 'Target grades: A+ in Algorithms and Machine Learning, A in Full Stack and DevOps.',
+        description:
+          'Target grades: A+ in Algorithms and Machine Learning, A in Full Stack and DevOps.',
         targetValue: 9,
         currentValue: 8.5,
         unit: 'SGPA',

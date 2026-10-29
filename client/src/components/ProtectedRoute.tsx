@@ -27,10 +27,13 @@ export function ProtectedRoute({ children, allowedRole }: ProtectedRouteProps) {
   if (allowedRole && user.role !== allowedRole) {
     return (
       <div className="container" style={{ textAlign: 'center', padding: '5rem 1rem' }}>
-        <span className="badge badge-red" style={{ marginBottom: '1rem' }}>Access Denied (403)</span>
+        <span className="badge badge-red" style={{ marginBottom: '1rem' }}>
+          Access Denied (403)
+        </span>
         <h1 style={{ fontSize: '2rem', marginBottom: '1rem' }}>Unauthorized Role Access</h1>
         <p style={{ color: 'var(--ink-soft)', maxWidth: '480px', margin: '0 auto 1.5rem' }}>
-          Your account has the role <strong>{user.role.toUpperCase()}</strong>, but this portal section requires <strong>{allowedRole.toUpperCase()}</strong> permissions.
+          Your account has the role <strong>{user.role.toUpperCase()}</strong>, but this portal
+          section requires <strong>{allowedRole.toUpperCase()}</strong> permissions.
         </p>
         <a
           href={user.role === 'admin' ? '/admin/dashboard' : '/student/dashboard'}

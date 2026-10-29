@@ -2,13 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-import {
-  Menu,
-  Search,
-  Sun,
-  Moon,
-  LogOut,
-} from 'lucide-react';
+import { Menu, Search, Sun, Moon, LogOut } from 'lucide-react';
 
 interface TopBarProps {
   onOpenMobileSidebar: () => void;
@@ -56,7 +50,11 @@ export function TopBar({ onOpenMobileSidebar, onOpenCommandPalette }: TopBarProp
         </button>
 
         {/* Global Search / Command Trigger */}
-        <div className="search-trigger-btn" onClick={onOpenCommandPalette} title="Search subjects, tasks, notes... (⌘K)">
+        <div
+          className="search-trigger-btn"
+          onClick={onOpenCommandPalette}
+          title="Search subjects, tasks, notes... (⌘K)"
+        >
           <Search size={15} />
           <span>Search portal...</span>
           <span className="kbd-shortcut">⌘K</span>
@@ -131,9 +129,24 @@ export function TopBar({ onOpenMobileSidebar, onOpenCommandPalette }: TopBarProp
                 gap: '0.5rem',
               }}
             >
-              <div style={{ padding: '0.25rem 0.5rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.75rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
-                  <span style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--text-primary)' }}>
+              <div
+                style={{
+                  padding: '0.25rem 0.5rem',
+                  borderBottom: '1px solid var(--border-subtle)',
+                  paddingBottom: '0.75rem',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    marginBottom: '0.25rem',
+                  }}
+                >
+                  <span
+                    style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--text-primary)' }}
+                  >
                     {user.name}
                   </span>
                   <span className={`badge ${user.role === 'admin' ? 'badge-gold' : 'badge-green'}`}>
@@ -142,15 +155,28 @@ export function TopBar({ onOpenMobileSidebar, onOpenCommandPalette }: TopBarProp
                 </div>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{user.email}</div>
                 {user.profile?.rollNumber && (
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
-                    Roll: <strong style={{ color: 'var(--text-secondary)' }}>{user.profile.rollNumber}</strong>
+                  <div
+                    style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}
+                  >
+                    Roll:{' '}
+                    <strong style={{ color: 'var(--text-secondary)' }}>
+                      {user.profile.rollNumber}
+                    </strong>
                   </div>
                 )}
               </div>
 
               <div style={{ padding: '0.25rem 0' }}>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', padding: '0 0.5rem 0.25rem' }}>
-                  {user.role === 'admin' ? 'Administrative Access' : `${user.profile?.department || 'Academics'} • Sem ${user.profile?.semester || 1}`}
+                <div
+                  style={{
+                    fontSize: '0.75rem',
+                    color: 'var(--text-muted)',
+                    padding: '0 0.5rem 0.25rem',
+                  }}
+                >
+                  {user.role === 'admin'
+                    ? 'Administrative Access'
+                    : `${user.profile?.department || 'Academics'} • Sem ${user.profile?.semester || 1}`}
                 </div>
               </div>
 

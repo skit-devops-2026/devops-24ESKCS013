@@ -86,42 +86,35 @@ describe('Attendance Intelligence Unit & Integration Tests', () => {
     await connectDB(mongod.getUri());
 
     // Register Student A
-    const resA = await request(app)
-      .post('/api/auth/register')
-      .send({
-        name: 'Attendance Student Alice',
-        email: 'alice.attendance@test.edu',
-        password: 'Password123!',
-        rollNumber: 'CS_ATT_01',
-        department: 'CS',
-        semester: 5,
-      });
+    const resA = await request(app).post('/api/auth/register').send({
+      name: 'Attendance Student Alice',
+      email: 'alice.attendance@test.edu',
+      password: 'Password123!',
+      rollNumber: 'CS_ATT_01',
+      department: 'CS',
+      semester: 5,
+    });
     studentACookie = resA.headers['set-cookie'] as unknown as string[];
 
     // Register Student B (for cross-user isolation tests)
-    const resB = await request(app)
-      .post('/api/auth/register')
-      .send({
-        name: 'Attendance Student Bob',
-        email: 'bob.attendance@test.edu',
-        password: 'Password123!',
-        rollNumber: 'CS_ATT_02',
-        department: 'CS',
-        semester: 5,
-      });
+    const resB = await request(app).post('/api/auth/register').send({
+      name: 'Attendance Student Bob',
+      email: 'bob.attendance@test.edu',
+      password: 'Password123!',
+      rollNumber: 'CS_ATT_02',
+      department: 'CS',
+      semester: 5,
+    });
     studentBCookie = resB.headers['set-cookie'] as unknown as string[];
 
     // Seed existing subject for Alice to test catalog linking
-    await request(app)
-      .post('/api/subjects')
-      .set('Cookie', studentACookie)
-      .send({
-        code: 'CSUL501',
-        name: 'Design and Analysis of Algorithms',
-        credits: 4,
-        semester: 5,
-        attendancePercentage: 0,
-      });
+    await request(app).post('/api/subjects').set('Cookie', studentACookie).send({
+      code: 'CSUL501',
+      name: 'Design and Analysis of Algorithms',
+      credits: 4,
+      semester: 5,
+      attendancePercentage: 0,
+    });
   });
 
   after(async () => {
@@ -265,7 +258,10 @@ describe('Attendance Intelligence Unit & Integration Tests', () => {
       // If Makeup is credited as present without being added to conducted (34/40 = 85.00%)
       const simulatedErpNumerator = 30 + 3 + 1;
       const simulatedErpDenominator = 30 + 3 + 7;
-      assert.equal(Number(((simulatedErpNumerator / simulatedErpDenominator) * 100).toFixed(2)), 85.0);
+      assert.equal(
+        Number(((simulatedErpNumerator / simulatedErpDenominator) * 100).toFixed(2)),
+        85.0
+      );
     });
 
     it('handles threshold boundary calculations across 60%, 65%, 70%, 75%, 80%, 85%', () => {
@@ -301,7 +297,10 @@ describe('Attendance Intelligence Unit & Integration Tests', () => {
       const parsed = parseErpAttendanceText(REAL_ERP_TSV, 'standard_od');
       assert.equal(parsed.success, true);
       assert.equal(parsed.rows.length, 4);
-      assert.equal(parsed.rows.every((r) => r.isValid), true);
+      assert.equal(
+        parsed.rows.every((r) => r.isValid),
+        true
+      );
 
       const daa = parsed.rows.find((r) => r.subjectCode === 'CSUL501');
       assert.ok(daa);
@@ -497,7 +496,9 @@ CS101,Duplicate,-5,2
       assert.equal(res.body.status, 'ok');
       assert.equal(res.body.count, 3);
 
-      const daaRecord = res.body.data.find((r: { subjectCode: string }) => r.subjectCode === 'CSUL501');
+      const daaRecord = res.body.data.find(
+        (r: { subjectCode: string }) => r.subjectCode === 'CSUL501'
+      );
       assert.ok(daaRecord);
       assert.equal(daaRecord.calculatedPercentage, 71.05);
       createdRecordId = daaRecord._id;
@@ -536,9 +537,7 @@ CS101,Duplicate,-5,2
     });
 
     it('GET /api/attendance returns semester summary and prioritizes CSUL501 shortage at top', async () => {
-      const res = await request(app)
-        .get('/api/attendance')
-        .set('Cookie', studentACookie);
+      const res = await request(app).get('/api/attendance').set('Cookie', studentACookie);
 
       assert.equal(res.status, 200);
       assert.equal(res.body.status, 'ok');
@@ -568,28 +567,30 @@ CS101,Duplicate,-5,2
         .set('Cookie', studentACookie)
         .send({
           policy: 'standard_od',
-          records: previewRes.body.rows.map((r: {
-            subjectCode: string;
-            subjectName: string;
-            subjectType: string;
-            present: number;
-            od: number;
-            makeup: number;
-            absent: number;
-            erpPercentage: number;
-            discrepancyNote?: string;
-          }) => ({
-            subjectCode: r.subjectCode,
-            subjectName: r.subjectName,
-            subjectType: r.subjectType,
-            present: r.present,
-            od: r.od,
-            makeup: r.makeup,
-            absent: r.absent,
-            erpPercentage: r.erpPercentage,
-            threshold: 75,
-            discrepancyNote: r.discrepancyNote,
-          })),
+          records: previewRes.body.rows.map(
+            (r: {
+              subjectCode: string;
+              subjectName: string;
+              subjectType: string;
+              present: number;
+              od: number;
+              makeup: number;
+              absent: number;
+              erpPercentage: number;
+              discrepancyNote?: string;
+            }) => ({
+              subjectCode: r.subjectCode,
+              subjectName: r.subjectName,
+              subjectType: r.subjectType,
+              present: r.present,
+              od: r.od,
+              makeup: r.makeup,
+              absent: r.absent,
+              erpPercentage: r.erpPercentage,
+              threshold: 75,
+              discrepancyNote: r.discrepancyNote,
+            })
+          ),
         });
       assert.equal(importRes.status, 201);
       assert.equal(importRes.body.count, 11);
@@ -600,34 +601,34 @@ CS101,Duplicate,-5,2
         .set('Cookie', studentACookie)
         .send({
           policy: 'standard_od',
-          records: previewRes.body.rows.map((r: {
-            subjectCode: string;
-            subjectName: string;
-            subjectType: string;
-            present: number;
-            od: number;
-            makeup: number;
-            absent: number;
-            erpPercentage: number;
-          }) => ({
-            subjectCode: r.subjectCode,
-            subjectName: r.subjectName,
-            subjectType: r.subjectType,
-            present: r.present,
-            od: r.od,
-            makeup: r.makeup,
-            absent: r.absent,
-            erpPercentage: r.erpPercentage,
-            threshold: 75,
-          })),
+          records: previewRes.body.rows.map(
+            (r: {
+              subjectCode: string;
+              subjectName: string;
+              subjectType: string;
+              present: number;
+              od: number;
+              makeup: number;
+              absent: number;
+              erpPercentage: number;
+            }) => ({
+              subjectCode: r.subjectCode,
+              subjectName: r.subjectName,
+              subjectType: r.subjectType,
+              present: r.present,
+              od: r.od,
+              makeup: r.makeup,
+              absent: r.absent,
+              erpPercentage: r.erpPercentage,
+              threshold: 75,
+            })
+          ),
         });
       assert.equal(reimportRes.status, 201);
       assert.equal(reimportRes.body.count, 11);
 
       // 4. GET /api/attendance: verify exact totals and sorted shortages
-      const listRes = await request(app)
-        .get('/api/attendance')
-        .set('Cookie', studentACookie);
+      const listRes = await request(app).get('/api/attendance').set('Cookie', studentACookie);
       assert.equal(listRes.status, 200);
       assert.equal(listRes.body.summary.totalSubjects, 11);
       assert.equal(listRes.body.summary.totalAttended, 312);
@@ -646,7 +647,9 @@ CS101,Duplicate,-5,2
       assert.equal(listRes.body.shortages[0].subjectCode, 'CSUL501');
 
       // Verify CSUL502 updated counts and zero discrepancy
-      const csul502 = listRes.body.records.find((r: { subjectCode: string }) => r.subjectCode === 'CSUL502');
+      const csul502 = listRes.body.records.find(
+        (r: { subjectCode: string }) => r.subjectCode === 'CSUL502'
+      );
       assert.ok(csul502);
       assert.equal(csul502.absent, 9);
       assert.equal(csul502.erpPercentage, 75.68);
@@ -654,13 +657,17 @@ CS101,Duplicate,-5,2
       assert.equal(csul502.isDiscrepancy, false);
 
       // Verify CSUT530 and CSUL511 discrepancies
-      const csut530 = listRes.body.records.find((r: { subjectCode: string }) => r.subjectCode === 'CSUT530');
+      const csut530 = listRes.body.records.find(
+        (r: { subjectCode: string }) => r.subjectCode === 'CSUT530'
+      );
       assert.ok(csut530);
       assert.equal(csut530.isDiscrepancy, true);
       assert.equal(csut530.erpPercentage, 100.0);
       assert.equal(csut530.calculatedPercentage, 82.35);
 
-      const csul511 = listRes.body.records.find((r: { subjectCode: string }) => r.subjectCode === 'CSUL511');
+      const csul511 = listRes.body.records.find(
+        (r: { subjectCode: string }) => r.subjectCode === 'CSUL511'
+      );
       assert.ok(csul511);
       assert.equal(csul511.isDiscrepancy, true);
       assert.equal(csul511.erpPercentage, 85.0);
@@ -716,9 +723,7 @@ CS101,Duplicate,-5,2
       assert.equal(res.body.data.eventAttendance.presentHours, 10);
 
       // Verify Bob cannot see Alice's overview
-      const bobRes = await request(app)
-        .get('/api/attendance')
-        .set('Cookie', studentBCookie);
+      const bobRes = await request(app).get('/api/attendance').set('Cookie', studentBCookie);
       assert.equal(bobRes.status, 200);
       // Bob gets defaults, not Alice's updated 80.5% or 10 present hours
       assert.notEqual(bobRes.body.summary.erpAggregatePercentage, 80.5);
@@ -743,9 +748,7 @@ CS101,Duplicate,-5,2
 
     it('enforces cross-user isolation: Bob cannot view, update, simulate, or delete Alice record', async () => {
       // Bob tries to GET Alice's records
-      const bobList = await request(app)
-        .get('/api/attendance')
-        .set('Cookie', studentBCookie);
+      const bobList = await request(app).get('/api/attendance').set('Cookie', studentBCookie);
       assert.equal(bobList.status, 200);
       assert.equal(bobList.body.summary.totalSubjects, 0); // Bob sees 0 subjects
 

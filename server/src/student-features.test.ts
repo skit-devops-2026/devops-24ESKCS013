@@ -7,7 +7,8 @@ import { connectDB, disconnectDB } from './config/db.js';
 import { User } from './models/User.js';
 import { Announcement } from './models/Announcement.js';
 import { Resource } from './models/Resource.js';
-import { AUTH_COOKIE_NAME } from './services/auth.service.js';
+import { Goal } from './models/Goal.js';
+import { Subject } from './models/Subject.js';
 
 let mongod: MongoMemoryServer;
 const app = createApp();
@@ -21,29 +22,25 @@ describe('Student Academic Features Integration Tests', () => {
     await connectDB(mongod.getUri());
 
     // Register Student A
-    const resA = await request(app)
-      .post('/api/auth/register')
-      .send({
-        name: 'Student Alice',
-        email: 'alice@test.edu',
-        password: 'Password123!',
-        rollNumber: 'CS101',
-        department: 'CS',
-        semester: 4,
-      });
+    const resA = await request(app).post('/api/auth/register').send({
+      name: 'Student Alice',
+      email: 'alice@test.edu',
+      password: 'Password123!',
+      rollNumber: 'CS101',
+      department: 'CS',
+      semester: 4,
+    });
     studentACookie = resA.headers['set-cookie'] as unknown as string[];
 
     // Register Student B (for data isolation checks)
-    const resB = await request(app)
-      .post('/api/auth/register')
-      .send({
-        name: 'Student Bob',
-        email: 'bob@test.edu',
-        password: 'Password123!',
-        rollNumber: 'CS102',
-        department: 'CS',
-        semester: 4,
-      });
+    const resB = await request(app).post('/api/auth/register').send({
+      name: 'Student Bob',
+      email: 'bob@test.edu',
+      password: 'Password123!',
+      rollNumber: 'CS102',
+      department: 'CS',
+      semester: 4,
+    });
     studentBCookie = resB.headers['set-cookie'] as unknown as string[];
 
     // Seed test published announcement and resource
@@ -90,17 +87,14 @@ describe('Student Academic Features Integration Tests', () => {
    * ------------------------------------------------------------- */
   describe('Subjects Module', () => {
     it('POST /api/subjects creates a subject for Alice', async () => {
-      const res = await request(app)
-        .post('/api/subjects')
-        .set('Cookie', studentACookie)
-        .send({
-          code: 'CS301',
-          name: 'Database Management Systems',
-          credits: 4,
-          semester: 4,
-          facultyName: 'Dr. Turing',
-          attendancePercentage: 92,
-        });
+      const res = await request(app).post('/api/subjects').set('Cookie', studentACookie).send({
+        code: 'CS301',
+        name: 'Database Management Systems',
+        credits: 4,
+        semester: 4,
+        facultyName: 'Dr. Turing',
+        attendancePercentage: 92,
+      });
 
       assert.equal(res.status, 201);
       assert.equal(res.body.status, 'ok');
@@ -109,36 +103,28 @@ describe('Student Academic Features Integration Tests', () => {
     });
 
     it('POST /api/subjects rejects duplicate subject code for the same user', async () => {
-      const res = await request(app)
-        .post('/api/subjects')
-        .set('Cookie', studentACookie)
-        .send({
-          code: 'cs301', // case-insensitive duplicate check
-          name: 'Duplicate DBMS',
-        });
+      const res = await request(app).post('/api/subjects').set('Cookie', studentACookie).send({
+        code: 'cs301', // case-insensitive duplicate check
+        name: 'Duplicate DBMS',
+      });
 
       assert.equal(res.status, 409);
       assert.ok(res.body.message.includes('already have a subject with code CS301'));
     });
 
     it('POST /api/subjects allows another student (Bob) to have the same subject code', async () => {
-      const res = await request(app)
-        .post('/api/subjects')
-        .set('Cookie', studentBCookie)
-        .send({
-          code: 'CS301',
-          name: 'DBMS Bob Section',
-          credits: 4,
-        });
+      const res = await request(app).post('/api/subjects').set('Cookie', studentBCookie).send({
+        code: 'CS301',
+        name: 'DBMS Bob Section',
+        credits: 4,
+      });
 
       assert.equal(res.status, 201);
       assert.equal(res.body.data.code, 'CS301');
     });
 
     it('GET /api/subjects enforces user isolation (Alice only sees her subjects)', async () => {
-      const res = await request(app)
-        .get('/api/subjects')
-        .set('Cookie', studentACookie);
+      const res = await request(app).get('/api/subjects').set('Cookie', studentACookie);
 
       assert.equal(res.status, 200);
       assert.equal(res.body.count, 1);
@@ -153,17 +139,14 @@ describe('Student Academic Features Integration Tests', () => {
   describe('Tasks Module', () => {
     it('POST /api/tasks creates a task linked to Alice and her subject', async () => {
       const tomorrow = new Date(Date.now() + 86400000).toISOString();
-      const res = await request(app)
-        .post('/api/tasks')
-        .set('Cookie', studentACookie)
-        .send({
-          title: 'Complete SQL Normalization Assignment',
-          description: '3NF and BCNF problems',
-          priority: 'high',
-          status: 'pending',
-          dueDate: tomorrow,
-          subjectId: createdSubjectId,
-        });
+      const res = await request(app).post('/api/tasks').set('Cookie', studentACookie).send({
+        title: 'Complete SQL Normalization Assignment',
+        description: '3NF and BCNF problems',
+        priority: 'high',
+        status: 'pending',
+        dueDate: tomorrow,
+        subjectId: createdSubjectId,
+      });
 
       assert.equal(res.status, 201);
       assert.equal(res.body.data.title, 'Complete SQL Normalization Assignment');
@@ -172,9 +155,7 @@ describe('Student Academic Features Integration Tests', () => {
     });
 
     it('GET /api/tasks/summary calculates pending and overdue counts', async () => {
-      const res = await request(app)
-        .get('/api/tasks/summary')
-        .set('Cookie', studentACookie);
+      const res = await request(app).get('/api/tasks/summary').set('Cookie', studentACookie);
 
       assert.equal(res.status, 200);
       assert.equal(res.body.data.total, 1);
@@ -240,16 +221,13 @@ describe('Student Academic Features Integration Tests', () => {
   describe('Goals Module', () => {
     it('POST /api/goals creates an academic milestone', async () => {
       const nextMonth = new Date(Date.now() + 30 * 86400000).toISOString();
-      const res = await request(app)
-        .post('/api/goals')
-        .set('Cookie', studentACookie)
-        .send({
-          title: 'Solve 50 LeetCode Algorithms',
-          targetValue: 50,
-          currentValue: 15,
-          unit: 'problems',
-          targetDate: nextMonth,
-        });
+      const res = await request(app).post('/api/goals').set('Cookie', studentACookie).send({
+        title: 'Solve 50 LeetCode Algorithms',
+        targetValue: 50,
+        currentValue: 15,
+        unit: 'problems',
+        targetDate: nextMonth,
+      });
 
       assert.equal(res.status, 201);
       assert.equal(res.body.data.currentValue, 15);
@@ -269,9 +247,7 @@ describe('Student Academic Features Integration Tests', () => {
     });
 
     it('GET /api/goals/summary returns average progress and counts', async () => {
-      const res = await request(app)
-        .get('/api/goals/summary')
-        .set('Cookie', studentACookie);
+      const res = await request(app).get('/api/goals/summary').set('Cookie', studentACookie);
 
       assert.equal(res.status, 200);
       assert.equal(res.body.data.total, 1);
@@ -311,6 +287,84 @@ describe('Student Academic Features Integration Tests', () => {
         .set('Cookie', studentACookie);
       assert.equal(fetchRes.status, 404);
     });
+
+    it('auto-linked goals compute in-memory on GET without mutating DB, and drop-below rule reverts to active', async () => {
+      // 1. Create a subject with 80% attendance
+      const subjRes = await request(app).post('/api/subjects').set('Cookie', studentACookie).send({
+        name: 'Operating Systems Laboratory',
+        code: 'CSL302',
+        attendancePercentage: 80,
+        totalClasses: 10,
+        attendedClasses: 8,
+      });
+      const oslId = subjRes.body.data._id;
+
+      // 2. Create an auto-linked goal targeting 75% attendance
+      const goalRes = await request(app)
+        .post('/api/goals')
+        .set('Cookie', studentACookie)
+        .send({
+          title: 'Maintain 75% in OS Lab',
+          targetValue: 75,
+          currentValue: 0,
+          unit: '%',
+          targetDate: new Date(Date.now() + 30 * 86400000).toISOString(),
+          autoLinkMetric: 'attendance',
+          subjectId: oslId,
+        });
+      const goalId = goalRes.body.data._id;
+
+      // Check DB directly: in DB, currentValue is still 0
+      const rawInDbBefore = await Goal.findById(goalId);
+      assert.equal(rawInDbBefore?.currentValue, 0);
+
+      // 3. GET /api/goals should return dynamic in-memory computed currentValue: 80 and status: 'completed'
+      const getRes = await request(app).get('/api/goals').set('Cookie', studentACookie);
+      const computedGoal = getRes.body.data.find(
+        (g: Record<string, unknown>) => String(g._id) === goalId
+      );
+      assert.equal(computedGoal.currentValue, 80);
+      assert.equal(computedGoal.status, 'completed');
+
+      // Crucial test: DB document must NOT have been mutated by the GET request!
+      const rawInDbAfter = await Goal.findById(goalId);
+      assert.equal(
+        rawInDbAfter?.currentValue,
+        0,
+        'GET request must be strictly side-effect free and not write to DB'
+      );
+
+      // 4. Test drop-below rule: Subject attendance drops to 70%
+      await Subject.updateOne(
+        { _id: oslId },
+        { $set: { attendedClasses: 7, attendancePercentage: 70 } }
+      );
+
+      const getResAfterDrop = await request(app).get('/api/goals').set('Cookie', studentACookie);
+      const droppedGoal = getResAfterDrop.body.data.find(
+        (g: Record<string, unknown>) => String(g._id) === goalId
+      );
+      assert.equal(droppedGoal.currentValue, 70);
+      assert.equal(
+        droppedGoal.status,
+        'active',
+        'Goal status must revert to active when attendance drops below target'
+      );
+
+      // 5. Test explicit POST /api/goals/recompute: should persist to DB
+      const recomputeRes = await request(app)
+        .post('/api/goals/recompute')
+        .set('Cookie', studentACookie);
+      assert.equal(recomputeRes.status, 200);
+
+      const rawInDbPersisted = await Goal.findById(goalId);
+      assert.equal(rawInDbPersisted?.currentValue, 70, 'recompute should persist currentValue');
+      assert.equal(rawInDbPersisted?.status, 'active', 'recompute should persist status');
+
+      // Cleanup test documents to keep suite state pristine
+      await Goal.deleteOne({ _id: goalId });
+      await Subject.deleteOne({ _id: oslId });
+    });
   });
 
   /* -------------------------------------------------------------
@@ -336,13 +390,32 @@ describe('Student Academic Features Integration Tests', () => {
     });
 
     it('GET /api/notes supports search queries', async () => {
-      const res = await request(app)
-        .get('/api/notes?q=Cartesian')
-        .set('Cookie', studentACookie);
+      const res = await request(app).get('/api/notes?q=Cartesian').set('Cookie', studentACookie);
 
       assert.equal(res.status, 200);
       assert.equal(res.body.count, 1);
       assert.equal(res.body.data[0]._id, createdNoteId);
+    });
+
+    it('GET /api/notes?q= supports partial-word substring search (e.g. algo matches Algorithms)', async () => {
+      await request(app)
+        .post('/api/notes')
+        .set('Cookie', studentACookie)
+        .send({
+          title: 'Design and Analysis of Algorithms - Divide and Conquer',
+          content: 'Master theorem recurrence relations and mergesort analysis.',
+          tags: ['Algorithms', 'DAA'],
+        });
+
+      const res = await request(app).get('/api/notes?q=algo').set('Cookie', studentACookie);
+
+      assert.equal(res.status, 200);
+      assert.ok(res.body.count >= 1);
+      const found = res.body.data.some((n: { title: string }) => n.title.includes('Algorithms'));
+      assert.ok(
+        found,
+        'Expected search for "algo" to match note with title containing "Algorithms"'
+      );
     });
 
     it('PATCH /api/notes/:id updates note content and toggles isPinned', async () => {
@@ -360,9 +433,7 @@ describe('Student Academic Features Integration Tests', () => {
     });
 
     it('GET /api/notes?tag= filters notes by tag', async () => {
-      const res = await request(app)
-        .get('/api/notes?tag=DBMS')
-        .set('Cookie', studentACookie);
+      const res = await request(app).get('/api/notes?tag=DBMS').set('Cookie', studentACookie);
 
       assert.equal(res.status, 200);
       assert.equal(res.body.count, 1);
@@ -370,13 +441,10 @@ describe('Student Academic Features Integration Tests', () => {
     });
 
     it('DELETE /api/notes/:id deletes note', async () => {
-      const createRes = await request(app)
-        .post('/api/notes')
-        .set('Cookie', studentACookie)
-        .send({
-          title: 'Scratch Note',
-          content: 'Temporary content',
-        });
+      const createRes = await request(app).post('/api/notes').set('Cookie', studentACookie).send({
+        title: 'Scratch Note',
+        content: 'Temporary content',
+      });
       const scratchId = createRes.body.data._id;
 
       const delRes = await request(app)
@@ -391,9 +459,7 @@ describe('Student Academic Features Integration Tests', () => {
     });
 
     it('GET /api/notes enforces cross-user isolation (Bob finds 0 notes)', async () => {
-      const res = await request(app)
-        .get('/api/notes')
-        .set('Cookie', studentBCookie);
+      const res = await request(app).get('/api/notes').set('Cookie', studentBCookie);
 
       assert.equal(res.status, 200);
       assert.equal(res.body.count, 0);
@@ -420,14 +486,11 @@ describe('Student Academic Features Integration Tests', () => {
 
     it('DELETE /api/subjects/:id deletes a subject and safely clears associations', async () => {
       // Create a temporary subject to delete
-      const subRes = await request(app)
-        .post('/api/subjects')
-        .set('Cookie', studentACookie)
-        .send({
-          code: 'TEMP101',
-          name: 'Temporary Subject',
-          credits: 2,
-        });
+      const subRes = await request(app).post('/api/subjects').set('Cookie', studentACookie).send({
+        code: 'TEMP101',
+        name: 'Temporary Subject',
+        credits: 2,
+      });
       const tempSubId = subRes.body.data._id;
 
       // Link a task to this temporary subject
@@ -457,9 +520,7 @@ describe('Student Academic Features Integration Tests', () => {
       assert.equal(checkTask.body.data.subjectCode, '');
 
       // Clean up the temporary task
-      await request(app)
-        .delete(`/api/tasks/${tempTaskId}`)
-        .set('Cookie', studentACookie);
+      await request(app).delete(`/api/tasks/${tempTaskId}`).set('Cookie', studentACookie);
     });
   });
 
@@ -468,13 +529,10 @@ describe('Student Academic Features Integration Tests', () => {
    * ------------------------------------------------------------- */
   describe('Study Timer Module', () => {
     it('POST /api/study/start begins a focused study session', async () => {
-      const res = await request(app)
-        .post('/api/study/start')
-        .set('Cookie', studentACookie)
-        .send({
-          subjectId: createdSubjectId,
-          title: 'Deep Focus - Database Algorithms',
-        });
+      const res = await request(app).post('/api/study/start').set('Cookie', studentACookie).send({
+        subjectId: createdSubjectId,
+        title: 'Deep Focus - Database Algorithms',
+      });
 
       assert.equal(res.status, 201);
       assert.equal(res.body.session.status, 'active');
@@ -492,9 +550,7 @@ describe('Student Academic Features Integration Tests', () => {
     });
 
     it('GET /api/study/current returns authoritative active session on refresh', async () => {
-      const res = await request(app)
-        .get('/api/study/current')
-        .set('Cookie', studentACookie);
+      const res = await request(app).get('/api/study/current').set('Cookie', studentACookie);
 
       assert.equal(res.status, 200);
       assert.equal(res.body.active, true);
@@ -503,27 +559,21 @@ describe('Student Academic Features Integration Tests', () => {
     });
 
     it('POST /api/study/pause marks timer as paused', async () => {
-      const res = await request(app)
-        .post('/api/study/pause')
-        .set('Cookie', studentACookie);
+      const res = await request(app).post('/api/study/pause').set('Cookie', studentACookie);
 
       assert.equal(res.status, 200);
       assert.equal(res.body.session.status, 'paused');
     });
 
     it('POST /api/study/resume resumes session and accumulates paused time', async () => {
-      const res = await request(app)
-        .post('/api/study/resume')
-        .set('Cookie', studentACookie);
+      const res = await request(app).post('/api/study/resume').set('Cookie', studentACookie);
 
       assert.equal(res.status, 200);
       assert.equal(res.body.session.status, 'active');
     });
 
     it('POST /api/study/finish computes authoritative duration and marks completed', async () => {
-      const res = await request(app)
-        .post('/api/study/finish')
-        .set('Cookie', studentACookie);
+      const res = await request(app).post('/api/study/finish').set('Cookie', studentACookie);
 
       assert.equal(res.status, 200);
       assert.equal(res.body.session.status, 'completed');
@@ -537,24 +587,18 @@ describe('Student Academic Features Integration Tests', () => {
         .send({ title: 'Session to Cancel' });
       assert.equal(startRes.status, 201);
 
-      const cancelRes = await request(app)
-        .post('/api/study/cancel')
-        .set('Cookie', studentACookie);
+      const cancelRes = await request(app).post('/api/study/cancel').set('Cookie', studentACookie);
       assert.equal(cancelRes.status, 200);
       assert.equal(cancelRes.body.status, 'ok');
 
-      const currentRes = await request(app)
-        .get('/api/study/current')
-        .set('Cookie', studentACookie);
+      const currentRes = await request(app).get('/api/study/current').set('Cookie', studentACookie);
       assert.equal(currentRes.status, 200);
       assert.equal(currentRes.body.active, false);
       assert.equal(currentRes.body.session, null);
     });
 
     it('GET /api/study/history reports aggregated study analytics', async () => {
-      const res = await request(app)
-        .get('/api/study/history')
-        .set('Cookie', studentACookie);
+      const res = await request(app).get('/api/study/history').set('Cookie', studentACookie);
 
       assert.equal(res.status, 200);
       assert.equal(res.body.summary.totalSessions, 1);
@@ -567,9 +611,7 @@ describe('Student Academic Features Integration Tests', () => {
    * ------------------------------------------------------------- */
   describe('Institutional Bulletins & Resource Library Visibility', () => {
     it('GET /api/announcements allows student to view published announcements', async () => {
-      const res = await request(app)
-        .get('/api/announcements')
-        .set('Cookie', studentACookie);
+      const res = await request(app).get('/api/announcements').set('Cookie', studentACookie);
 
       assert.equal(res.status, 200);
       assert.ok(Array.isArray(res.body.data));
@@ -578,9 +620,7 @@ describe('Student Academic Features Integration Tests', () => {
     });
 
     it('GET /api/resources allows student to search and view published resources', async () => {
-      const res = await request(app)
-        .get('/api/resources')
-        .set('Cookie', studentACookie);
+      const res = await request(app).get('/api/resources').set('Cookie', studentACookie);
 
       assert.equal(res.status, 200);
       assert.ok(Array.isArray(res.body.data));
@@ -594,9 +634,7 @@ describe('Student Academic Features Integration Tests', () => {
    * ------------------------------------------------------------- */
   describe('Dashboard Metrics Consistency', () => {
     it('verifies task summary metrics match actual database counts', async () => {
-      const res = await request(app)
-        .get('/api/tasks/summary')
-        .set('Cookie', studentACookie);
+      const res = await request(app).get('/api/tasks/summary').set('Cookie', studentACookie);
 
       assert.equal(res.status, 200);
       assert.equal(res.body.data.total, 1);
@@ -605,9 +643,7 @@ describe('Student Academic Features Integration Tests', () => {
     });
 
     it('verifies goal summary metrics match actual goal progress', async () => {
-      const res = await request(app)
-        .get('/api/goals/summary')
-        .set('Cookie', studentACookie);
+      const res = await request(app).get('/api/goals/summary').set('Cookie', studentACookie);
 
       assert.equal(res.status, 200);
       assert.equal(res.body.data.total, 1);

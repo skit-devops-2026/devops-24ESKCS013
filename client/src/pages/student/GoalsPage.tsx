@@ -31,7 +31,9 @@ export function GoalsPage() {
   const [unit, setUnit] = useState('%');
   const [category, setCategory] = useState('Academic');
   const [subjectId, setSubjectId] = useState('');
-  const [autoLinkMetric, setAutoLinkMetric] = useState<'none' | 'attendance' | 'task_completion' | 'study_hours'>('none');
+  const [autoLinkMetric, setAutoLinkMetric] = useState<
+    'none' | 'attendance' | 'task_completion' | 'study_hours'
+  >('none');
   const [targetDate, setTargetDate] = useState(() => {
     const d = new Date(Date.now() + 30 * 86400000);
     return d.toISOString().split('T')[0];
@@ -157,7 +159,11 @@ export function GoalsPage() {
         backTo="/student/dashboard"
         backLabel="Back to Dashboard"
         actions={
-          <button onClick={() => setShowModal(true)} className="btn btn-primary" style={{ gap: '0.4rem' }}>
+          <button
+            onClick={() => setShowModal(true)}
+            className="btn btn-primary"
+            style={{ gap: '0.4rem' }}
+          >
             <Plus size={16} />
             <span>Set New Goal</span>
           </button>
@@ -165,22 +171,35 @@ export function GoalsPage() {
       />
 
       {summary && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+            gap: '1rem',
+            marginBottom: '2rem',
+          }}
+        >
           <div className="card" style={{ padding: '1.25rem' }}>
             <span style={{ color: 'var(--ink-soft)', fontSize: '0.85rem' }}>Total Goals</span>
             <h3 style={{ fontSize: '1.75rem', marginTop: '0.25rem' }}>{summary.total}</h3>
           </div>
           <div className="card" style={{ padding: '1.25rem' }}>
             <span style={{ color: 'var(--ink-soft)', fontSize: '0.85rem' }}>In Progress</span>
-            <h3 style={{ fontSize: '1.75rem', marginTop: '0.25rem', color: 'var(--brand-gold)' }}>{summary.active}</h3>
+            <h3 style={{ fontSize: '1.75rem', marginTop: '0.25rem', color: 'var(--brand-gold)' }}>
+              {summary.active}
+            </h3>
           </div>
           <div className="card" style={{ padding: '1.25rem' }}>
             <span style={{ color: 'var(--ink-soft)', fontSize: '0.85rem' }}>Completed</span>
-            <h3 style={{ fontSize: '1.75rem', marginTop: '0.25rem', color: 'var(--emerald)' }}>{summary.completed}</h3>
+            <h3 style={{ fontSize: '1.75rem', marginTop: '0.25rem', color: 'var(--emerald)' }}>
+              {summary.completed}
+            </h3>
           </div>
           <div className="card" style={{ padding: '1.25rem' }}>
             <span style={{ color: 'var(--ink-soft)', fontSize: '0.85rem' }}>Average Progress</span>
-            <h3 style={{ fontSize: '1.75rem', marginTop: '0.25rem', color: 'var(--ink)' }}>{summary.averageProgress}%</h3>
+            <h3 style={{ fontSize: '1.75rem', marginTop: '0.25rem', color: 'var(--ink)' }}>
+              {summary.averageProgress}%
+            </h3>
           </div>
         </div>
       )}
@@ -190,27 +209,54 @@ export function GoalsPage() {
           Loading your academic milestones...
         </div>
       ) : error ? (
-        <div style={{ background: 'var(--crimson-soft)', color: 'var(--crimson)', padding: '1rem', borderRadius: '6px' }}>
+        <div
+          style={{
+            background: 'var(--crimson-soft)',
+            color: 'var(--crimson)',
+            padding: '1rem',
+            borderRadius: '6px',
+          }}
+        >
           {error}
         </div>
       ) : goals.length === 0 ? (
         <div className="card" style={{ textAlign: 'center', padding: '4rem 1rem' }}>
-          <Target size={40} style={{ color: 'var(--brand-gold)', margin: '0 auto 1rem', opacity: 0.8 }} />
+          <Target
+            size={40}
+            style={{ color: 'var(--brand-gold)', margin: '0 auto 1rem', opacity: 0.8 }}
+          />
           <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem', color: 'var(--ink)' }}>
             No goals set for this semester
           </h3>
-          <p style={{ color: 'var(--ink-soft)', marginBottom: '1.5rem', maxWidth: '440px', margin: '0 auto 1.5rem' }}>
-            Define measurable milestones for study hours, attendance recovery, or problem-solving targets.
+          <p
+            style={{
+              color: 'var(--ink-soft)',
+              marginBottom: '1.5rem',
+              maxWidth: '440px',
+              margin: '0 auto 1.5rem',
+            }}
+          >
+            Define measurable milestones for study hours, attendance recovery, or problem-solving
+            targets.
           </p>
           <button onClick={() => setShowModal(true)} className="btn btn-secondary">
             + Define First Goal
           </button>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))', gap: '1.5rem' }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))',
+            gap: '1.5rem',
+          }}
+        >
           {goals.map((goal) => {
             const isDone = goal.status === 'completed' || goal.currentValue >= goal.targetValue;
-            const progressPct = Math.min(100, Math.round((goal.currentValue / Math.max(1, goal.targetValue)) * 100));
+            const progressPct = Math.min(
+              100,
+              Math.round((goal.currentValue / Math.max(1, goal.targetValue)) * 100)
+            );
             const isAutoLinked = goal.autoLinkMetric && goal.autoLinkMetric !== 'none';
 
             return (
@@ -227,7 +273,16 @@ export function GoalsPage() {
                 }}
               >
                 <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem', flexWrap: 'wrap', gap: '0.4rem' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginBottom: '0.5rem',
+                      flexWrap: 'wrap',
+                      gap: '0.4rem',
+                    }}
+                  >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                       <span className="badge badge-gold" style={{ fontSize: '0.72rem' }}>
                         {goal.category}
@@ -238,29 +293,62 @@ export function GoalsPage() {
                         </span>
                       )}
                       {isAutoLinked && (
-                        <span className="badge badge-blue" style={{ fontSize: '0.7rem', display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}>
+                        <span
+                          className="badge badge-blue"
+                          style={{
+                            fontSize: '0.7rem',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.2rem',
+                          }}
+                        >
                           <Sparkles size={11} /> Auto-Tracked
                         </span>
                       )}
                     </div>
-                    <span className={`badge ${isDone ? 'badge-green' : 'badge-gold'}`} style={{ fontSize: '0.75rem' }}>
+                    <span
+                      className={`badge ${isDone ? 'badge-green' : 'badge-gold'}`}
+                      style={{ fontSize: '0.75rem' }}
+                    >
                       {isDone ? 'Completed' : 'In Progress'}
                     </span>
                   </div>
 
-                  <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: '0.5rem 0', color: 'var(--ink)' }}>
+                  <h3
+                    style={{
+                      fontSize: '1.2rem',
+                      fontWeight: 700,
+                      margin: '0.5rem 0',
+                      color: 'var(--ink)',
+                    }}
+                  >
                     {goal.title}
                   </h3>
 
                   {goal.description && (
-                    <p style={{ fontSize: '0.85rem', color: 'var(--ink-soft)', marginBottom: '1rem', lineHeight: 1.4 }}>
+                    <p
+                      style={{
+                        fontSize: '0.85rem',
+                        color: 'var(--ink-soft)',
+                        marginBottom: '1rem',
+                        lineHeight: 1.4,
+                      }}
+                    >
                       {goal.description}
                     </p>
                   )}
 
                   {/* Progress Bar */}
                   <div style={{ marginBottom: '1.25rem' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.35rem' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        fontSize: '0.85rem',
+                        fontWeight: 600,
+                        marginBottom: '0.35rem',
+                      }}
+                    >
                       <span style={{ color: 'var(--ink)' }}>
                         {goal.currentValue} / {goal.targetValue} {goal.unit}
                       </span>
@@ -268,7 +356,14 @@ export function GoalsPage() {
                         {progressPct}%
                       </span>
                     </div>
-                    <div style={{ height: '8px', background: 'var(--surface-muted)', borderRadius: '4px', overflow: 'hidden' }}>
+                    <div
+                      style={{
+                        height: '8px',
+                        background: 'var(--surface-muted)',
+                        borderRadius: '4px',
+                        overflow: 'hidden',
+                      }}
+                    >
                       <div
                         style={{
                           height: '100%',
@@ -282,8 +377,24 @@ export function GoalsPage() {
                   </div>
                 </div>
 
-                <div style={{ borderTop: '1px solid var(--border)', paddingTop: '0.85rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--ink-soft)', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+                <div
+                  style={{
+                    borderTop: '1px solid var(--border)',
+                    paddingTop: '0.85rem',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: '0.75rem',
+                      color: 'var(--ink-soft)',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.3rem',
+                    }}
+                  >
                     <Clock size={13} />
                     Target: {new Date(goal.targetDate).toLocaleDateString()}
                   </span>
@@ -299,7 +410,16 @@ export function GoalsPage() {
                       </button>
                     )}
                     {isDone && (
-                      <span style={{ fontSize: '0.75rem', color: 'var(--emerald)', display: 'inline-flex', alignItems: 'center', gap: '0.2rem', fontWeight: 600 }}>
+                      <span
+                        style={{
+                          fontSize: '0.75rem',
+                          color: 'var(--emerald)',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.2rem',
+                          fontWeight: 600,
+                        }}
+                      >
                         <CheckCircle2 size={13} /> Achieved
                       </span>
                     )}
@@ -321,14 +441,33 @@ export function GoalsPage() {
 
       {/* Create Goal Modal */}
       {showModal && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '1rem' }}>
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+            padding: '1rem',
+          }}
+        >
           <div className="card" style={{ maxWidth: '520px', width: '100%', padding: '2rem' }}>
             <h3 style={{ fontSize: '1.4rem', marginBottom: '1.25rem', color: 'var(--ink)' }}>
               Set Academic Milestone
             </h3>
             <form onSubmit={handleCreate}>
               <div style={{ marginBottom: '1rem' }}>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.35rem', color: 'var(--ink)' }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '0.85rem',
+                    fontWeight: 600,
+                    marginBottom: '0.35rem',
+                    color: 'var(--ink)',
+                  }}
+                >
                   Goal Title
                 </label>
                 <input
@@ -343,8 +482,24 @@ export function GoalsPage() {
               </div>
 
               {/* Auto-Linking Metric Selector */}
-              <div style={{ marginBottom: '1rem', backgroundColor: 'var(--surface-muted)', padding: '0.85rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.35rem', color: 'var(--ink)' }}>
+              <div
+                style={{
+                  marginBottom: '1rem',
+                  backgroundColor: 'var(--surface-muted)',
+                  padding: '0.85rem',
+                  borderRadius: 'var(--radius-sm)',
+                  border: '1px solid var(--border)',
+                }}
+              >
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '0.85rem',
+                    fontWeight: 600,
+                    marginBottom: '0.35rem',
+                    color: 'var(--ink)',
+                  }}
+                >
                   Auto-Link to Academic System Data
                 </label>
                 <select
@@ -362,17 +517,26 @@ export function GoalsPage() {
                   {autoLinkMetric === 'attendance'
                     ? 'Current progress will automatically sync with your live course attendance percentage.'
                     : autoLinkMetric === 'task_completion'
-                    ? 'Current progress will automatically increment as you complete tasks.'
-                    : autoLinkMetric === 'study_hours'
-                    ? 'Current progress will automatically accumulate from your completed Pomodoro study sessions.'
-                    : 'Manual tracking: you can increment progress using buttons on the goal card.'}
+                      ? 'Current progress will automatically increment as you complete tasks.'
+                      : autoLinkMetric === 'study_hours'
+                        ? 'Current progress will automatically accumulate from your completed Pomodoro study sessions.'
+                        : 'Manual tracking: you can increment progress using buttons on the goal card.'}
                 </span>
               </div>
 
               {/* Course Association */}
               <div style={{ marginBottom: '1rem' }}>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.35rem', color: 'var(--ink)' }}>
-                  Course Association {autoLinkMetric === 'attendance' ? '(Required for Attendance)' : '(Optional)'}
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '0.85rem',
+                    fontWeight: 600,
+                    marginBottom: '0.35rem',
+                    color: 'var(--ink)',
+                  }}
+                >
+                  Course Association{' '}
+                  {autoLinkMetric === 'attendance' ? '(Required for Attendance)' : '(Optional)'}
                 </label>
                 <select
                   value={subjectId}
@@ -389,9 +553,24 @@ export function GoalsPage() {
                 </select>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem', marginBottom: '1rem' }}>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr 1fr',
+                  gap: '0.75rem',
+                  marginBottom: '1rem',
+                }}
+              >
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.35rem', color: 'var(--ink)' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '0.85rem',
+                      fontWeight: 600,
+                      marginBottom: '0.35rem',
+                      color: 'var(--ink)',
+                    }}
+                  >
                     Current
                   </label>
                   <input
@@ -405,7 +584,15 @@ export function GoalsPage() {
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.35rem', color: 'var(--ink)' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '0.85rem',
+                      fontWeight: 600,
+                      marginBottom: '0.35rem',
+                      color: 'var(--ink)',
+                    }}
+                  >
                     Target
                   </label>
                   <input
@@ -419,7 +606,15 @@ export function GoalsPage() {
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.35rem', color: 'var(--ink)' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '0.85rem',
+                      fontWeight: 600,
+                      marginBottom: '0.35rem',
+                      color: 'var(--ink)',
+                    }}
+                  >
                     Unit
                   </label>
                   <input
@@ -433,9 +628,24 @@ export function GoalsPage() {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '1rem',
+                  marginBottom: '1.5rem',
+                }}
+              >
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.35rem', color: 'var(--ink)' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '0.85rem',
+                      fontWeight: 600,
+                      marginBottom: '0.35rem',
+                      color: 'var(--ink)',
+                    }}
+                  >
                     Category
                   </label>
                   <select
@@ -451,7 +661,15 @@ export function GoalsPage() {
                   </select>
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.35rem', color: 'var(--ink)' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '0.85rem',
+                      fontWeight: 600,
+                      marginBottom: '0.35rem',
+                      color: 'var(--ink)',
+                    }}
+                  >
                     Target Date
                   </label>
                   <input
@@ -466,7 +684,11 @@ export function GoalsPage() {
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
-                <button type="button" onClick={() => setShowModal(false)} className="btn btn-secondary">
+                <button
+                  type="button"
+                  onClick={() => setShowModal(false)}
+                  className="btn btn-secondary"
+                >
                   Cancel
                 </button>
                 <button type="submit" disabled={submitting} className="btn btn-primary">

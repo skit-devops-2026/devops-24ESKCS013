@@ -23,87 +23,91 @@ const loginSchema = z.object({
 });
 
 // POST /api/auth/register
-authRouter.post('/register', authRateLimiter, async (req: Request, res: Response): Promise<void> => {
-  const parseResult = registerSchema.safeParse(req.body);
+authRouter.post(
+  '/register',
+  authRateLimiter,
+  async (req: Request, res: Response): Promise<void> => {
+    const parseResult = registerSchema.safeParse(req.body);
 
-  if (!parseResult.success) {
-    const errorDetails = parseResult.error.issues.map((i) => i.message).join('. ');
-    res.status(400).json({
-      status: 'error',
-      statusCode: 400,
-      message: errorDetails,
+    if (!parseResult.success) {
+      const errorDetails = parseResult.error.issues.map((i) => i.message).join('. ');
+      res.status(400).json({
+        status: 'error',
+        statusCode: 400,
+        message: errorDetails,
+      });
+      return;
+    }
+
+    const { name, email, password, rollNumber, department, semester } = parseResult.data;
+
+    // Check for duplicate email
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      res.status(409).json({
+        status: 'error',
+        statusCode: 409,
+        message: 'An account with this email address already exists.',
+      });
+      return;
+    }
+
+    // Check for duplicate roll number
+    const existingProfile = await StudentProfile.findOne({ rollNumber });
+    if (existingProfile) {
+      res.status(409).json({
+        status: 'error',
+        statusCode: 409,
+        message: 'A student profile with this roll number already exists.',
+      });
+      return;
+    }
+
+    // Securely hash password
+    const passwordHash = await User.hashPassword(password);
+
+    // Role is strictly enforced to 'student' (admin accounts cannot be registered publicly)
+    const newUser = await User.create({
+      name,
+      email,
+      passwordHash,
+      role: 'student',
     });
-    return;
-  }
 
-  const { name, email, password, rollNumber, department, semester } = parseResult.data;
-
-  // Check for duplicate email
-  const existingUser = await User.findOne({ email });
-  if (existingUser) {
-    res.status(409).json({
-      status: 'error',
-      statusCode: 409,
-      message: 'An account with this email address already exists.',
+    const profile = await StudentProfile.create({
+      userId: newUser._id,
+      rollNumber,
+      department,
+      semester,
     });
-    return;
-  }
 
-  // Check for duplicate roll number
-  const existingProfile = await StudentProfile.findOne({ rollNumber });
-  if (existingProfile) {
-    res.status(409).json({
-      status: 'error',
-      statusCode: 409,
-      message: 'A student profile with this roll number already exists.',
-    });
-    return;
-  }
-
-  // Securely hash password
-  const passwordHash = await User.hashPassword(password);
-
-  // Role is strictly enforced to 'student' (admin accounts cannot be registered publicly)
-  const newUser = await User.create({
-    name,
-    email,
-    passwordHash,
-    role: 'student',
-  });
-
-  const profile = await StudentProfile.create({
-    userId: newUser._id,
-    rollNumber,
-    department,
-    semester,
-  });
-
-  // Issue session token and set secure HttpOnly cookie
-  const token = generateToken({
-    id: newUser._id.toString(),
-    email: newUser.email,
-    role: newUser.role,
-  });
-  setAuthCookie(res, token);
-
-  res.status(201).json({
-    status: 'ok',
-    message: 'Registration successful.',
-    user: {
-      id: newUser._id,
-      name: newUser.name,
+    // Issue session token and set secure HttpOnly cookie
+    const token = generateToken({
+      id: newUser._id.toString(),
       email: newUser.email,
       role: newUser.role,
-      profile: {
-        rollNumber: profile.rollNumber,
-        department: profile.department,
-        semester: profile.semester,
-        currentGpa: profile.currentGpa,
-        attendancePercentage: profile.attendancePercentage,
+    });
+    setAuthCookie(res, token);
+
+    res.status(201).json({
+      status: 'ok',
+      message: 'Registration successful.',
+      user: {
+        id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+        role: newUser.role,
+        profile: {
+          rollNumber: profile.rollNumber,
+          department: profile.department,
+          semester: profile.semester,
+          currentGpa: profile.currentGpa,
+          attendancePercentage: profile.attendancePercentage,
+        },
       },
-    },
-  });
-});
+    });
+  }
+);
 
 // POST /api/auth/login
 authRouter.post('/login', authRateLimiter, async (req: Request, res: Response): Promise<void> => {
@@ -187,32 +191,36 @@ authRouter.post('/logout', (req: Request, res: Response) => {
 });
 
 // GET /api/auth/me
-authRouter.get('/me', requireAuth, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  const user = req.user!;
-  let profileData = null;
+authRouter.get(
+  '/me',
+  requireAuth,
+  async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    const user = req.user!;
+    let profileData = null;
 
-  if (user.role === 'student') {
-    const profile = await StudentProfile.findOne({ userId: user._id });
-    if (profile) {
-      profileData = {
-        rollNumber: profile.rollNumber,
-        department: profile.department,
-        semester: profile.semester,
-        currentGpa: profile.currentGpa,
-        attendancePercentage: profile.attendancePercentage,
-      };
+    if (user.role === 'student') {
+      const profile = await StudentProfile.findOne({ userId: user._id });
+      if (profile) {
+        profileData = {
+          rollNumber: profile.rollNumber,
+          department: profile.department,
+          semester: profile.semester,
+          currentGpa: profile.currentGpa,
+          attendancePercentage: profile.attendancePercentage,
+        };
+      }
     }
-  }
 
-  res.status(200).json({
-    status: 'ok',
-    user: {
-      id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      status: user.status,
-      profile: profileData,
-    },
-  });
-});
+    res.status(200).json({
+      status: 'ok',
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        status: user.status,
+        profile: profileData,
+      },
+    });
+  }
+);

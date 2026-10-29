@@ -8,6 +8,8 @@
     "start": "node dist/server.js",
     "dev": "tsx watch src/server.ts",
     "typecheck": "tsc --noEmit",
+    "lint": "npx eslint \"src/**/*.ts\"",
+    "format": "npx prettier --write \"src/**/*.ts\"",
     "test": "node --test --import tsx src/**/*.test.ts",
     "create-admin": "tsx src/scripts/create-admin.ts",
     "backfill-subjects": "tsx src/scripts/backfill-subjects.ts",

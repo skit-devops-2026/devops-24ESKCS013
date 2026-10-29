@@ -21,7 +21,7 @@ describe('Attendance Recovery Math Engine - Pure Unit Tests', () => {
         { attended: 10, conducted: 20, threshold: 75 }, // 50%
         { attended: 70, conducted: 100, threshold: 75 }, // 70%
         { attended: 15, conducted: 25, threshold: 80 }, // 60% with 80% threshold
-        { attended: 1, conducted: 5, threshold: 75 },   // 20%
+        { attended: 1, conducted: 5, threshold: 75 }, // 20%
         { attended: 58, conducted: 80, threshold: 75 }, // 72.5%
       ];
 
@@ -264,7 +264,11 @@ describe('Attendance Recovery Math Engine - Pure Unit Tests', () => {
 
             // 2. calculateSkippableClasses parity
             const serverSkippable = calculateSkippableClasses(attended, conducted, thresh);
-            const clientSkippable = clientMath.calculateSkippableClasses(attended, conducted, thresh);
+            const clientSkippable = clientMath.calculateSkippableClasses(
+              attended,
+              conducted,
+              thresh
+            );
             assert.equal(
               clientSkippable,
               serverSkippable,
@@ -275,7 +279,13 @@ describe('Attendance Recovery Math Engine - Pure Unit Tests', () => {
             for (let addAtt = 0; addAtt <= 2; addAtt++) {
               for (let addMiss = 0; addMiss <= 2; addMiss++) {
                 const serverSim = simulateScenario(attended, conducted, addAtt, addMiss, thresh);
-                const clientSim = clientMath.simulateScenario(attended, conducted, addAtt, addMiss, thresh);
+                const clientSim = clientMath.simulateScenario(
+                  attended,
+                  conducted,
+                  addAtt,
+                  addMiss,
+                  thresh
+                );
                 assert.deepEqual(
                   clientSim,
                   serverSim,
@@ -288,8 +298,10 @@ describe('Attendance Recovery Math Engine - Pure Unit Tests', () => {
         }
       }
 
-      assert.ok(permutationsChecked >= 1000, `Expected >= 1000 permutations, verified ${permutationsChecked}`);
+      assert.ok(
+        permutationsChecked >= 1000,
+        `Expected >= 1000 permutations, verified ${permutationsChecked}`
+      );
     });
   });
 });
-

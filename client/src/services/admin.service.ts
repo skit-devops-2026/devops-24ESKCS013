@@ -169,7 +169,10 @@ export async function getAdminStudentDetails(id: string): Promise<StudentDetailD
   return data.data;
 }
 
-export async function updateStudentStatus(id: string, status: 'active' | 'suspended'): Promise<void> {
+export async function updateStudentStatus(
+  id: string,
+  status: 'active' | 'suspended'
+): Promise<void> {
   const res = await fetch(`${API_BASE}/admin/students/${id}/status`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },

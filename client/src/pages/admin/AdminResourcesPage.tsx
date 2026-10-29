@@ -1,7 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { AlertTriangle } from 'lucide-react';
-import { getResources, createResource, deleteResource, ResourceItem } from '../../services/admin.service';
+import {
+  getResources,
+  createResource,
+  deleteResource,
+  ResourceItem,
+} from '../../services/admin.service';
 import { useToast } from '../../context/ToastContext';
 
 export function AdminResourcesPage() {
@@ -101,9 +106,20 @@ export function AdminResourcesPage() {
 
   return (
     <div className="container" style={{ padding: '2.5rem 1rem' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '2rem',
+          flexWrap: 'wrap',
+          gap: '1rem',
+        }}
+      >
         <div>
-          <span className="badge badge-gold" style={{ marginBottom: '0.5rem' }}>Curriculum Repository</span>
+          <span className="badge badge-gold" style={{ marginBottom: '0.5rem' }}>
+            Curriculum Repository
+          </span>
           <h1 style={{ fontSize: '2.25rem', color: 'var(--ink)' }}>Resource Library</h1>
           <p style={{ color: 'var(--ink-soft)' }}>
             Curate and distribute official syllabi, university question banks, and lab manuals.
@@ -120,7 +136,19 @@ export function AdminResourcesPage() {
       </div>
 
       {error && (
-        <div style={{ background: 'var(--red-light)', color: 'var(--red)', padding: '1rem', borderRadius: '6px', marginBottom: '1.5rem', border: '1px solid var(--red)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <div
+          style={{
+            background: 'var(--red-light)',
+            color: 'var(--red)',
+            padding: '1rem',
+            borderRadius: '6px',
+            marginBottom: '1.5rem',
+            border: '1px solid var(--red)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+          }}
+        >
           <AlertTriangle size={16} />
           <span>{error}</span>
         </div>
@@ -128,9 +156,22 @@ export function AdminResourcesPage() {
 
       {/* Filter and Search Bar */}
       <div className="card" style={{ marginBottom: '1.5rem', padding: '1.25rem' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: '1rem',
+          }}
+        >
           <div>
-            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.35rem' }}>
+            <label
+              style={{
+                display: 'block',
+                fontSize: '0.85rem',
+                fontWeight: 600,
+                marginBottom: '0.35rem',
+              }}
+            >
               Search Title or Description
             </label>
             <input
@@ -138,18 +179,35 @@ export function AdminResourcesPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="e.g. Networks, Algorithms"
-              style={{ width: '100%', padding: '0.5rem 0.75rem', borderRadius: '4px', border: '1px solid var(--rule-strong)' }}
+              style={{
+                width: '100%',
+                padding: '0.5rem 0.75rem',
+                borderRadius: '4px',
+                border: '1px solid var(--rule-strong)',
+              }}
             />
           </div>
 
           <div>
-            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.35rem' }}>
+            <label
+              style={{
+                display: 'block',
+                fontSize: '0.85rem',
+                fontWeight: 600,
+                marginBottom: '0.35rem',
+              }}
+            >
               Resource Type
             </label>
             <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
-              style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid var(--rule-strong)' }}
+              style={{
+                width: '100%',
+                padding: '0.5rem',
+                borderRadius: '4px',
+                border: '1px solid var(--rule-strong)',
+              }}
             >
               <option value="">All Resource Types</option>
               <option value="syllabus">Syllabus</option>
@@ -161,13 +219,25 @@ export function AdminResourcesPage() {
           </div>
 
           <div>
-            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.35rem' }}>
+            <label
+              style={{
+                display: 'block',
+                fontSize: '0.85rem',
+                fontWeight: 600,
+                marginBottom: '0.35rem',
+              }}
+            >
               Publication Status
             </label>
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid var(--rule-strong)' }}
+              style={{
+                width: '100%',
+                padding: '0.5rem',
+                borderRadius: '4px',
+                border: '1px solid var(--rule-strong)',
+              }}
             >
               <option value="">All Statuses</option>
               <option value="published">Published Only</option>
@@ -180,8 +250,20 @@ export function AdminResourcesPage() {
       {/* Resources Table */}
       <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
         <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.875rem' }}>
-            <thead style={{ background: 'var(--bg-muted)', borderBottom: '1px solid var(--border-strong)' }}>
+          <table
+            style={{
+              width: '100%',
+              borderCollapse: 'collapse',
+              textAlign: 'left',
+              fontSize: '0.875rem',
+            }}
+          >
+            <thead
+              style={{
+                background: 'var(--bg-muted)',
+                borderBottom: '1px solid var(--border-strong)',
+              }}
+            >
               <tr>
                 <th style={{ padding: '0.875rem 1rem' }}>Title &amp; Description</th>
                 <th style={{ padding: '0.875rem 1rem' }}>Type</th>
@@ -194,13 +276,19 @@ export function AdminResourcesPage() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={6} style={{ padding: '2.5rem', textAlign: 'center', color: 'var(--ink-soft)' }}>
+                  <td
+                    colSpan={6}
+                    style={{ padding: '2.5rem', textAlign: 'center', color: 'var(--ink-soft)' }}
+                  >
                     Loading resources...
                   </td>
                 </tr>
               ) : resources.length === 0 ? (
                 <tr>
-                  <td colSpan={6} style={{ padding: '2.5rem', textAlign: 'center', color: 'var(--ink-soft)' }}>
+                  <td
+                    colSpan={6}
+                    style={{ padding: '2.5rem', textAlign: 'center', color: 'var(--ink-soft)' }}
+                  >
                     No resources match the selected filters.
                   </td>
                 </tr>
@@ -208,31 +296,50 @@ export function AdminResourcesPage() {
                 resources.map((item) => (
                   <tr key={item._id} style={{ borderBottom: '1px solid var(--rule)' }}>
                     <td style={{ padding: '0.875rem 1rem', maxWidth: '300px' }}>
-                      <strong style={{ display: 'block', color: 'var(--ink)' }}>{item.title}</strong>
+                      <strong style={{ display: 'block', color: 'var(--ink)' }}>
+                        {item.title}
+                      </strong>
                       <span style={{ fontSize: '0.8rem', color: 'var(--ink-soft)' }}>
-                        {item.description.length > 70 ? `${item.description.slice(0, 70)}...` : item.description}
+                        {item.description.length > 70
+                          ? `${item.description.slice(0, 70)}...`
+                          : item.description}
                       </span>
                     </td>
                     <td style={{ padding: '0.875rem 1rem' }}>
-                      <span className="badge" style={{ background: 'var(--bg-muted)', color: 'var(--text-muted)', textTransform: 'capitalize' }}>
+                      <span
+                        className="badge"
+                        style={{
+                          background: 'var(--bg-muted)',
+                          color: 'var(--text-muted)',
+                          textTransform: 'capitalize',
+                        }}
+                      >
                         {item.resourceType.replace('_', ' ')}
                       </span>
                     </td>
                     <td style={{ padding: '0.875rem 1rem' }}>
-                      {item.department ? `${item.department} ${item.semester ? `(Sem ${item.semester})` : ''}` : 'All Campus'}
+                      {item.department
+                        ? `${item.department} ${item.semester ? `(Sem ${item.semester})` : ''}`
+                        : 'All Campus'}
                     </td>
                     <td style={{ padding: '0.875rem 1rem' }}>
                       <a
                         href={item.url}
                         target="_blank"
                         rel="noreferrer noopener"
-                        style={{ color: 'var(--blue)', fontWeight: 600, textDecoration: 'underline' }}
+                        style={{
+                          color: 'var(--blue)',
+                          fontWeight: 600,
+                          textDecoration: 'underline',
+                        }}
                       >
                         Open Resource ↗
                       </a>
                     </td>
                     <td style={{ padding: '0.875rem 1rem' }}>
-                      <span className={`badge ${item.status === 'published' ? 'badge-green' : 'badge-gold'}`}>
+                      <span
+                        className={`badge ${item.status === 'published' ? 'badge-green' : 'badge-gold'}`}
+                      >
                         {item.status.toUpperCase()}
                       </span>
                     </td>
@@ -240,7 +347,11 @@ export function AdminResourcesPage() {
                       <button
                         onClick={() => handleDelete(item._id)}
                         className="btn btn-secondary"
-                        style={{ padding: '0.35rem 0.65rem', fontSize: '0.8rem', color: 'var(--red)' }}
+                        style={{
+                          padding: '0.35rem 0.65rem',
+                          fontSize: '0.8rem',
+                          color: 'var(--red)',
+                        }}
                       >
                         Delete
                       </button>
@@ -255,12 +366,32 @@ export function AdminResourcesPage() {
 
       {/* Add Resource Modal */}
       {showModal && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100, padding: '1rem' }}>
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 100,
+            padding: '1rem',
+          }}
+        >
           <div className="card" style={{ maxWidth: '500px', width: '100%', padding: '2rem' }}>
-            <h3 style={{ fontSize: '1.5rem', marginBottom: '1.25rem' }}>Publish Academic Resource</h3>
+            <h3 style={{ fontSize: '1.5rem', marginBottom: '1.25rem' }}>
+              Publish Academic Resource
+            </h3>
             <form onSubmit={handleCreate}>
               <div style={{ marginBottom: '1rem' }}>
-                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.35rem' }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '0.875rem',
+                    fontWeight: 600,
+                    marginBottom: '0.35rem',
+                  }}
+                >
                   Resource Title
                 </label>
                 <input
@@ -269,12 +400,24 @@ export function AdminResourcesPage() {
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="e.g. Operating Systems Lab Manual 2026"
-                  style={{ width: '100%', padding: '0.5rem 0.75rem', borderRadius: '4px', border: '1px solid var(--rule-strong)' }}
+                  style={{
+                    width: '100%',
+                    padding: '0.5rem 0.75rem',
+                    borderRadius: '4px',
+                    border: '1px solid var(--rule-strong)',
+                  }}
                 />
               </div>
 
               <div style={{ marginBottom: '1rem' }}>
-                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.35rem' }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '0.875rem',
+                    fontWeight: 600,
+                    marginBottom: '0.35rem',
+                  }}
+                >
                   Description
                 </label>
                 <textarea
@@ -283,12 +426,25 @@ export function AdminResourcesPage() {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Enter details about this resource..."
-                  style={{ width: '100%', padding: '0.5rem 0.75rem', borderRadius: '4px', border: '1px solid var(--rule-strong)', resize: 'vertical' }}
+                  style={{
+                    width: '100%',
+                    padding: '0.5rem 0.75rem',
+                    borderRadius: '4px',
+                    border: '1px solid var(--rule-strong)',
+                    resize: 'vertical',
+                  }}
                 />
               </div>
 
               <div style={{ marginBottom: '1rem' }}>
-                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.35rem' }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '0.875rem',
+                    fontWeight: 600,
+                    marginBottom: '0.35rem',
+                  }}
+                >
                   Resource URL (HTTP / HTTPS)
                 </label>
                 <input
@@ -297,19 +453,43 @@ export function AdminResourcesPage() {
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
                   placeholder="https://drive.google.com/... or https://college.edu/..."
-                  style={{ width: '100%', padding: '0.5rem 0.75rem', borderRadius: '4px', border: '1px solid var(--rule-strong)' }}
+                  style={{
+                    width: '100%',
+                    padding: '0.5rem 0.75rem',
+                    borderRadius: '4px',
+                    border: '1px solid var(--rule-strong)',
+                  }}
                 />
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '1rem',
+                  marginBottom: '1.5rem',
+                }}
+              >
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.35rem' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '0.85rem',
+                      fontWeight: 600,
+                      marginBottom: '0.35rem',
+                    }}
+                  >
                     Type
                   </label>
                   <select
                     value={resourceType}
                     onChange={(e) => setResourceType(e.target.value)}
-                    style={{ width: '100%', padding: '0.45rem', borderRadius: '4px', border: '1px solid var(--rule-strong)' }}
+                    style={{
+                      width: '100%',
+                      padding: '0.45rem',
+                      borderRadius: '4px',
+                      border: '1px solid var(--rule-strong)',
+                    }}
                   >
                     <option value="syllabus">Syllabus</option>
                     <option value="lab_manual">Lab Manual</option>
@@ -320,13 +500,25 @@ export function AdminResourcesPage() {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.35rem' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '0.85rem',
+                      fontWeight: 600,
+                      marginBottom: '0.35rem',
+                    }}
+                  >
                     Status
                   </label>
                   <select
                     value={status}
                     onChange={(e) => setStatus(e.target.value as 'draft' | 'published')}
-                    style={{ width: '100%', padding: '0.45rem', borderRadius: '4px', border: '1px solid var(--rule-strong)' }}
+                    style={{
+                      width: '100%',
+                      padding: '0.45rem',
+                      borderRadius: '4px',
+                      border: '1px solid var(--rule-strong)',
+                    }}
                   >
                     <option value="published">Published</option>
                     <option value="draft">Draft</option>

@@ -11,15 +11,7 @@ import {
   Search,
   BookOpen,
 } from 'lucide-react';
-import {
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-} from 'recharts';
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import {
   getCurrentStudySession,
   startStudySession,
@@ -38,7 +30,9 @@ import { PageHeader } from '../../components/PageHeader';
 
 export function StudyTimerPage() {
   const { toast, confirmModal } = useToast();
-  const [currentSession, setCurrentSession] = useState<CurrentStudySessionResponse['session'] | null>(null);
+  const [currentSession, setCurrentSession] = useState<
+    CurrentStudySessionResponse['session'] | null
+  >(null);
   const [history, setHistory] = useState<StudyHistoryResponse | null>(null);
   const [subjects, setSubjects] = useState<SubjectItem[]>([]);
   const [selectedSubjectId, setSelectedSubjectId] = useState('');
@@ -96,7 +90,10 @@ export function StudyTimerPage() {
     setActionLoading(true);
     setErrorMsg(null);
     try {
-      const res = await startStudySession(selectedSubjectId || undefined, sessionTitle.trim() || 'Focus Session');
+      const res = await startStudySession(
+        selectedSubjectId || undefined,
+        sessionTitle.trim() || 'Focus Session'
+      );
       setCurrentSession(res.session);
       setDisplaySeconds(0);
       toast.success('Study session started! Focus mode engaged.');
@@ -147,7 +144,8 @@ export function StudyTimerPage() {
   async function handleFinish() {
     const ok = await confirmModal({
       title: 'Conclude Study Session',
-      message: 'Are you ready to conclude this study session and persist it to your academic ledger?',
+      message:
+        'Are you ready to conclude this study session and persist it to your academic ledger?',
       confirmText: 'Finish Session',
     });
     if (!ok) return;
@@ -171,7 +169,8 @@ export function StudyTimerPage() {
   async function handleCancel() {
     const ok = await confirmModal({
       title: 'Discard Session',
-      message: 'Are you sure you want to discard this study session? Paused and elapsed time will not be recorded.',
+      message:
+        'Are you sure you want to discard this study session? Paused and elapsed time will not be recorded.',
       confirmText: 'Discard',
       isDestructive: true,
     });
@@ -277,7 +276,16 @@ export function StudyTimerPage() {
       />
 
       {errorMsg && (
-        <div style={{ maxWidth: '640px', margin: '0 auto 1.5rem', background: 'var(--crimson-soft)', color: 'var(--crimson)', padding: '1rem', borderRadius: '6px' }}>
+        <div
+          style={{
+            maxWidth: '640px',
+            margin: '0 auto 1.5rem',
+            background: 'var(--crimson-soft)',
+            color: 'var(--crimson)',
+            padding: '1rem',
+            borderRadius: '6px',
+          }}
+        >
           {errorMsg}
         </div>
       )}
@@ -291,7 +299,10 @@ export function StudyTimerPage() {
           padding: '2.5rem 2rem',
           textAlign: 'center',
           boxShadow: 'var(--shadow-lg)',
-          borderTop: currentSession?.status === 'active' ? '4px solid var(--emerald)' : '4px solid var(--brand-gold)',
+          borderTop:
+            currentSession?.status === 'active'
+              ? '4px solid var(--emerald)'
+              : '4px solid var(--brand-gold)',
         }}
       >
         <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'center' }}>
@@ -300,10 +311,16 @@ export function StudyTimerPage() {
               !currentSession
                 ? 'badge-gold'
                 : currentSession.status === 'active'
-                ? 'badge-green'
-                : 'badge-gold'
+                  ? 'badge-green'
+                  : 'badge-gold'
             }`}
-            style={{ fontSize: '0.85rem', padding: '0.35rem 0.85rem', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
+            style={{
+              fontSize: '0.85rem',
+              padding: '0.35rem 0.85rem',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+            }}
           >
             {!currentSession ? (
               <>
@@ -330,7 +347,8 @@ export function StudyTimerPage() {
             letterSpacing: '0.05em',
             color: currentSession?.status === 'active' ? 'var(--emerald)' : 'var(--ink)',
             margin: '0.5rem 0 1.25rem',
-            textShadow: currentSession?.status === 'active' ? '0 0 20px rgba(16, 185, 129, 0.2)' : 'none',
+            textShadow:
+              currentSession?.status === 'active' ? '0 0 20px rgba(16, 185, 129, 0.2)' : 'none',
           }}
         >
           {formatTime(displaySeconds)}
@@ -338,16 +356,34 @@ export function StudyTimerPage() {
 
         {currentSession ? (
           <div>
-            <h4 style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--ink)', marginBottom: '0.4rem' }}>
+            <h4
+              style={{
+                fontSize: '1.2rem',
+                fontWeight: 700,
+                color: 'var(--ink)',
+                marginBottom: '0.4rem',
+              }}
+            >
               {currentSession.title}
             </h4>
             {currentSession.subjectCode && (
-              <span className="badge badge-gold" style={{ marginBottom: '1.25rem', display: 'inline-block' }}>
+              <span
+                className="badge badge-gold"
+                style={{ marginBottom: '1.25rem', display: 'inline-block' }}
+              >
                 Course: {currentSession.subjectCode}
               </span>
             )}
 
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '0.85rem', flexWrap: 'wrap', marginTop: '1.25rem' }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                gap: '0.85rem',
+                flexWrap: 'wrap',
+                marginTop: '1.25rem',
+              }}
+            >
               {currentSession.status === 'active' ? (
                 <button
                   type="button"
@@ -394,7 +430,12 @@ export function StudyTimerPage() {
                 onClick={handleCancel}
                 disabled={actionLoading}
                 className="btn btn-ghost"
-                style={{ padding: '0.65rem 1rem', color: 'var(--crimson)', gap: '0.35rem', fontSize: '0.85rem' }}
+                style={{
+                  padding: '0.65rem 1rem',
+                  color: 'var(--crimson)',
+                  gap: '0.35rem',
+                  fontSize: '0.85rem',
+                }}
               >
                 <Trash2 size={15} />
                 <span>Discard</span>
@@ -403,8 +444,62 @@ export function StudyTimerPage() {
           </div>
         ) : (
           <div style={{ maxWidth: '440px', margin: '0 auto', textAlign: 'left' }}>
+            {/* Quick Pomodoro Presets */}
+            <div style={{ marginBottom: '1.25rem' }}>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '0.8rem',
+                  fontWeight: 600,
+                  marginBottom: '0.4rem',
+                  color: 'var(--ink-muted)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
+                }}
+              >
+                Quick Presets
+              </label>
+              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                <button
+                  type="button"
+                  onClick={() => setSessionTitle('Pomodoro 25/5 Sprint')}
+                  className="btn btn-secondary"
+                  style={{ fontSize: '0.8rem', padding: '0.35rem 0.65rem' }}
+                  aria-label="Set 25-minute Pomodoro Sprint preset"
+                >
+                  <Clock size={13} style={{ marginRight: '0.3rem' }} /> 25m Focus / 5m Break
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSessionTitle('Deep Work 50/10 Block')}
+                  className="btn btn-secondary"
+                  style={{ fontSize: '0.8rem', padding: '0.35rem 0.65rem' }}
+                  aria-label="Set 50-minute Deep Work preset"
+                >
+                  <Flame size={13} style={{ marginRight: '0.3rem' }} /> 50m Deep Work / 10m Break
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSessionTitle('15m Quick Revision')}
+                  className="btn btn-secondary"
+                  style={{ fontSize: '0.8rem', padding: '0.35rem 0.65rem' }}
+                  aria-label="Set 15-minute Quick Revision preset"
+                >
+                  <BookOpen size={13} style={{ marginRight: '0.3rem' }} /> 15m Sprint
+                </button>
+              </div>
+            </div>
+
             <div style={{ marginBottom: '1rem' }}>
-              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.35rem', color: 'var(--ink)' }}>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '0.85rem',
+                  fontWeight: 600,
+                  marginBottom: '0.35rem',
+                  color: 'var(--ink)',
+                }}
+              >
                 Session Objective / Topic
               </label>
               <input
@@ -414,11 +509,20 @@ export function StudyTimerPage() {
                 placeholder="e.g. Chapter 4 Practice Problems"
                 className="input-field"
                 style={{ width: '100%' }}
+                aria-label="Session objective or topic"
               />
             </div>
 
             <div style={{ marginBottom: '1.5rem' }}>
-              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.35rem', color: 'var(--ink)' }}>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '0.85rem',
+                  fontWeight: 600,
+                  marginBottom: '0.35rem',
+                  color: 'var(--ink)',
+                }}
+              >
                 Course Association (Optional)
               </label>
               <select
@@ -441,7 +545,13 @@ export function StudyTimerPage() {
               onClick={handleStart}
               disabled={actionLoading}
               className="btn btn-primary"
-              style={{ width: '100%', padding: '0.85rem', fontSize: '1rem', gap: '0.5rem', justifyContent: 'center' }}
+              style={{
+                width: '100%',
+                padding: '0.85rem',
+                fontSize: '1rem',
+                gap: '0.5rem',
+                justifyContent: 'center',
+              }}
             >
               <Play size={18} />
               <span>{actionLoading ? 'Initializing...' : 'Start Focus Session'}</span>
@@ -461,7 +571,14 @@ export function StudyTimerPage() {
       >
         {/* Weekly Focus Bar Chart */}
         <div className="card" style={{ padding: '1.5rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '1.25rem',
+            }}
+          >
             <div>
               <h4 style={{ fontSize: '1.05rem', fontWeight: 700, margin: 0, color: 'var(--ink)' }}>
                 Weekly Focus Trend
@@ -475,14 +592,21 @@ export function StudyTimerPage() {
 
           <div style={{ height: '220px', width: '100%' }}>
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={weeklyChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+              <BarChart
+                data={weeklyChartData}
+                margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+              >
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
                 <XAxis dataKey="day" stroke="var(--ink-soft)" fontSize={11} tickLine={false} />
                 <YAxis stroke="var(--ink-soft)" fontSize={11} tickLine={false} unit="m" />
                 <Tooltip
                   content={({ active, payload }) => {
                     if (active && payload && payload.length) {
-                      const data = payload[0].payload as { day: string; dateStr: string; minutes: number };
+                      const data = payload[0].payload as {
+                        day: string;
+                        dateStr: string;
+                        minutes: number;
+                      };
                       return (
                         <div
                           style={{
@@ -497,7 +621,13 @@ export function StudyTimerPage() {
                           <p style={{ margin: 0, fontWeight: 700, color: 'var(--ink)' }}>
                             {data.day} ({data.dateStr})
                           </p>
-                          <p style={{ margin: '0.2rem 0 0', color: 'var(--brand-gold)', fontWeight: 600 }}>
+                          <p
+                            style={{
+                              margin: '0.2rem 0 0',
+                              color: 'var(--brand-gold)',
+                              fontWeight: 600,
+                            }}
+                          >
                             {data.minutes} focus minutes
                           </p>
                         </div>
@@ -514,9 +644,19 @@ export function StudyTimerPage() {
 
         {/* Focus Metrics Summary Cards */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-          <div className="card" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <div
+            className="card"
+            style={{
+              padding: '1.25rem',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+            }}
+          >
             <div>
-              <span style={{ color: 'var(--ink-soft)', fontSize: '0.8rem', fontWeight: 600 }}>Today's Focus</span>
+              <span style={{ color: 'var(--ink-soft)', fontSize: '0.8rem', fontWeight: 600 }}>
+                Today's Focus
+              </span>
               <h3 style={{ fontSize: '1.8rem', marginTop: '0.25rem', color: 'var(--emerald)' }}>
                 {todayMinutes}m
               </h3>
@@ -526,9 +666,19 @@ export function StudyTimerPage() {
             </span>
           </div>
 
-          <div className="card" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <div
+            className="card"
+            style={{
+              padding: '1.25rem',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+            }}
+          >
             <div>
-              <span style={{ color: 'var(--ink-soft)', fontSize: '0.8rem', fontWeight: 600 }}>Total All-Time</span>
+              <span style={{ color: 'var(--ink-soft)', fontSize: '0.8rem', fontWeight: 600 }}>
+                Total All-Time
+              </span>
               <h3 style={{ fontSize: '1.8rem', marginTop: '0.25rem', color: 'var(--brand-gold)' }}>
                 {history?.summary.totalHoursFormatted || '0.0'}h
               </h3>
@@ -538,9 +688,19 @@ export function StudyTimerPage() {
             </span>
           </div>
 
-          <div className="card" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <div
+            className="card"
+            style={{
+              padding: '1.25rem',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+            }}
+          >
             <div>
-              <span style={{ color: 'var(--ink-soft)', fontSize: '0.8rem', fontWeight: 600 }}>Total Sessions</span>
+              <span style={{ color: 'var(--ink-soft)', fontSize: '0.8rem', fontWeight: 600 }}>
+                Total Sessions
+              </span>
               <h3 style={{ fontSize: '1.8rem', marginTop: '0.25rem', color: 'var(--primary)' }}>
                 {history?.summary.totalSessions || 0}
               </h3>
@@ -550,9 +710,19 @@ export function StudyTimerPage() {
             </span>
           </div>
 
-          <div className="card" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <div
+            className="card"
+            style={{
+              padding: '1.25rem',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+            }}
+          >
             <div>
-              <span style={{ color: 'var(--ink-soft)', fontSize: '0.8rem', fontWeight: 600 }}>Avg Session</span>
+              <span style={{ color: 'var(--ink-soft)', fontSize: '0.8rem', fontWeight: 600 }}>
+                Avg Session
+              </span>
               <h3 style={{ fontSize: '1.8rem', marginTop: '0.25rem', color: 'var(--ink)' }}>
                 {history && history.summary.totalSessions > 0
                   ? Math.round(history.summary.totalMinutes / history.summary.totalSessions)
@@ -593,7 +763,13 @@ export function StudyTimerPage() {
             <div style={{ position: 'relative', width: '200px' }}>
               <Search
                 size={14}
-                style={{ position: 'absolute', left: '0.6rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--ink-soft)' }}
+                style={{
+                  position: 'absolute',
+                  left: '0.6rem',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  color: 'var(--ink-soft)',
+                }}
               />
               <input
                 type="text"
@@ -601,7 +777,12 @@ export function StudyTimerPage() {
                 onChange={(e) => setHistorySearch(e.target.value)}
                 placeholder="Search sessions..."
                 className="input-field"
-                style={{ paddingLeft: '2rem', fontSize: '0.8rem', width: '100%', padding: '0.3rem 0.6rem 0.3rem 2rem' }}
+                style={{
+                  paddingLeft: '2rem',
+                  fontSize: '0.8rem',
+                  width: '100%',
+                  padding: '0.3rem 0.6rem 0.3rem 2rem',
+                }}
               />
             </div>
 
@@ -625,7 +806,10 @@ export function StudyTimerPage() {
 
         {filteredHistory.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '3rem 1rem', color: 'var(--ink-soft)' }}>
-            <BookOpen size={32} style={{ color: 'var(--brand-gold)', margin: '0 auto 0.75rem', opacity: 0.7 }} />
+            <BookOpen
+              size={32}
+              style={{ color: 'var(--brand-gold)', margin: '0 auto 0.75rem', opacity: 0.7 }}
+            />
             <p style={{ margin: 0, fontSize: '0.9rem' }}>
               {history?.data.length === 0
                 ? 'No completed study sessions recorded yet. Start your first focus session above!'
@@ -634,7 +818,14 @@ export function StudyTimerPage() {
           </div>
         ) : (
           <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
+            <table
+              style={{
+                width: '100%',
+                borderCollapse: 'collapse',
+                textAlign: 'left',
+                fontSize: '0.85rem',
+              }}
+            >
               <thead>
                 <tr style={{ borderBottom: '2px solid var(--border)', color: 'var(--ink-soft)' }}>
                   <th style={{ padding: '0.75rem 0.6rem' }}>Session Objective</th>
@@ -654,7 +845,9 @@ export function StudyTimerPage() {
                         transition: 'background-color 0.15s ease',
                       }}
                     >
-                      <td style={{ padding: '0.75rem 0.6rem', fontWeight: 600, color: 'var(--ink)' }}>
+                      <td
+                        style={{ padding: '0.75rem 0.6rem', fontWeight: 600, color: 'var(--ink)' }}
+                      >
                         {sess.title}
                       </td>
                       <td style={{ padding: '0.75rem 0.6rem' }}>
@@ -664,14 +857,24 @@ export function StudyTimerPage() {
                           <span style={{ color: 'var(--ink-soft)' }}>General</span>
                         )}
                       </td>
-                      <td style={{ padding: '0.75rem 0.6rem', color: 'var(--emerald)', fontWeight: 700 }}>
+                      <td
+                        style={{
+                          padding: '0.75rem 0.6rem',
+                          color: 'var(--emerald)',
+                          fontWeight: 700,
+                        }}
+                      >
                         {mins} {mins === 1 ? 'min' : 'mins'}{' '}
-                        <span style={{ fontSize: '0.75rem', fontWeight: 400, color: 'var(--ink-soft)' }}>
+                        <span
+                          style={{ fontSize: '0.75rem', fontWeight: 400, color: 'var(--ink-soft)' }}
+                        >
                           ({sess.durationSeconds}s)
                         </span>
                       </td>
                       <td style={{ padding: '0.75rem 0.6rem', color: 'var(--ink-soft)' }}>
-                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+                        <span
+                          style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+                        >
                           <Calendar size={13} />
                           {new Date(sess.endTime).toLocaleString('en-US', {
                             month: 'short',

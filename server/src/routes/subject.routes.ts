@@ -12,7 +12,12 @@ export const subjectRouter = Router();
 subjectRouter.use(requireAuth);
 
 const subjectSchema = z.object({
-  code: z.string().min(2, 'Subject code must be at least 2 characters').max(20).trim().toUpperCase(),
+  code: z
+    .string()
+    .min(2, 'Subject code must be at least 2 characters')
+    .max(20)
+    .trim()
+    .toUpperCase(),
   name: z.string().min(2, 'Subject name must be at least 2 characters').max(100).trim(),
   credits: z.coerce.number().int().min(1, 'Credits must be at least 1').max(10).default(3),
   semester: z.coerce.number().int().min(1).max(8).default(1),
@@ -42,7 +47,8 @@ subjectRouter.post('/', async (req: AuthenticatedRequest, res: Response): Promis
     return;
   }
 
-  const { code, name, credits, semester, facultyName, attendancePercentage, color } = parseResult.data;
+  const { code, name, credits, semester, facultyName, attendancePercentage, color } =
+    parseResult.data;
 
   // Check duplicate code for this specific student
   const existing = await Subject.findOne({ userId: req.user!._id, code });
@@ -161,9 +167,17 @@ subjectRouter.delete('/:id', async (req: AuthenticatedRequest, res: Response): P
 
   // Unlink deleted subject from dependent tasks and notes without dropping records
   await Promise.all([
-    Task.updateMany({ userId: req.user!._id, subjectId: subject._id }, { $set: { subjectId: null, subjectCode: '' } }),
-    Note.updateMany({ userId: req.user!._id, subjectId: subject._id }, { $set: { subjectId: null, subjectCode: '' } }),
+    Task.updateMany(
+      { userId: req.user!._id, subjectId: subject._id },
+      { $set: { subjectId: null, subjectCode: '' } }
+    ),
+    Note.updateMany(
+      { userId: req.user!._id, subjectId: subject._id },
+      { $set: { subjectId: null, subjectCode: '' } }
+    ),
   ]);
 
-  res.status(200).json({ status: 'ok', message: 'Subject deleted and associations safely cleared.' });
+  res
+    .status(200)
+    .json({ status: 'ok', message: 'Subject deleted and associations safely cleared.' });
 });

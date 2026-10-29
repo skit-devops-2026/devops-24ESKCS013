@@ -31,152 +31,156 @@ export function App() {
       <AuthProvider>
         <ToastProvider>
           <Routes>
-        <Route path="/" element={<RootLayout />}>
-          <Route index element={<LandingPage />} />
-          <Route path="login" element={<LoginPage />} />
-          <Route path="register" element={<RegisterPage />} />
+            <Route path="/" element={<RootLayout />}>
+              <Route index element={<LandingPage />} />
+              <Route path="login" element={<LoginPage />} />
+              <Route path="register" element={<RegisterPage />} />
 
-          {/* Protected Student Routes */}
-          <Route
-            path="student/dashboard"
-            element={
-              <ProtectedRoute allowedRole="student">
-                <StudentDashboardPreview />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="student/tasks"
-            element={
-              <ProtectedRoute allowedRole="student">
-                <TasksPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="student/goals"
-            element={
-              <ProtectedRoute allowedRole="student">
-                <GoalsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="student/subjects"
-            element={
-              <ProtectedRoute allowedRole="student">
-                <SubjectsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="student/subjects/:id"
-            element={
-              <ProtectedRoute allowedRole="student">
-                <SubjectDetailPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="student/notes"
-            element={
-              <ProtectedRoute allowedRole="student">
-                <NotesPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="student/study"
-            element={
-              <ProtectedRoute allowedRole="student">
-                <StudyTimerPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="student/announcements"
-            element={
-              <ProtectedRoute allowedRole="student">
-                <StudentAnnouncementsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="student/resources"
-            element={
-              <ProtectedRoute allowedRole="student">
-                <StudentResourcesPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="student/attendance"
-            element={
-              <ProtectedRoute allowedRole="student">
-                <AttendanceIntelligencePage />
-              </ProtectedRoute>
-            }
-          />
+              {/* Protected Student Routes */}
+              <Route
+                path="student/dashboard"
+                element={
+                  <ProtectedRoute allowedRole="student">
+                    <StudentDashboardPreview />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="student/tasks"
+                element={
+                  <ProtectedRoute allowedRole="student">
+                    <TasksPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="student/goals"
+                element={
+                  <ProtectedRoute allowedRole="student">
+                    <GoalsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="student/subjects"
+                element={
+                  <ProtectedRoute allowedRole="student">
+                    <SubjectsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="student/subjects/:id"
+                element={
+                  <ProtectedRoute allowedRole="student">
+                    <SubjectDetailPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="student/notes"
+                element={
+                  <ProtectedRoute allowedRole="student">
+                    <NotesPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="student/study"
+                element={
+                  <ProtectedRoute allowedRole="student">
+                    <StudyTimerPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="student/announcements"
+                element={
+                  <ProtectedRoute allowedRole="student">
+                    <StudentAnnouncementsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="student/resources"
+                element={
+                  <ProtectedRoute allowedRole="student">
+                    <StudentResourcesPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="student/attendance"
+                element={
+                  <ProtectedRoute allowedRole="student">
+                    <AttendanceIntelligencePage />
+                  </ProtectedRoute>
+                }
+              />
 
-          {/* Protected Admin Routes */}
-          <Route
-            path="admin/dashboard"
-            element={
-              <ProtectedRoute allowedRole="admin">
-                <AdminDashboardPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="admin/students"
-            element={
-              <ProtectedRoute allowedRole="admin">
-                <AdminStudentsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="admin/students/:id"
-            element={
-              <ProtectedRoute allowedRole="admin">
-                <AdminStudentDetailPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="admin/announcements"
-            element={
-              <ProtectedRoute allowedRole="admin">
-                <AdminAnnouncementsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="admin/resources"
-            element={
-              <ProtectedRoute allowedRole="admin">
-                <AdminResourcesPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="admin/health"
-            element={
-              <ProtectedRoute allowedRole="admin">
-                <div className="container" style={{ padding: '3rem 1rem' }}>
-                  <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-                    <h1 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>System Diagnostics</h1>
-                    <p style={{ color: 'var(--ink-soft)' }}>Infrastructure health and database connectivity.</p>
-                  </div>
-                  <ApiHealthCheck />
-                </div>
-              </ProtectedRoute>
-            }
-          />
+              {/* Protected Admin Routes */}
+              <Route
+                path="admin/dashboard"
+                element={
+                  <ProtectedRoute allowedRole="admin">
+                    <AdminDashboardPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="admin/students"
+                element={
+                  <ProtectedRoute allowedRole="admin">
+                    <AdminStudentsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="admin/students/:id"
+                element={
+                  <ProtectedRoute allowedRole="admin">
+                    <AdminStudentDetailPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="admin/announcements"
+                element={
+                  <ProtectedRoute allowedRole="admin">
+                    <AdminAnnouncementsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="admin/resources"
+                element={
+                  <ProtectedRoute allowedRole="admin">
+                    <AdminResourcesPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="admin/health"
+                element={
+                  <ProtectedRoute allowedRole="admin">
+                    <div className="container" style={{ padding: '3rem 1rem' }}>
+                      <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                        <h1 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>
+                          System Diagnostics
+                        </h1>
+                        <p style={{ color: 'var(--ink-soft)' }}>
+                          Infrastructure health and database connectivity.
+                        </p>
+                      </div>
+                      <ApiHealthCheck />
+                    </div>
+                  </ProtectedRoute>
+                }
+              />
 
-          <Route path="*" element={<NotFoundPage />} />
-        </Route>
-      </Routes>
+              <Route path="*" element={<NotFoundPage />} />
+            </Route>
+          </Routes>
         </ToastProvider>
       </AuthProvider>
     </ThemeProvider>

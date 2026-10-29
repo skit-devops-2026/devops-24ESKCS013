@@ -5,16 +5,17 @@
    ========================================================================== */
 :root {
   /* Typography */
-  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-sans:
+    'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-serif: 'Fraunces', Georgia, serif;
 
   /* Surfaces & Backgrounds */
-  --bg-base: #F8FAFC;
-  --bg-surface: #FFFFFF;
-  --bg-surface-raised: #FFFFFF;
-  --bg-surface-hover: #F1F5F9;
-  --bg-surface-active: #E2E8F0;
-  --bg-muted: #F1F5F9;
+  --bg-base: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-surface-raised: #ffffff;
+  --bg-surface-hover: #f1f5f9;
+  --bg-surface-active: #e2e8f0;
+  --bg-muted: #f1f5f9;
 
   /* Legacy aliases for backward compatibility */
   --paper: var(--bg-base);
@@ -25,43 +26,43 @@
   --emerald: var(--green);
 
   /* Borders & Rules */
-  --border-subtle: #E2E8F0;
-  --border-strong: #CBD5E1;
-  --border-focus: #3B82F6;
+  --border-subtle: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --border-focus: #3b82f6;
   --rule: var(--border-subtle);
   --rule-strong: var(--border-strong);
 
   /* Typography / Text colors */
-  --text-primary: #0F172A;
+  --text-primary: #0f172a;
   --text-secondary: #475569;
-  --text-muted: #64748B;
-  --text-faint: #94A3B8;
+  --text-muted: #64748b;
+  --text-faint: #94a3b8;
   --ink: var(--text-primary);
   --ink-soft: var(--text-secondary);
   --ink-faint: var(--text-muted);
 
   /* Brand / Primary Accent (Amber / Academic Gold & Indigo) */
-  --accent-primary: #2563EB;
-  --accent-primary-hover: #1D4ED8;
-  --accent-primary-soft: #EFF6FF;
-  --gold: #D97706;
-  --gold-ink: #92400E;
-  --gold-soft: #FEF3C7;
+  --accent-primary: #2563eb;
+  --accent-primary-hover: #1d4ed8;
+  --accent-primary-soft: #eff6ff;
+  --gold: #d97706;
+  --gold-ink: #92400e;
+  --gold-soft: #fef3c7;
 
   /* Semantic Feedback */
-  --green: #16A34A;
-  --green-soft: #DCFCE7;
-  --green-border: #86EFAC;
+  --green: #16a34a;
+  --green-soft: #dcfce7;
+  --green-border: #86efac;
 
-  --red: #DC2626;
-  --red-soft: #FEE2E2;
-  --red-border: #FCA5A5;
+  --red: #dc2626;
+  --red-soft: #fee2e2;
+  --red-border: #fca5a5;
 
-  --amber: #D97706;
-  --amber-soft: #FEF3C7;
+  --amber: #d97706;
+  --amber-soft: #fef3c7;
 
-  --blue: #2563EB;
-  --blue-soft: #DBEAFE;
+  --blue: #2563eb;
+  --blue-soft: #dbeafe;
 
   /* Elevation Shadows */
   --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
@@ -90,13 +91,13 @@
 /* ==========================================================================
    DESIGN TOKENS — DARK THEME
    ========================================================================== */
-[data-theme="dark"] {
-  --bg-base: #0B0F17;
+[data-theme='dark'] {
+  --bg-base: #0b0f17;
   --bg-surface: #111827;
-  --bg-surface-raised: #1F2937;
-  --bg-surface-hover: #1E293B;
+  --bg-surface-raised: #1f2937;
+  --bg-surface-hover: #1e293b;
   --bg-surface-active: #334155;
-  --bg-muted: #1E293B;
+  --bg-muted: #1e293b;
 
   --paper: var(--bg-base);
   --paper-raised: var(--bg-surface);
@@ -110,34 +111,34 @@
   --crimson: var(--red);
   --emerald: var(--green);
 
-  --border-subtle: #1E293B;
+  --border-subtle: #1e293b;
   --border-strong: #334155;
-  --border-focus: #60A5FA;
+  --border-focus: #60a5fa;
 
-  --text-primary: #F8FAFC;
-  --text-secondary: #CBD5E1;
-  --text-muted: #94A3B8;
-  --text-faint: #64748B;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --text-faint: #64748b;
 
-  --accent-primary: #3B82F6;
-  --accent-primary-hover: #60A5FA;
+  --accent-primary: #3b82f6;
+  --accent-primary-hover: #60a5fa;
   --accent-primary-soft: rgba(59, 130, 246, 0.15);
-  --gold: #F59E0B;
-  --gold-ink: #FCD34D;
+  --gold: #f59e0b;
+  --gold-ink: #fcd34d;
   --gold-soft: rgba(245, 158, 11, 0.15);
 
-  --green: #22C55E;
+  --green: #22c55e;
   --green-soft: rgba(34, 197, 94, 0.15);
   --green-border: rgba(34, 197, 94, 0.3);
 
-  --red: #EF4444;
+  --red: #ef4444;
   --red-soft: rgba(239, 68, 68, 0.15);
   --red-border: rgba(239, 68, 68, 0.3);
 
-  --amber: #F59E0B;
+  --amber: #f59e0b;
   --amber-soft: rgba(245, 158, 11, 0.15);
 
-  --blue: #3B82F6;
+  --blue: #3b82f6;
   --blue-soft: rgba(59, 130, 246, 0.15);
 
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
@@ -168,7 +169,9 @@ body {
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: background-color var(--transition-normal), color var(--transition-normal);
+  transition:
+    background-color var(--transition-normal),
+    color var(--transition-normal);
 }
 
 a {
@@ -184,7 +187,9 @@ button {
   color: inherit;
 }
 
-input, select, textarea {
+input,
+select,
+textarea {
   font-family: inherit;
   color: inherit;
   background-color: var(--bg-surface);
@@ -192,10 +197,14 @@ input, select, textarea {
   border-radius: var(--radius-md);
   padding: 0.5rem 0.75rem;
   font-size: 0.9rem;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
-input:focus, select:focus, textarea:focus {
+input:focus,
+select:focus,
+textarea:focus {
   outline: none;
   border-color: var(--border-focus);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
@@ -253,7 +262,7 @@ input:focus, select:focus, textarea:focus {
 
 .btn-accent {
   background: var(--accent-primary);
-  color: #FFFFFF;
+  color: #ffffff;
 }
 
 .btn-accent:hover {
@@ -262,7 +271,7 @@ input:focus, select:focus, textarea:focus {
 
 .btn-gold {
   background: var(--gold);
-  color: #FFFFFF;
+  color: #ffffff;
 }
 
 .btn-gold:hover {
@@ -297,7 +306,9 @@ input:focus, select:focus, textarea:focus {
   border-radius: var(--radius-lg);
   padding: 1.5rem;
   box-shadow: var(--shadow-sm);
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .card:hover {
@@ -374,7 +385,9 @@ input:focus, select:focus, textarea:focus {
   bottom: 0;
   left: 0;
   z-index: 40;
-  transition: width var(--transition-normal), transform var(--transition-normal);
+  transition:
+    width var(--transition-normal),
+    transform var(--transition-normal);
 }
 
 .app-sidebar.collapsed {
@@ -402,8 +415,8 @@ input:focus, select:focus, textarea:focus {
 .sidebar-brand-icon {
   width: 32px;
   height: 32px;
-  background: linear-gradient(135deg, var(--gold) 0%, #B45309 100%);
-  color: #FFFFFF;
+  background: linear-gradient(135deg, var(--gold) 0%, #b45309 100%);
+  color: #ffffff;
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
@@ -674,5 +687,24 @@ input:focus, select:focus, textarea:focus {
   to {
     transform: translateX(0);
     opacity: 1;
+  }
+}
+
+/* ==========================================================================
+   ACCESSIBILITY & REDUCED MOTION (WCAG AA COMPLIANCE)
+   ========================================================================== */
+:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
