@@ -19,6 +19,7 @@ const envSchema = z.object({
     .min(16, { message: 'JWT_SECRET must be at least 16 characters long' })
     .default('student_hub_dev_secret_key_minimum_32_bytes_safe_default'),
   JWT_EXPIRES_IN: z.string().default('7d'),
+  COOKIE_SAME_SITE: z.enum(['lax', 'strict', 'none']).optional(),
 });
 
 const parsed = envSchema.safeParse(process.env);

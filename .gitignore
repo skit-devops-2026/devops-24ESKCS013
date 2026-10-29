@@ -20,6 +20,12 @@ build/
 *.pem
 *.key
 
+# Database backups & local dumps
+backup-before-backfill/
+backup*/
+dump/
+*.dump
+
 # Editor and OS
 .vscode/
 .idea/

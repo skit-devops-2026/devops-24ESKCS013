@@ -23,10 +23,13 @@ export const AUTH_COOKIE_NAME = 'student_hub_token';
 
 export function getCookieOptions(): CookieOptions {
   const isProduction = env.NODE_ENV === 'production';
+  const sameSiteSetting = env.COOKIE_SAME_SITE || (isProduction ? 'none' : 'lax');
+  const isSecure = isProduction || sameSiteSetting === 'none';
+
   return {
     httpOnly: true, // Prevents access via client JavaScript (XSS mitigation)
-    secure: isProduction, // HTTPS only in production
-    sameSite: isProduction ? 'strict' : 'lax', // CSRF mitigation
+    secure: isSecure, // HTTPS required in production or for cross-site sameSite: 'none'
+    sameSite: sameSiteSetting, // 'lax' in dev; 'none' in prod for cross-domain deployments (e.g. Vercel + Render)
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
     path: '/',
   };
