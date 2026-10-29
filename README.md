@@ -95,13 +95,13 @@
 
 ## Visual Previews & Screenshots
 
-| View | Description | Preview |
-|---|---|---|
-| **Attendance Intelligence** | Multi-format ERP parser, recovery math calculations, and live what-if simulation sliders | *(docs/screenshots/attendance-intelligence.png)* |
-| **Course Dashboard** | Recharts visual analytics, attendance status, quick tasks, and onboarding checklist | *(docs/screenshots/dashboard.png)* |
-| **Kanban Assignments** | Drag-and-drop workflow across Pending, In Progress, and Completed columns | *(docs/screenshots/kanban.png)* |
-| **Markdown Notebook** | Split-pane markdown editor with live preview and DOMPurify sanitization | *(docs/screenshots/notes.png)* |
-| **Study Focus Timer** | Authoritative Pomodoro tracker with 25/5 and 50/10 presets and weekly focus chart | *(docs/screenshots/study-timer.png)* |
+| Interface View | Capabilities Highlighted | Light Theme Preview | Dark Theme Preview |
+|---|---|---|---|
+| **Course Dashboard** | Recharts visual analytics, attendance status, quick tasks, onboarding checklist | [Light Preview](docs/screenshots/dashboard-light.png) | [Dark Preview](docs/screenshots/dashboard-dark.png) |
+| **Attendance Intelligence** | Multi-format ERP parser, recovery math calculations, live what-if simulation sliders | [Light Preview](docs/screenshots/attendance-light.png) | [Dark Preview](docs/screenshots/attendance-dark.png) |
+| **Kanban Assignments** | Drag-and-drop workflow across Pending, In Progress, and Completed columns | [Light Preview](docs/screenshots/tasks-kanban-light.png) | [Dark Preview](docs/screenshots/tasks-kanban-dark.png) |
+| **Markdown Notebook** | Split-pane markdown editor with live preview, hashtag filtering, and DOMPurify sanitization | [Light Preview](docs/screenshots/notes-light.png) | [Dark Preview](docs/screenshots/notes-dark.png) |
+| **Study Focus Timer** | Authoritative Pomodoro tracker with 25/5 and 50/10 presets and weekly focus chart | [Light Preview](docs/screenshots/study-timer-light.png) | [Dark Preview](docs/screenshots/study-timer-dark.png) |
 
 ---
 

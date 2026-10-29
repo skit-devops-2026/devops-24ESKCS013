@@ -19,9 +19,9 @@ async function seedDemoStudent() {
   try {
     let demoUser = await User.findOne({ email: DEMO_EMAIL });
 
+    const passwordHash = await bcrypt.hash('DemoStudent@123', 10);
     if (!demoUser) {
       console.log(`[Seed] Creating demo user '${DEMO_EMAIL}'...`);
-      const passwordHash = await bcrypt.hash('DemoStudent@123', 10);
       demoUser = await User.create({
         email: DEMO_EMAIL,
         passwordHash,
@@ -29,6 +29,10 @@ async function seedDemoStudent() {
         name: 'Demo Student',
         status: 'active',
       });
+    } else {
+      demoUser.passwordHash = passwordHash;
+      demoUser.status = 'active';
+      await demoUser.save();
     }
 
     // STRICT SAFETY CHECK: Never touch any account other than demo student
